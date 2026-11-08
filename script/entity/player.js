@@ -11,8 +11,8 @@ export default class Player {
         }
         
         // this.tank.level = 1;
-        this.tank.upgradeToken = 10;
-        this.tank.updateToken = 100;
+        // this.tank.upgradeToken = 10;
+        // this.tank.updateToken = 100;
     }
 
     run() {
