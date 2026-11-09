@@ -148,12 +148,6 @@ export default class WallManager {
         );
     }
 
-    checkRect(target) {
-        return this.walls.some(wall =>
-            this.collision.rectRect(target, wall)
-        );
-    }
-
     get() {
         return {
             class: 'wall',

@@ -142,7 +142,7 @@ export default class TankManager {
                 if (!tank.get().active) continue;
                 if (!object.get().active) continue;
 
-                if (this.collision.circleRect(tank.get(), object.get())) {
+                if (this.collision.circleCircle(tank.get(), object.get())) {
                     if (object.hit(tank.get())) {
                         tank.kill(object.get());
                         object.death(tank.get());
@@ -151,6 +151,10 @@ export default class TankManager {
                     if (tank.hit(object.get())) {
                         object.kill(tank.get());
                         tank.death(object.get());
+
+                        if (object.shapeIndex === 6) {
+                            this.logManager.object(object.get());
+                        }
 
                         this.logManager.destruction(tank.get());
                     }
@@ -339,8 +343,8 @@ export default class TankManager {
 
                 if (!target.active) continue;
 
-                const dx = target.x + target.width / 2 - x;
-                const dy = target.y + target.height / 2 - y;
+                const dx = target.x - x;
+                const dy = target.y - y;
 
                 if (Math.abs(dx) > halfWidth) continue;
                 if (Math.abs(dy) > halfHeight) continue;

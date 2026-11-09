@@ -488,7 +488,7 @@ export default class Tank {
         const p = this.p;
 
         const width = this.tank.radius * 2;
-        const height = 5;
+        const height = 4;
 
         const maxHealth = this.tank.armor;
         const healthRate = Math.max(

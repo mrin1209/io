@@ -19,7 +19,7 @@ export default class mapManager {
     }
 
     draw() {
-        if (!this.tankManager.player) return;
+        if (!this.tankManager.watch) return;
         
         const p = this.p;
 
@@ -58,23 +58,44 @@ export default class mapManager {
             );
         }
 
-        // 戦車
         for (const tank of this.tankManager.tanks) {
-            const data = tank.get();
+            if (!tank.get().active || tank.get().type !== "cpu") continue;
 
-            if (!data.active) continue;
-
-            if (data.type === "player") {
-                p.fill(Color.blue.border);
-            } else {
-                p.fill(Color.red.border);
-            }
+            p.fill(Color.map.cpu);
 
             p.circle(
-                data.x,
-                data.y,
+                tank.get().x,
+                tank.get().y,
                 5 / this.scale
             );
+        }
+
+        if (this.tankManager.player) {
+            const player = this.tankManager.player.get();
+
+            if (player.active) {
+                p.fill(Color.map.player);
+
+                p.circle(
+                    player.x,
+                    player.y,
+                    5 / this.scale
+                );
+            }
+        }
+
+        if (this.tankManager.watch) {
+            const watch = this.tankManager.watch.get();
+
+            if (watch.active) {
+                p.fill(Color.map.watch);
+
+                p.circle(
+                    watch.x,
+                    watch.y,
+                    5 / this.scale
+                );
+            }
         }
 
         p.pop();

@@ -7,7 +7,7 @@ export default class ScoreManager {
 
         this.x = 20;
         this.y = 20;
-        this.rowHeight = 45;
+        this.rowHeight = 25;
 
         this.previews = new WeakMap();
 
@@ -42,8 +42,6 @@ export default class ScoreManager {
     }
 
     draw() {
-        if (!this.tankManager.player) return;
-
         const ranking = this.tankManager.tanks
             .filter(item => item.tank.active)
             .sort((a, b) => b.tank.level - a.tank.level)
@@ -63,11 +61,11 @@ export default class ScoreManager {
             const rowY = y + index * this.rowHeight;
             const preview = this.getPreview(tank);
 
-            preview.x = x - 20;
+            preview.x = x - 10;
             preview.y = rowY;
             preview.angle = 0;
 
-            preview.previewScale = 15 / preview.tank.radius;
+            preview.previewScale = 10 / preview.tank.radius;
 
             preview.draw();
 
@@ -75,7 +73,7 @@ export default class ScoreManager {
             p.stroke(Color.name.stroke);
             p.strokeWeight(3);
             p.fill(Color.name.color);
-            p.text(`${tank.get().name} (${tank.get().level})`, x - 45, rowY - 1);
+            p.text(`${tank.get().name} (${tank.get().level})`, x - 25, rowY);
         });
 
         p.pop();

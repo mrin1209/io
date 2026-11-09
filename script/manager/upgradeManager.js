@@ -16,7 +16,6 @@ export default class UpgradeManager {
         this.icon = {
             size: 80,
             gap: 10,
-            padding: 10,
             radius: 15,
         };
     }
@@ -69,7 +68,7 @@ export default class UpgradeManager {
             + (this.candidates.length - 1) * gap;
 
         const startX = (this.p.width - totalWidth) / 2;
-        const startY = this.p.height - size - 30;
+        const startY = this.p.height - size - 20;
 
         this.candidates.forEach((candidate, index) => {
             candidate.x = startX + index * (size + gap);
@@ -134,7 +133,7 @@ export default class UpgradeManager {
             p.text(
                 candidate.type,
                 x + size / 2,
-                y + size - 12
+                y + size - 8
             );
         });
 

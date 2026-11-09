@@ -4,7 +4,7 @@ export default class LevelManager {
     constructor(p) {
         this.p = p;
 
-        this.width = 360;
+        this.width = 300;
         this.height = 24;
         this.y = 20;
     }

@@ -1,5 +1,5 @@
 import Collision from "../core/collision.js";
-import Rect from "../object/rect.js";
+import Object from "../object/object.js";
 import Config from "../config/config.js";
 
 export default class ObjectManager {
@@ -44,15 +44,21 @@ export default class ObjectManager {
                 if (!objectA.get().active) continue;
                 if (!objectB.get().active) continue;
 
-                if (this.collision.rectRect(objectA.get(), objectB.get())) {
+                if (this.collision.circleCircle(objectA.get(), objectB.get())) {
                     if (objectA.hit(objectB.get())) {
                         objectB.kill(objectA.get());
                         objectA.death(objectB.get());
-                    }
 
-                    if (objectB.hit(objectA.get())) {
+                        if (objectB.shapeIndex === 6) {
+                            this.logManager.object(objectB.get());
+                        }
+                    } else if (objectB.hit(objectA.get())) {
                         objectA.kill(objectB.get());
                         objectB.death(objectA.get());
+
+                        if (objectA.shapeIndex === 6) {
+                            this.logManager.object(objectA.get());
+                        }
                     }
                 }
             }
@@ -64,7 +70,7 @@ export default class ObjectManager {
                 if (!bullet.get().active) continue;
                 if (!object.get().active) continue;
 
-                if (this.collision.circleRect(bullet.get(), object.get())) {
+                if (this.collision.circleCircle(bullet.get(), object.get())) {
                     if (bullet.collisions.has(object.get().id)) continue;
 
                     if (bullet.hit(object.get())) {
@@ -105,7 +111,7 @@ export default class ObjectManager {
         const position = this.spawnPosition();
         if (!position) return;
 
-        const object = new Rect(
+        const object = new Object(
             this.p,
             position.x,
             position.y
@@ -120,14 +126,8 @@ export default class ObjectManager {
 
         for (let i = 0; i < maxAttempts; i++) {
             const position = {
-                x: this.p.random(
-                    radius,
-                    Config.map.width - radius
-                ),
-                y: this.p.random(
-                    radius,
-                    Config.map.height - radius
-                ),
+                x: Math.random() * (Config.map.width - radius * 2) + radius,
+                y: Math.random() * (Config.map.height - radius * 2) + radius,
                 radius,
             };
 
@@ -155,8 +155,8 @@ export default class ObjectManager {
             if (target.get().id === object.get().id) continue;
             if (!target.get().active) continue;
 
-            const dx = target.get().x + target.get().width / 2 - x;
-            const dy = target.get().y + target.get().height / 2 - y;
+            const dx = target.get().x - x;
+            const dy = target.get().y - y;
 
             if (Math.abs(dx) > halfWidth) continue;
             if (Math.abs(dy) > halfHeight) continue;

@@ -68,8 +68,6 @@ export default class Game {
             // for (let i = 0; i < 100000; i++) {
             //     this.loop();
             // }
-
-            this.tankManager.setWatch();
         }
 
         this.levelManager = new LevelManager(this.p);
@@ -185,6 +183,11 @@ export default class Game {
             this.camera.run(this.tankManager.watch.get());
             return;
         }
+
+        this.camera.run({
+            x: Config.map.width / 2,
+            y: Config.map.height / 2,
+        });
     }
 
     upgrade(x, y) {

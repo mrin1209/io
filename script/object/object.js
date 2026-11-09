@@ -1,29 +1,46 @@
 import Color from "../config/color.js";
 import Collision from "../core/collision.js";
+import Circle from "./shape/circle.js";
+import Triangle from "./shape/triangle.js";
+import Square from "./shape/square.js";
+import Pentagon from "./shape/pentagon.js";
+import Hexagon from "./shape/hexagon.js";
+import Heptagon from "./shape/heptagon.js";
+import Octagon from "./shape/octagon.js";
 
-export default class Rect {
+
+export default class Object {
     constructor(p, x, y) {
         this.p = p;
         this.x = x;
         this.y = y;
-
-        this.baseSize = 20;
 
         this.object = {
             angle: Math.random() * Math.PI * 2,
             rotationSpeed: (0.0025 + Math.random() * 0.005) * (Math.random() < 0.5 ? -1 : 1),
             speed: 0.5,
             minSpeed: 0.1 + Math.random() * 0.15,
-            health : 50,
-            armor  : 50,
-            power  : 30,
+            armor  : 10,
+            power  : 10,
             penetration : 10,
             deceleration: 0.005,
-            size: 20,
             recoil: 1,
             regeneration: 0,
-            zoom: 1.5,
+            zoom: 2.5,
         }
+
+        this.shapes = [
+            new Circle(p),
+            new Triangle(p),
+            new Square(p),
+            new Pentagon(p),
+            new Hexagon(p),
+            new Heptagon(p),
+            new Octagon(p)
+        ];
+
+        this.shapeIndex = 0;
+        this.shape = this.shapes[this.shapeIndex];
 
         const direction = Math.random() * Math.PI * 2;
         const speed = this.object.speed;
@@ -34,11 +51,12 @@ export default class Rect {
         this.id = crypto.randomUUID();
         this.level = 1;
         this.exp = 0;
-        this.totalExp = 20;
+        this.totalExp = 50;
+
+        this.object.health = this.object.armor;
 
         this.active = true;
         this.invincible = 0;
-        this.color = Color.pink;
 
         this.collision = new Collision();
     }
@@ -61,17 +79,14 @@ export default class Rect {
         this.drawHealth();
 
         p.push();
-        p.translate(
-            this.x + this.object.size / 2,
-            this.y + this.object.size / 2
-        );
+        p.translate(this.x, this.y);
         p.rotate(this.object.angle);
-
         p.rectMode(p.CENTER);
-        p.stroke(this.color.border);
+        p.stroke(this.shape.color.border);
         p.strokeWeight(2);
-        p.fill(this.color.fill);
-        p.rect(0, 0, this.object.size, this.object.size);
+        p.fill(this.shape.color.fill);
+
+        this.shape.draw();;
 
         p.pop();
     }
@@ -81,25 +96,22 @@ export default class Rect {
         const py = this.y;
 
         if (target) {
-            const dx = target.x + target.width / 2
-                - (this.x + this.object.size / 2);
-
-            const dy = target.y + target.height / 2
-                - (this.y + this.object.size / 2);
+            const dx = target.x - this.x;
+            const dy = target.y - this.y;
 
             const distance = Math.hypot(dx, dy);
 
             if (distance > 0) {
-                this.x += (dx / distance) * this.object.minSpeed;
-                this.y += (dy / distance) * this.object.minSpeed;
+                this.x += (dx / distance) * this.object.minSpeed * 1.2;
+                this.y += (dy / distance) * this.object.minSpeed * 1.2;
             }
         }
 
         this.x += this.rx;
 
         if (
-            this.collision.outsideRect(this.get()) ||
-            wallManager.checkRect(this.get())
+            this.collision.outside(this.get()) ||
+            wallManager.check(this.get())
         ) {
             this.x = px;
             this.rx *= -1;
@@ -108,8 +120,8 @@ export default class Rect {
         this.y += this.ry;
 
         if (
-            this.collision.outsideRect(this.get()) ||
-            wallManager.checkRect(this.get())
+            this.collision.outside(this.get()) ||
+            wallManager.check(this.get())
         ) {
             this.y = py;
             this.ry *= -1;
@@ -155,8 +167,8 @@ export default class Rect {
             this.invincible = 15;
 
             this.setDirection(
-                this.x + this.object.size / 2 - target.x,
-                this.y + this.object.size / 2 - target.y,
+                this.x + this.shape.radius - (target.x + target.radius),
+                this.y + this.shape.radius - (target.y + target.radius),
                 target.recoil
             );
         }
@@ -166,8 +178,8 @@ export default class Rect {
             this.invincible = 15;
 
             this.setDirection(
-                this.x + this.object.size / 2 - target.x,
-                this.y + this.object.size / 2 - target.y,
+                this.x + this.shape.radius - (target.x + target.radius),
+                this.y + this.shape.radius - (target.y + target.radius),
                 target.recoil
             );
         }
@@ -203,7 +215,7 @@ export default class Rect {
     }
 
     getRequiredExp() {
-        return 100 + this.level * 25;
+        return 50 * Math.pow(2, this.level - 1);
     }
 
     kill(target) {
@@ -235,12 +247,20 @@ export default class Rect {
     }
 
     levelUp() {
+        if (this.shapeIndex >= this.shapes.length - 1) return;
+
         this.level++;
-        this.object.armor += 10;
-        this.object.power += 2;
-        this.object.penetration += 1;
-        this.object.health += 10;
-        this.object.size = this.baseSize + ((this.level - 1) * 1);
+
+        this.object.health = Math.min(
+            this.object.health + this.object.armor,
+            this.object.armor
+        );
+        this.object.armor *= 2;
+        this.object.power += 10;
+        this.object.penetration *= 2;
+
+        this.shapeIndex++;
+        this.shape = this.shapes[this.shapeIndex];
     }
 
     drawHealth() {
@@ -248,9 +268,7 @@ export default class Rect {
 
         const p = this.p;
 
-        const width = Math.sqrt(
-            this.object.size ** 2 + this.object.size ** 2
-        );
+        const width = this.shape.radius * 2;
         const height = 4;
 
         const maxHealth = this.object.armor;
@@ -259,10 +277,11 @@ export default class Rect {
             Math.min(1, this.object.health / maxHealth)
         );
 
-        const x = this.x + this.object.size / 2 - width / 2;
-        const y = this.y + this.object.size + 8;
+        const x = -width / 2;
+        const y = this.shape.size / 2 + 8;
 
         p.push();
+        p.translate(this.x, this.y);
 
         p.noStroke();
 
@@ -281,10 +300,8 @@ export default class Rect {
             class: 'object',
             x: this.x,
             y: this.y,
-            angle: this.angle,
             recoil: this.object.recoil,
-            width: this.object.size,
-            height: this.object.size,
+            radius: this.shape.radius,
             active: this.active,
             speed: this.object.speed,
             power: this.object.power,

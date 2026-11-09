@@ -27,30 +27,12 @@ export default class Collision {
         return dx * dx + dy * dy <= circle.radius * circle.radius;
     }
 
-    rectRect(a, b) {
-        return (
-            a.x < b.x + b.width &&
-            a.x + a.width > b.x &&
-            a.y < b.y + b.height &&
-            a.y + a.height > b.y
-        );
-    }
-
     outside(object) {
         return (
             object.x - object.radius < 0 ||
             object.y - object.radius < 0 ||
             object.x + object.radius > Config.map.width ||
             object.y + object.radius > Config.map.height
-        );
-    }
-
-    outsideRect(rect) {
-        return (
-            rect.x < 0 ||
-            rect.y < 0 ||
-            rect.x + rect.width > Config.map.width ||
-            rect.y + rect.height > Config.map.height
         );
     }
 }
