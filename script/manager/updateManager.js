@@ -18,26 +18,6 @@ export default class UpdateManager {
         };
     }
 
-    run(tank) {
-        const tankData = tank.get();
-
-        if (tankData.updateToken) {
-            if (tankData.type === "cpu") {
-                const items = tank.tank.status.items.filter(
-                    item => item.count < Config.max.status
-                );
-
-                if (!items.length) return;
-
-                const item = items[
-                    Math.floor(this.p.random(items.length))
-                ];
-
-                tank.update(item.key);
-            }
-        }
-    }
-
     create(tank) {
         this.player = tank;
 

@@ -5,21 +5,22 @@ export default class Debug extends Tank {
     constructor(param) {
         super(param);
 
-        this.color = Color.yellow;
+        this.color = Color.pink;
 
         this.tank.armor = 100;
         this.tank.power = 100;
         this.tank.speed = 2;
         this.tank.zoom = 1;
 
-        this.gun.reload = 60;
-        this.gun.aim = 0;
+        this.gun.reload = 5;
+        this.gun.aim = 10;
         this.gun.count = 1;
+        this.gun.recoil = 0.5;
 
-        this.bullet.speed = 1;
-        this.bullet.power = 1;
-        this.bullet.armor = 10000;
-        this.bullet.penetration = 1;
+        this.bullet.speed = 5;
+        this.bullet.power = 100;
+        this.bullet.armor = 100;
+        this.bullet.penetration = 100;
         this.bullet.duration = 30;
         this.bullet.deceleration = 0.005;
         this.bullet.range = 120;

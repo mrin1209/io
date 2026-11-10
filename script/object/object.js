@@ -214,10 +214,6 @@ export default class Object {
         );
     }
 
-    getRequiredExp() {
-        return 50 * Math.pow(2, this.level - 1);
-    }
-
     kill(target) {
         if (target.class === 'object') {
             this.object.health = Math.min(
@@ -246,21 +242,30 @@ export default class Object {
         this.active = false;
     }
 
-    levelUp() {
-        if (this.shapeIndex >= this.shapes.length - 1) return;
+    getRequiredExp() {
+        return 50 * Math.pow(2, this.level - 1);
+    }
 
+    levelUp() {
         this.level++;
 
-        this.object.health = Math.min(
-            this.object.health + this.object.armor,
-            this.object.armor
-        );
-        this.object.armor *= 2;
-        this.object.power += 10;
-        this.object.penetration *= 2;
+        if (this.shapeIndex >= this.shapes.length - 1) {
+            this.object.armor += 10;
+            this.object.power += 10;
+            this.object.penetration += 10;
+            this.shape.radius += 2;
+        } else {
+            this.object.health = Math.min(
+                this.object.health + this.object.armor,
+                this.object.armor
+            );
+            this.object.armor *= 2;
+            this.object.power += 10;
+            this.object.penetration *= 2;
 
-        this.shapeIndex++;
-        this.shape = this.shapes[this.shapeIndex];
+            this.shapeIndex++;
+            this.shape = this.shapes[this.shapeIndex];
+        }
     }
 
     drawHealth() {

@@ -3,7 +3,6 @@ import Player from "../entity/player.js";
 import Collision from "../core/collision.js";
 import Config from "../config/config.js";
 import Single from "../tank/tier1/single.js";
-import Debug from "../tank/tier1/debug.js";
 
 export default class TankManager {
     constructor(
@@ -11,8 +10,6 @@ export default class TankManager {
         bulletManager,
         objectManager,
         wallManager,
-        upgradeManager,
-        updateManager,
         logManager,
     ) {
         this.p = p;
@@ -21,8 +18,6 @@ export default class TankManager {
         this.bulletManager = bulletManager;
         this.objectManager = objectManager;
         this.wallManager = wallManager;
-        this.upgradeManager = upgradeManager;
-        this.updateManager = updateManager;
         this.logManager = logManager;
         
         this.collision = new Collision();
@@ -152,11 +147,11 @@ export default class TankManager {
                         object.kill(tank.get());
                         tank.death(object.get());
 
+                        this.logManager.destruction(tank.get());
+
                         if (object.shapeIndex === 6) {
                             this.logManager.object(object.get());
                         }
-
-                        this.logManager.destruction(tank.get());
                     }
                 }
             }
@@ -164,20 +159,27 @@ export default class TankManager {
 
         // 機体のアップグレード
         for (const tank of this.tanks) {
-            this.upgradeManager.run(tank, this);
-            this.updateManager.run(tank, this);
+            if (tank.get().type !== "cpu") continue;
+            this.update(tank);
+            this.upgrade(tank);
         }
 
         this.remove();
 
-        if (this.player) {
+        if (this.player && this.watch) {
             this.watch = null;
         } else if (
-            !this.watch ||
-            !this.watch.get().active ||
-            this.watch.get().type !== 'cpu'
+            !this.player &&
+            (
+                !this.watch ||
+                !this.watch.get().active ||
+                this.watch.get().type !== 'cpu'
+            ) &&
+            this.tanks.some(tank =>
+                tank.get().active && tank.get().type === 'cpu'
+            )
         ) {
-            this.setWatch();
+            // this.setWatch();
         }
     }
 
@@ -206,23 +208,32 @@ export default class TankManager {
         }
     }
 
-    upgrade(tank, TankClass) {
-        const newTank = tank.upgrade(TankClass);
+    change(tank) {
+        this.tanks = this.tanks.filter(item => item.get().id !== tank.get().id);
+        this.tanks.push(tank);
+    }
 
-        this.logManager.awakening(newTank.get());
+    set(tank) {
+        this.player = tank;
+    }
 
-        this.tanks = this.tanks.filter(item => item.tank.id !== tank.tank.id);
-        this.tanks.push(newTank);
+    upgrade(tank) {
+        const newTank = tank.upgrade();
+        if (!newTank) return;
 
-        if (newTank.tank.type === 'player') {
-            this.player = newTank;
-        }
+        this.change(newTank);
 
         if (this.watch) {
             if (newTank.get().id === this.watch.get().id) {
                 this.watch = newTank;
             }
         }
+
+        this.logManager.awakening(newTank.get());
+    }
+
+    update(tank) {
+        tank.update();
     }
 
     add(name) {
@@ -242,10 +253,11 @@ export default class TankManager {
                 y: position.y,
                 name: name,
                 type: 'player',
+                level: 40,
+                upgradeToken: 10,
+                updateToken: 100,
             })
         );
-
-        this.upgradeManager.create(player.get());
 
         this.tanks.push(player);
         this.player = player;

@@ -9,11 +9,14 @@ export default class Camera {
         const p = this.p;
 
         const zoom = tank.zoom
-            ? Math.max(
+            ? Math.min(
                 p.width / (Config.view.width / tank.zoom),
                 p.height / (Config.view.height / tank.zoom)
             )
-            : p.width / Config.map.width;
+            : Math.max(
+                p.width / Config.map.width,
+                p.height / Config.map.height
+            );
 
         p.translate(p.width / 2, p.height / 2);
         p.scale(zoom);

@@ -7,6 +7,7 @@ export default class Single extends Tank {
 
         this.gun.reload = 60;
         this.gun.aim = 10;
+        this.gun.recoil = 1;
 
         this.bullet.speed = 3;
         this.bullet.power = 10;
@@ -16,16 +17,6 @@ export default class Single extends Tank {
         this.bullet.deceleration = 0.01;
         this.bullet.range = 135;
         this.bullet.radius = 10;
-
-        this.upgrade = [
-            'twin',
-            'side',
-            'wide',
-            'double',
-            'sniper',
-            'cannon',
-            'shotgun',
-        ];
 
         super.setup(param);
     }

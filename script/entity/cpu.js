@@ -1,10 +1,10 @@
 import Config from "../config/config.js";
+import Tanks from "../config/tanks.js";
 
 export default class Cpu {
     constructor(p, tank) {
         this.p = p;
         this.tank = tank;
-        this.tank.owner = this;
     }
 
     run(wallManager) {
@@ -66,23 +66,32 @@ export default class Cpu {
         this.tank.death(target);
     }
 
-    upgrade(TankClass) {
-        if (!this.tank.upgradeToken) return;
+    upgrade() {
+        const tier = `tier${this.tank.get().tier + 1}`;
+        const name = this.tank.get().tank;
+        const candidates = Tanks[tier][name];
+        if (!candidates || !Object.keys(candidates).length) return false;
+        const classes = Object.values(candidates);
+        const TankClass = classes[Math.floor(Math.random() * classes.length)];
 
-        this.tank.upgradeToken--;
+        if (!this.tank.upgrade()) return false;
 
         this.tank = new TankClass({
             p: this.p,
             ...this.get()
         });
 
-        this.tank.owner = this;
-
         return this;
     }
 
-    update(key, value) {
-        this.tank.update(key, value);
+    update() {
+        const items = this.tank.get().status.items.filter(
+            item => item.count < Config.max.status
+        );
+        if (!items.length) return false;
+        const item = items[Math.floor(Math.random() * items.length)];
+
+        if (!this.tank.update(item)) return false;
     }
 
     get() {

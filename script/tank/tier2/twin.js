@@ -19,10 +19,6 @@ export default class Twin extends Tank {
         this.bullet.radius = 7.5;
         this.gun.recoil = 0.5;
 
-        this.upgrade = [
-            'triple'
-        ]
-
         this.next = 0;
 
         this.previewColor = Color.red;

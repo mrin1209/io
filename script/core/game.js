@@ -23,10 +23,7 @@ export default class Game {
 
         this.logManager = new LogManager(this.p);
 
-        this.upgradeManager = new UpgradeManager(
-            this.p,
-            this.logManager,
-        );
+        this.upgradeManager = new UpgradeManager(this.p);
         this.updateManager = new UpdateManager(this.p);
 
         this.bulletManager = new BulletManager(
@@ -46,8 +43,6 @@ export default class Game {
             this.bulletManager,
             this.objectManager,
             this.wallManager,
-            this.upgradeManager,
-            this.updateManager,
             this.logManager,
         );
 
@@ -109,6 +104,8 @@ export default class Game {
                 input.value = "";
                 input.style.display = "none";
             }
+
+            this.upgradeManager.create(this.tankManager.player.get());
         });
 
         this.nameInput = input;
@@ -146,6 +143,7 @@ export default class Game {
         this.scoreManager.draw();
         this.logManager.draw();
         this.levelManager.draw(this.tankManager.player);
+
 
         p.pop();
     }
@@ -191,24 +189,29 @@ export default class Game {
     }
 
     upgrade(x, y) {
-        if (!this.tankManager.player) return;
-        if (!this.tankManager.player.get().upgradeToken) return;
+        const tank = this.tankManager.player;
+
+        if (!tank) return;
 
         const TankClass = this.upgradeManager.pressed(x, y);
-
         if (TankClass) {
-            this.tankManager.upgrade(this.tankManager.player, TankClass);
+            tank.upgrade(TankClass);
         }
+
+        this.tankManager.change(tank);
+        this.tankManager.set(tank);
+
+        this.logManager.awakening(tank.get());
     }
 
     update(x, y) {
-        if (!this.tankManager.player) return;
-        if (!this.tankManager.player.get().updateToken) return;
+        const tank = this.tankManager.player;
+
+        if (!tank) return;
 
         const item = this.updateManager.pressed(x, y);
-
         if (item) {
-            this.tankManager.player.update(item.key, item.value);
+            tank.update(item);
         }
     }
 

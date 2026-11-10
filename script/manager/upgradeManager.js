@@ -2,16 +2,11 @@ import Tanks from "../config/tanks.js";
 import Color from "../config/color.js";
 
 export default class UpgradeManager {
-    constructor(
-        p,
-        logManager
-    ) {
+    constructor(p) {
         this.p = p;
 
         this.candidates = [];
         this.selectedTankClass = null;
-
-        this.logManager = logManager;
 
         this.icon = {
             size: 80,
@@ -20,47 +15,29 @@ export default class UpgradeManager {
         };
     }
 
-    run(tank, tankManager) {
-        const tankData = tank.get();
-
-        if (tankData.upgradeToken) {
-            if (tankData.type === 'cpu') {
-                const types = (tankData.upgrade ?? []).filter(type => Tanks[type]);
-
-                if (types.length === 0) return;
-
-                const index = Math.floor(this.p.random(types.length));
-                const type = types[index];
-
-                tankManager.upgrade(tank, Tanks[type]);
-            } else {
-                this.create(tankData);
-            }
-        }
-    }
-
     create(tank) {
-        this.candidates = (tank.upgrade ?? [])
-            .filter(type => Tanks[type])
-            .map(type => {
-                const TankClass = Tanks[type];
+        const tier = `tier${tank.tier + 1}`;
+        const name = tank.tank;
 
-                const preview = new TankClass({
-                    p: this.p,
-                    x: 0,
-                    y: 0,
-                    level: tank.level,
-                    type: 'player',
-                });
+        const candidates = Tanks[tier]?.[name] ?? [];
 
-                return {
-                    type,
-                    TankClass,
-                    preview,
-                    x: 0,
-                    y: 0,
-                };
+        this.candidates = Object.entries(candidates).map(([type, TankClass]) => {
+            const preview = new TankClass({
+                p: this.p,
+                x: 0,
+                y: 0,
+                level: tank.level,
+                type: 'player',
             });
+
+            return {
+                type,
+                TankClass,
+                preview,
+                x: 0,
+                y: 0,
+            };
+        });
 
         const { size, gap } = this.icon;
 

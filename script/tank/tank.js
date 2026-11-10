@@ -52,16 +52,13 @@ export default class Tank {
             recoil : 1, // 着弾反動
         }
 
-        this.upgrade = [
-            // 'single'
-        ]
-
         this.id = crypto.randomUUID();
         this.level = 0;
         this.exp = 0;
         this.totalExp = 100;
         this.upgradeToken = 0;
         this.updateToken = 0;
+        this.tier = 1;
 
         this.previewColor = Color.blue;
         this.previewScale = 1;
@@ -111,6 +108,7 @@ export default class Tank {
         this.tank.regeneration = param.regeneration ?? this.tank.regeneration;
         this.exp = param.exp ?? this.exp;
         this.totalExp = param.totalExp ?? this.totalExp;
+        this.tier = param.tier ?? this.tier,
 
         this.count = this.gun.reload;
         this.color = this.color ?? (this.type === 'player' ? Color.blue : Color.red);
@@ -268,7 +266,7 @@ export default class Tank {
             this.vy,
             angle,
             this.color,
-            this.owner,
+            this,
             this.name,
             {
                 ...this.bullet,
@@ -379,13 +377,22 @@ export default class Tank {
         }
     }
 
-    update(key) {
-        if (!this.updateToken) return false;
+    upgrade(tank) {
+        if (!this.upgradeToken) return false;
+        this.upgradeToken--;
+        this.tier++;
 
-        const item = this.status.update(key);
+        return true;
+    }
+
+    update(status) {
+        if (!this.updateToken) return false;
+        this.updateToken--;
+
+        const item = this.status.update(status.key);
         if (!item) return false;
 
-        const [group, property] = key.split(".");
+        const [group, property] = status.key.split(".");
 
         this[group][property] =
             this.baseStats[group][property] *
@@ -406,8 +413,6 @@ export default class Tank {
                 this.tank.health + increase
             );
         }
-
-        this.updateToken--;
 
         return true;
     }
@@ -548,13 +553,13 @@ export default class Tank {
             armor: this.tank.armor,
             penetration : this.tank.penetration,
             recoil: this.tank.recoil,
-            upgrade: this.upgrade,
             level: this.level,
             exp: this.exp,
             totalExp: this.totalExp,
             requiredExp: this.getRequiredExp(),
             upgradeToken: this.upgradeToken,
             updateToken: this.updateToken,
+            tier: this.tier,
         }
     }
 }

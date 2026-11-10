@@ -13,17 +13,13 @@ export default class Sniper extends Tank {
         this.gun.recoil = 2;
 
         this.bullet.speed = 6;
-        this.bullet.power = 30;
+        this.bullet.power = 20;
         this.bullet.armor = 10;
         this.bullet.penetration = 10;
         this.bullet.duration = 65;
         this.bullet.deceleration = 0.3;
         this.bullet.range = 85;
         this.bullet.radius = 10;
-
-        this.upgrade = [
-            'assassin'
-        ]
 
         this.previewColor = Color.blue;
 

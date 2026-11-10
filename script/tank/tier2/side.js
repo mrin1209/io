@@ -18,10 +18,6 @@ export default class Side extends Tank {
         this.bullet.range = 140;
         this.bullet.radius = 10;
 
-        this.upgrade = [
-            'quad'
-        ];
-
         this.next = 0;
 
         this.previewColor = Color.orange;

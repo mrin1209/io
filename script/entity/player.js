@@ -4,15 +4,10 @@ export default class Player {
     constructor(p, tank) {
         this.p = p;
         this.tank = tank;
-        this.tank.owner = this;
 
         if (Config.debug) {
             this.debug();
         }
-        
-        // this.tank.level = 1;
-        // this.tank.upgradeToken = 10;
-        // this.tank.updateToken = 100;
     }
 
     run() {
@@ -54,30 +49,18 @@ export default class Player {
     }
 
     upgrade(TankClass) {
-        if (!this.tank.upgradeToken) return;
-
-        this.tank.upgradeToken--;
+        if (!this.tank.upgrade()) return;
 
         this.tank = new TankClass({
             p: this.p,
             ...this.get()
         });
 
-        this.tank.owner = this;
-
-        if (Config.debug) {
-            this.debug();
-        }
-
         return this;
     }
 
-    update(key, value) {
-        this.tank.update(key, value);
-
-        if (Config.debug) {
-            this.debug();
-        }
+    update(item) {
+        if (!this.tank.update(item)) return;
     }
 
     get() {

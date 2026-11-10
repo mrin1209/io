@@ -19,7 +19,7 @@ export default class mapManager {
     }
 
     draw() {
-        if (!this.tankManager.watch) return;
+        if (!this.tankManager.watch && !this.tankManager.player) return;
         
         const p = this.p;
 

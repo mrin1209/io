@@ -1,7 +1,7 @@
 const Config = {
     map: {
-        width: 5000,
-        height: 5000,
+        width: 500,
+        height: 500,
     },
 
     view: {
@@ -16,16 +16,23 @@ const Config = {
     },
 
     max: {
-        tank: 20,
-        object: 255,
+        tank: 0,
+        object: 100,
         status: 10,
     },
 
     wall: {
-        density: 0.2,
+        density: 0,
     },
 
     debug: false,
 };
+
+if (Config.debug) {
+    Config.map.width = 1000;
+    Config.map.height = 1000;
+    Config.max.tank = 1;
+    Config.max.object = 0;
+}
 
 export default Config;

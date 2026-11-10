@@ -18,10 +18,6 @@ export default class Wide extends Tank {
         this.bullet.range = 140;
         this.bullet.radius = 10;
 
-        this.upgrade = [
-            'machinegun'
-        ]
-
         this.previewColor = Color.yellow;
 
         super.setup(param);
