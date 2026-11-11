@@ -7,6 +7,11 @@ export default class Circle {
         this.color = Color.orange;
         this.radius = 10;
         this.size = this.radius * 2;
+
+        this.armor = 20;
+        this.power = 10;
+        this.penetration = 10;
+        this.recoil = 1;
     }
 
     draw() {

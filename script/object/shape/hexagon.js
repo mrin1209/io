@@ -7,6 +7,11 @@ export default class Hexagon {
         this.color = Color.purple;
         this.radius = 30;
         this.size = this.radius * 2;
+
+        this.armor = 100;
+        this.power = 30;
+        this.penetration = 75;
+        this.recoil = 1.6;
     }
 
     draw() {

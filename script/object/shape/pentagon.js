@@ -7,6 +7,11 @@ export default class Pentagon {
         this.color = Color.blue;
         this.radius = 25;
         this.size = this.radius * 2;
+
+        this.armor = 50;
+        this.power = 25;
+        this.penetration = 50;
+        this.recoil = 1.45;
     }
 
     draw() {

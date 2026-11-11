@@ -219,7 +219,7 @@ export default class TankManager {
 
     upgrade(tank) {
         const newTank = tank.upgrade();
-        if (!newTank) return;
+        if (!newTank) return false;
 
         this.change(newTank);
 
@@ -233,7 +233,7 @@ export default class TankManager {
     }
 
     update(tank) {
-        tank.update();
+        if (!tank.update()) return false;
     }
 
     add(name) {
@@ -253,9 +253,6 @@ export default class TankManager {
                 y: position.y,
                 name: name,
                 type: 'player',
-                level: 40,
-                upgradeToken: 10,
-                updateToken: 100,
             })
         );
 

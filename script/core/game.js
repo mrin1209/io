@@ -144,7 +144,6 @@ export default class Game {
         this.logManager.draw();
         this.levelManager.draw(this.tankManager.player);
 
-
         p.pop();
     }
 
@@ -195,13 +194,13 @@ export default class Game {
 
         const TankClass = this.upgradeManager.pressed(x, y);
         if (TankClass) {
-            tank.upgrade(TankClass);
+            if (!tank.upgrade(TankClass)) return;
+
+            this.tankManager.change(tank);
+            this.tankManager.set(tank);
+
+            this.logManager.awakening(tank.get());
         }
-
-        this.tankManager.change(tank);
-        this.tankManager.set(tank);
-
-        this.logManager.awakening(tank.get());
     }
 
     update(x, y) {
@@ -211,7 +210,7 @@ export default class Game {
 
         const item = this.updateManager.pressed(x, y);
         if (item) {
-            tank.update(item);
+            if (!tank.update(item)) return;
         }
     }
 

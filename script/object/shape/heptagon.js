@@ -7,6 +7,11 @@ export default class Heptagon {
         this.color = Color.pink;
         this.radius = 35;
         this.size = this.radius * 2;
+
+        this.armor = 200;
+        this.power = 40;
+        this.penetration = 80;
+        this.recoil = 1.75;
     }
 
     draw() {

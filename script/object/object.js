@@ -18,13 +18,9 @@ export default class Object {
         this.object = {
             angle: Math.random() * Math.PI * 2,
             rotationSpeed: (0.0025 + Math.random() * 0.005) * (Math.random() < 0.5 ? -1 : 1),
-            speed: 0.5,
-            minSpeed: 0.1 + Math.random() * 0.15,
-            armor  : 10,
-            power  : 10,
-            penetration : 10,
+            power: 5,
+            speed: 0.1 + Math.random() * 0.15,
             deceleration: 0.005,
-            recoil: 1,
             regeneration: 0,
             zoom: 2.5,
         }
@@ -43,17 +39,15 @@ export default class Object {
         this.shape = this.shapes[this.shapeIndex];
 
         const direction = Math.random() * Math.PI * 2;
-        const speed = this.object.speed;
-
-        this.rx = Math.cos(direction) * speed;
-        this.ry = Math.sin(direction) * speed;
+        this.rx = Math.cos(direction) * this.object.speed;
+        this.ry = Math.sin(direction) * this.object.speed;
 
         this.id = crypto.randomUUID();
         this.level = 1;
         this.exp = 0;
         this.totalExp = 50;
 
-        this.object.health = this.object.armor;
+        this.object.health = this.shape.armor;
 
         this.active = true;
         this.invincible = 0;
@@ -102,8 +96,8 @@ export default class Object {
             const distance = Math.hypot(dx, dy);
 
             if (distance > 0) {
-                this.x += (dx / distance) * this.object.minSpeed * 1.2;
-                this.y += (dy / distance) * this.object.minSpeed * 1.2;
+                this.x += (dx / distance) * this.object.speed * 1.2;
+                this.y += (dy / distance) * this.object.speed * 1.2;
             }
         }
 
@@ -129,9 +123,9 @@ export default class Object {
 
         const speed = Math.hypot(this.rx, this.ry);
 
-        if (speed > this.object.minSpeed) {
+        if (speed > this.object.speed) {
             const nextSpeed = Math.max(
-                this.object.minSpeed,
+                this.object.speed,
                 speed - this.object.deceleration
             );
 
@@ -142,64 +136,54 @@ export default class Object {
         }
     }
 
-    setDirection(dx, dy, recoil = 0) {
-        const distance = Math.hypot(dx, dy);
-
-        if (distance === 0) return;
-
-        const currentSpeed = Math.hypot(this.rx, this.ry);
-
-        const speed = Math.max(
-            this.object.minSpeed,
-            Math.min(
-                this.object.speed,
-                currentSpeed + recoil
-            )
-        );
-
-        this.rx = (dx / distance) * speed;
-        this.ry = (dy / distance) * speed;
-    }
-
     hit(target) {
+        if (target.class === 'bullet') {
+            this.rx += Math.cos(target.angle) * target.recoil;
+            this.ry += Math.sin(target.angle) * target.recoil;
+
+            this.object.health -= target.power;
+        }
+
         if (target.class === 'tank') {
             if (this.invincible > 0) return false;
             this.invincible = 15;
 
-            this.setDirection(
-                this.x + this.shape.radius - (target.x + target.radius),
-                this.y + this.shape.radius - (target.y + target.radius),
-                target.recoil
-            );
+            const dx = this.x - target.x;
+            const dy = this.y - target.y;
+            const distance = Math.hypot(dx, dy);
+
+            if (distance > 0) {
+                this.rx += (dx / distance) * target.recoil;
+                this.ry += (dy / distance) * target.recoil;
+            }
+
+            this.object.health -= target.power;
         }
 
         if (target.class === 'object') {
             if (this.invincible > 0) return false;
             this.invincible = 15;
 
-            this.setDirection(
-                this.x + this.shape.radius - (target.x + target.radius),
-                this.y + this.shape.radius - (target.y + target.radius),
-                target.recoil
-            );
+            const dx = this.x - target.x;
+            const dy = this.y - target.y;
+            const distance = Math.hypot(dx, dy);
+
+            if (distance > 0) {
+                this.rx += (dx / distance) * target.recoil;
+                this.ry += (dy / distance) * target.recoil;
+            }
+
+            this.object.health -= this.object.power;
         }
 
-        if (target.class === 'bullet') {
-            this.rx += Math.cos(target.angle) * target.recoil;
-            this.ry += Math.sin(target.angle) * target.recoil;
-            this.rx = Math.max(-this.object.speed, Math.min(this.rx, this.object.speed));
-            this.ry = Math.max(-this.object.speed, Math.min(this.ry, this.object.speed));
-        }
-
-        this.object.health -= target.power;
         this.object.regeneration = 300;
 
         return this.object.health <= 0;
     }
 
     heel() {
-        if (this.object.health >= this.object.armor) {
-            this.object.health = this.object.armor;
+        if (this.object.health >= this.shape.armor) {
+            this.object.health = this.shape.armor;
             return;
         }
 
@@ -209,7 +193,7 @@ export default class Object {
         }
 
         this.object.health = Math.min(
-            this.object.armor,
+            this.shape.armor,
             this.object.health + 0.1
         );
     }
@@ -217,15 +201,8 @@ export default class Object {
     kill(target) {
         if (target.class === 'object') {
             this.object.health = Math.min(
-                this.object.armor,
-                this.object.health * 2
-            );
-        }
-
-        if (target.class === 'tank') {
-            this.object.health = Math.min(
-                this.object.armor,
-                this.object.health * 2
+                this.shape.armor,
+                this.object.health + target.armor
             );
         }
 
@@ -250,36 +227,33 @@ export default class Object {
         this.level++;
 
         if (this.shapeIndex >= this.shapes.length - 1) {
-            this.object.armor += 10;
-            this.object.power += 10;
-            this.object.penetration += 10;
+            this.shape.armor += 10;
+            this.shape.power += 10;
+            this.shape.penetration += 10;
             this.shape.radius += 2;
         } else {
-            this.object.health = Math.min(
-                this.object.health + this.object.armor,
-                this.object.armor
-            );
-            this.object.armor *= 2;
-            this.object.power += 10;
-            this.object.penetration *= 2;
+            this.object.power += 5;
+
+            const armor = this.shape.armor;
 
             this.shapeIndex++;
             this.shape = this.shapes[this.shapeIndex];
+
+            this.object.health += this.shape.armor - armor;
         }
     }
 
     drawHealth() {
-        if (this.object.health >= this.object.armor) return;
+        if (this.object.health >= this.shape.armor) return;
 
         const p = this.p;
 
         const width = this.shape.radius * 2;
         const height = 4;
 
-        const maxHealth = this.object.armor;
         const healthRate = Math.max(
             0,
-            Math.min(1, this.object.health / maxHealth)
+            Math.min(1, this.object.health / this.shape.armor)
         );
 
         const x = -width / 2;
@@ -305,13 +279,13 @@ export default class Object {
             class: 'object',
             x: this.x,
             y: this.y,
-            recoil: this.object.recoil,
+            recoil: this.shape.recoil,
             radius: this.shape.radius,
             active: this.active,
             speed: this.object.speed,
-            power: this.object.power,
-            armor: this.object.armor,
-            penetration : this.object.penetration,
+            power: this.shape.power,
+            armor: this.shape.armor,
+            penetration : this.shape.penetration,
             level: this.level,
             exp: this.exp,
             totalExp: this.totalExp,

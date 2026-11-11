@@ -7,6 +7,11 @@ export default class Octagon {
         this.color = Color.red;
         this.radius = 40;
         this.size = this.radius * 2;
+
+        this.armor = 50;
+        this.power = 10;
+        this.penetration = 100;
+        this.recoil = 2;
     }
 
     draw() {

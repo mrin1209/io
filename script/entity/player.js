@@ -49,7 +49,7 @@ export default class Player {
     }
 
     upgrade(TankClass) {
-        if (!this.tank.upgrade()) return;
+        if (!this.tank.upgrade()) return false;
 
         this.tank = new TankClass({
             p: this.p,
@@ -60,7 +60,7 @@ export default class Player {
     }
 
     update(item) {
-        if (!this.tank.update(item)) return;
+        if (!this.tank.update(item)) return false;
     }
 
     get() {

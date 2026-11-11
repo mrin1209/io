@@ -248,8 +248,6 @@ export default class Tank {
 
             this.rx -= Math.cos(this.angle) * this.gun.recoil;
             this.ry -= Math.sin(this.angle) * this.gun.recoil;
-            this.rx = Math.max(-this.tank.speed, Math.min(this.rx, this.tank.speed * 1));
-            this.ry = Math.max(-this.tank.speed, Math.min(this.ry, this.tank.speed * 1));
 
             return true;
         }
@@ -281,16 +279,12 @@ export default class Tank {
 
             const dx = this.x - target.x;
             const dy = this.y - target.y;
-
-            const distance = Math.sqrt(dx ** 2 + dy ** 2);
+            const distance = Math.hypot(dx, dy);
 
             if (distance > 0) {
                 this.rx += (dx / distance) * target.recoil;
                 this.ry += (dy / distance) * target.recoil;
             }
-
-            this.rx = Math.max(-this.tank.speed, Math.min(this.rx, this.tank.speed));
-            this.ry = Math.max(-this.tank.speed, Math.min(this.ry, this.tank.speed));
         }
 
         if (target.class === 'object') {
@@ -299,23 +293,17 @@ export default class Tank {
 
             const dx = this.x - target.x;
             const dy = this.y - target.y;
-
-            const distance = Math.sqrt(dx ** 2 + dy ** 2);
+            const distance = Math.hypot(dx, dy);
 
             if (distance > 0) {
                 this.rx += (dx / distance) * target.recoil;
                 this.ry += (dy / distance) * target.recoil;
             }
-
-            this.rx = Math.max(-this.tank.speed, Math.min(this.rx, this.tank.speed));
-            this.ry = Math.max(-this.tank.speed, Math.min(this.ry, this.tank.speed));
         }
 
         if (target.class === 'bullet') {
             this.rx += Math.cos(target.angle) * target.recoil;
             this.ry += Math.sin(target.angle) * target.recoil;
-            this.rx = Math.max(-this.tank.speed, Math.min(this.rx, this.tank.speed * 1));
-            this.ry = Math.max(-this.tank.speed, Math.min(this.ry, this.tank.speed * 1));
         }
 
         this.tank.health -= target.power;

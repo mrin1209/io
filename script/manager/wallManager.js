@@ -10,12 +10,12 @@ export default class WallManager {
 
         this.collision = new Collision();
 
-        this.grid = Config.view.grid;
+        this.chunk = Config.view.chunk;
         this.mapWidth = Config.map.width;
         this.mapHeight = Config.map.height;
 
-        this.columns = Math.floor(this.mapWidth / this.grid);
-        this.rows = Math.floor(this.mapHeight / this.grid);
+        this.columns = Math.floor(this.mapWidth / this.chunk);
+        this.rows = Math.floor(this.mapHeight / this.chunk);
 
         if (!Config.debug) {
             this.generate();
@@ -84,10 +84,10 @@ export default class WallManager {
             if (!canPlace) continue;
 
             const wall = {
-                x: col * this.grid,
-                y: row * this.grid,
-                width: size.w * this.grid,
-                height: size.h * this.grid,
+                x: col * this.chunk,
+                y: row * this.chunk,
+                width: size.w * this.chunk,
+                height: size.h * this.chunk,
             };
 
             this.walls.push(wall);
@@ -151,8 +151,8 @@ export default class WallManager {
     get() {
         return {
             class: 'wall',
-            power: 100,
-            penetration: 100,
+            power: 1000,
+            penetration: 1000,
         }
     }
 }

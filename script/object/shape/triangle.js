@@ -7,6 +7,11 @@ export default class Triangle {
         this.color = Color.yellow;
         this.radius = 15;
         this.size = this.radius * 2;
+
+        this.armor = 30;
+        this.power = 15;
+        this.penetration = 15;
+        this.recoil = 1.15;
     }
 
     draw() {

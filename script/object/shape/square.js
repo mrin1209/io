@@ -7,6 +7,11 @@ export default class Square {
         this.color = Color.green;
         this.radius = 20;
         this.size = this.radius * Math.sqrt(2);
+
+        this.armor = 40;
+        this.power = 20;
+        this.penetration = 20;
+        this.recoil = 1.3;
     }
 
     draw() {
