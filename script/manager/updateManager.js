@@ -1,5 +1,4 @@
 import Color from "../config/color.js";
-import Config from "../config/config.js"
 
 export default class UpdateManager {
     constructor(p) {
@@ -7,6 +6,7 @@ export default class UpdateManager {
 
         this.player = null;
         this.items = [];
+        this.max = 10;
 
         this.layout = {
             x: 10,
@@ -43,7 +43,7 @@ export default class UpdateManager {
         if (!this.player || !this.items.length) return null;
 
         const item = this.items.find(item =>
-            item.count < Config.max.status &&
+            item.count < this.max &&
             x >= item.x &&
             x <= item.x + this.layout.width &&
             y >= item.y &&
@@ -75,7 +75,7 @@ export default class UpdateManager {
         p.textSize(12);
 
         this.items.forEach(item => {
-            const ratio = item.count / Config.max.status;
+            const ratio = item.count / this.max;
 
             // ゲージ背景
             p.noStroke();
@@ -111,7 +111,7 @@ export default class UpdateManager {
             // 強化回数
             p.textAlign(p.RIGHT, p.CENTER);
             p.text(
-                `${item.count}/${Config.max.status}`,
+                `${item.count}/${this.max}`,
                 item.x + this.layout.width - 10,
                 item.y + this.layout.height / 2
             );

@@ -19,7 +19,6 @@ const Config = {
     max: {
         tank: 20,
         object: 255,
-        status: 10,
     },
 
     wall: {

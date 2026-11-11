@@ -1,4 +1,3 @@
-
 import Color from "../config/color.js";
 import Config from "../config/config.js";
 

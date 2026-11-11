@@ -54,6 +54,7 @@ const Color = {
     level: {
         fill: [255, 217, 102],
         back : [102, 102, 102],
+        stroke: [102, 102, 102],
     },
 
     name : {
