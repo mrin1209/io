@@ -25,7 +25,6 @@ import Destroy from "../tank/tier5/destroy.js";
 
 const Tanks = {
     tier1: {
-        Debug: Debug,
         Single: Single,
     },
     tier2: {

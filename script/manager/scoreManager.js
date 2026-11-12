@@ -1,79 +1,70 @@
 import Color from "../config/color.js";
 
 export default class ScoreManager {
-    constructor(p, tankManager) {
+    constructor(p) {
         this.p = p;
-        this.tankManager = tankManager;
 
-        this.x = 20;
-        this.y = 20;
-        this.rowHeight = 25;
+        this.ranking = [];
+        this.max = 10;
 
-        this.previews = new WeakMap();
-
-        this.icon = {
-            size: 30,
+        this.layout = {
+            padding: 10,
+            height: 20,
+            gap: 10,
+            textSize: 14,
+            strokeWeight: 3,
+            size: 10,
         };
     }
 
-    getPreview(player) {
-        const tank = player.tank;
+    set(tanks) {
+        const p = this.p;
 
-        const cached = this.previews.get(player);
-        if (cached?.tank === tank) return cached.preview;
+        this.ranking = tanks
+            .filter(item => item.tank.active)
+            .sort((a, b) => b.tank.level - a.tank.level)
+            .slice(0, this.max)
+            .map((item, index) => {
+                const preview = new item.tank.constructor({
+                    p: this.p,
+                    x: 0,
+                    y: 0,
+                    previewScale: this.layout.size / item.tank.get().radius,
+                    level: item.tank.level,
+                    name: item.tank.name,
+                    type: item.tank.type,
+                });
 
-        const TankClass = tank.constructor;
+                const y = this.layout.padding + (this.layout.height / 2) + (index * (this.layout.height + this.layout.gap))
 
-        const preview = new TankClass({
-            p: this.p,
-            x: 0,
-            y: 0,
-            level: tank.level,
-            name: tank.name,
-            type: tank.type,
-        });
+                preview.x = p.width - this.layout.padding - ((preview.baseRadius + preview.baseRadius) * (this.layout.size / preview.baseRadius));
+                preview.y = y;
 
-        this.previews.set(player, {
-            level: tank.level,
-            preview,
-        });
-
-        return preview;
+                return preview;
+            });
     }
 
     draw() {
-        const ranking = this.tankManager.tanks
-            .filter(item => item.tank.active)
-            .sort((a, b) => b.tank.level - a.tank.level)
-            .slice(0, 10);
-
         const p = this.p;
-        const x = p.width - this.x;
-        const y = this.y;
 
         p.push();
         p.resetMatrix();
 
-        p.textSize(14);
-        p.textAlign(p.CENTER, p.CENTER);
+        this.ranking.forEach((tank, index) => {
+            const y = this.layout.padding + (this.layout.height / 2) + (index * (this.layout.height + this.layout.gap))
 
-        ranking.forEach((tank, index) => {
-            const rowY = y + index * this.rowHeight;
-            const preview = this.getPreview(tank);
-
-            preview.x = x - 10;
-            preview.y = rowY;
-            preview.angle = 0;
-
-            preview.previewScale = 10 / preview.tank.radius;
-
-            preview.draw();
+            tank.draw();
 
             p.textAlign(p.RIGHT, p.CENTER);
+            p.textSize(this.layout.textSize);
             p.stroke(Color.name.stroke);
-            p.strokeWeight(3);
+            p.strokeWeight(this.layout.strokeWeight);
             p.fill(Color.name.color);
-            p.text(`${tank.get().name} (${tank.get().level})`, x - 25, rowY);
+            p.text(
+                `${tank.get().name} (${tank.get().level})`,
+                p.width - this.layout.padding - ((tank.baseRadius * 2 + tank.baseRadius * 2) * (this.layout.size / tank.baseRadius)),
+                y
+            );
         });
 
         p.pop();

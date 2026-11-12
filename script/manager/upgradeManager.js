@@ -5,113 +5,93 @@ export default class UpgradeManager {
     constructor(p) {
         this.p = p;
 
-        this.candidates = [];
-        this.selectedTankClass = null;
+        this.tanks = [];
 
-        this.icon = {
-            size: 80,
+        this.layout = {
+            padding: 10,
+            width: 80,
+            height: 80,
             gap: 10,
-            radius: 15,
+            textSize: 14,
+            strokeWeight: 3,
+            size: 15,
         };
     }
 
-    create(tank) {
-        const tier = `tier${tank.tier + 1}`;
-        const name = tank.tank;
+    set(tank) {
+        const p = this.p;
 
-        const candidates = Tanks[tier]?.[name] ?? [];
+        const tanks = Object.entries(Tanks[`tier${tank.get().tier + 1}`]?.[tank.get().tank] ?? []);
+        const total = tanks.length * (this.layout.width + this.layout.gap) - this.layout.gap;
 
-        this.candidates = Object.entries(candidates).map(([type, TankClass]) => {
-            const preview = new TankClass({
+        this.tanks = tanks.map(([key, value], index) => {
+            const x = ((p.width - total) / 2) + (index * (this.layout.width + this.layout.gap)) + (this.layout.width / 2);
+            const y = p.height - this.layout.padding - (this.layout.height / 2);
+
+            const preview = new value({
                 p: this.p,
-                x: 0,
-                y: 0,
-                level: tank.level,
+                x: x,
+                y: y,
+                previewScale: this.layout.size / tank.get().radius,
+                level: tank.get().level,
                 type: 'player',
+                name: key,
             });
 
-            return {
-                type,
-                TankClass,
-                preview,
-                x: 0,
-                y: 0,
-            };
-        });
-
-        const { size, gap } = this.icon;
-
-        const totalWidth = this.candidates.length * size
-            + (this.candidates.length - 1) * gap;
-
-        const startX = (this.p.width - totalWidth) / 2;
-        const startY = this.p.height - size - 20;
-
-        this.candidates.forEach((candidate, index) => {
-            candidate.x = startX + index * (size + gap);
-            candidate.y = startY;
+            return preview;
         });
     }
 
     pressed(x, y) {
-        const size = this.icon.size;
+        if (!this.tanks) return;
 
-        const candidate = this.candidates.find(item =>
-            x >= item.x &&
-            x <= item.x + size &&
-            y >= item.y &&
-            y <= item.y + size
-        );
+        const p = this.p;
 
-        if (!candidate) return null;
+        const total = this.tanks.length * (this.layout.width + this.layout.gap) - this.layout.gap;
 
-        this.selectedTankClass = candidate.TankClass;
+        const index = this.tanks.findIndex((tank, index) => {
+            const itemX = (p.width - total) / 2 + index * (this.layout.width + this.layout.gap);
+            const itemY = p.height - this.layout.padding - this.layout.height;
 
-        this.create(candidate.preview);
+            return (
+                x >= itemX &&
+                x <= itemX + this.layout.width &&
+                y >= itemY &&
+                y <= itemY + this.layout.height
+            );
+        });
 
-        return this.selectedTankClass;
+        return index === -1 ? null : this.tanks[index].constructor;
     }
 
     draw(tank) {
+        if (!this.tanks) return;
         if (!tank) return;
         if (!tank.get().upgradeToken) return;
+
         const p = this.p;
-        const { size } = this.icon;
+
+        const total = this.tanks.length * (this.layout.width + this.layout.gap) - this.layout.gap;
 
         p.push();
-
         p.resetMatrix();
 
-        p.textAlign(p.CENTER, p.CENTER);
+        this.tanks.forEach((tank, index) => {
+            const x = (p.width - total) / 2 + index * (this.layout.width + this.layout.gap);
+            const y = p.height - this.layout.padding - this.layout.height;
 
-        this.candidates.forEach(candidate => {
-            const x = candidate.x;
-            const y = candidate.y;
-
-            const preview = candidate.preview;
-
-            p.fill(preview.previewColor.fill);
-            p.stroke(Color.map.border);
-            p.strokeWeight(2);
-            p.rect(x, y, size, size);
-
-            preview.x = x + size / 2;
-            preview.y = y + size / 2;
-            preview.angle = 0;
-
-            preview.previewScale = this.icon.radius / preview.tank.radius;
-
-            preview.draw();
-
-            p.stroke(Color.name.stroke);
-            p.strokeWeight(3);
-            p.fill(Color.name.color);
-            p.textSize(12);
-            p.text(
-                candidate.type,
-                x + size / 2,
-                y + size - 8
+            p.stroke(Color.upgrade.stroke);
+            p.strokeWeight(this.layout.strokeWeight);
+            p.fill(tank.previewColor.fill);
+            p.rect(
+                x,
+                y,
+                this.layout.width,
+                this.layout.height,
             );
+
+            tank.draw();
+            tank.drawName();
         });
 
         p.pop();

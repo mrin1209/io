@@ -5,13 +5,21 @@ export default class LogManager {
         this.p = p;
 
         this.logs = [];
-        this.maxLogs = 10;
+        this.max = 10;
+
+        this.layout = {
+            padding: 10,
+            height: 20,
+            gap: 10,
+            textSize: 14,
+            strokeWeight: 3,
+        };
     }
 
     add(message, color = Color.name) {
         this.logs.unshift({ message, color });
 
-        if (this.logs.length > this.maxLogs) {
+        if (this.logs.length > this.max) {
             this.logs.pop();
         }
     }
@@ -51,16 +59,17 @@ export default class LogManager {
         p.resetMatrix();
 
         p.textAlign(p.LEFT, p.CENTER);
+        p.textSize(this.layout.textSize);
+        p.stroke(Color.name.stroke);
+        p.strokeWeight(this.layout.strokeWeight);
 
         this.logs.forEach((log, index) => {
-            const x = 10;
-            const y = 10 + index * 25;
-
-            p.stroke(Color.name.border);
-            p.strokeWeight(3);
             p.fill(log.color.fill);
-            p.textSize(14);
-            p.text(log.message, x + 8, y + 11);
+            p.text(
+                log.message,
+                this.layout.padding,
+                this.layout.padding + (this.layout.height / 2) + (index * (this.layout.height + this.layout.gap))
+            );
         });
 
         p.pop();

@@ -4,9 +4,13 @@ export default class LevelManager {
     constructor(p) {
         this.p = p;
 
-        this.width = 300;
-        this.height = 24;
-        this.y = 20;
+        this.layout = {
+            padding: 10,
+            width: 300,
+            height: 20,
+            textSize: 14,
+            strokeWeight: 3,
+        };
     }
 
     draw(target) {
@@ -15,41 +19,41 @@ export default class LevelManager {
 
         const p = this.p;
 
-        const requiredExp = tank.requiredExp;
-        const currentExp = tank.exp;
-
         const rate = Math.max(
             0,
-            Math.min(1, currentExp / requiredExp)
+            Math.min(1, tank.exp / tank.requiredExp)
         );
-
-        const x = (p.width - this.width) / 2;
 
         p.push();
         p.resetMatrix();
 
-        p.noStroke();
+        p.stroke(Color.level.stroke);
+        p.strokeWeight(this.layout.strokeWeight);
         p.fill(Color.level.back);
-        p.rect(x, this.y, this.width, this.height, 6);
+        p.rect(
+            (p.width - this.layout.width) / 2,
+            this.layout.padding,
+            this.layout.width,
+            this.layout.height
+        );
 
         p.fill(Color.level.fill);
         p.rect(
-            x,
-            this.y,
-            this.width * rate,
-            this.height,
-            6
+            (p.width - this.layout.width) / 2,
+            this.layout.padding,
+            this.layout.width * rate,
+            this.layout.height
         );
 
         p.stroke(Color.name.stroke);
-        p.strokeWeight(3);
+        p.strokeWeight(this.layout.strokeWeight);
         p.fill(Color.name.color);
-        p.textSize(14);
+        p.textSize(this.layout.textSize);
         p.textAlign(p.CENTER, p.CENTER);
         p.text(
-            `LEVEL ${tank.level}`,
+            `Lv. ${tank.level}`,
             p.width / 2,
-            this.y + this.height / 2
+            this.layout.padding + this.layout.height / 2
         );
 
         p.pop();

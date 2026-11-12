@@ -86,8 +86,9 @@ export default class Cpu {
 
     update() {
         const items = this.tank.get().status.items.filter(
-            item => item.count < Config.max.status
+            item => item.count < item.max
         );
+
         if (!items.length) return false;
         const item = items[Math.floor(Math.random() * items.length)];
 

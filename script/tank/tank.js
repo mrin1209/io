@@ -8,11 +8,11 @@ export default class Tank {
         this.p = param.p;
         this.x = param.x;
         this.y = param.y;
+        this.angle = param.angle ?? 0;
         this.vx = 0;
         this.vy = 0;
         this.rx = 0;
         this.ry = 0;
-        this.angle = 0;
 
         this.status = new Status();
         this.baseRadius = 15;
@@ -108,7 +108,8 @@ export default class Tank {
         this.tank.regeneration = param.regeneration ?? this.tank.regeneration;
         this.exp = param.exp ?? this.exp;
         this.totalExp = param.totalExp ?? this.totalExp;
-        this.tier = param.tier ?? this.tier,
+        this.tier = param.tier ?? this.tier;
+        this.previewScale = param.previewScale ?? this.previewScale;
 
         this.count = this.gun.reload;
         this.color = this.color ?? (this.type === 'player' ? Color.blue : Color.red);
@@ -530,6 +531,7 @@ export default class Tank {
             status: this.status,
             x: this.x,
             y: this.y,
+            angle: this.angle,
             radius: this.tank.radius,
             zoom: this.tank.zoom,
             type: this.type,

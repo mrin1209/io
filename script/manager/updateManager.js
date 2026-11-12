@@ -5,118 +5,81 @@ export default class UpdateManager {
         this.p = p;
 
         this.player = null;
-        this.items = [];
-        this.max = 10;
 
         this.layout = {
-            x: 10,
-            bottom: 10,
-            width: 200,
-            height: 25,
-            gap: 8,
             padding: 10,
+            width: 180,
+            height: 20,
+            gap: 10,
+            textSize: 14,
+            strokeWeight: 3,
         };
     }
 
-    create(tank) {
-        this.player = tank;
-
-        this.items = (tank.tank.status.items ?? []).map(item => ({
-            ...item,
-            x: 0,
-            y: 0,
-        }));
-
-        const { height, gap, padding } = this.layout;
-
-        this.items.forEach((item, index) => {
-            item.x = this.layout.x;
-            item.y = this.p.height
-                - this.layout.bottom
-                - this.items.length * height
-                - (this.items.length - 1) * gap
-                + index * (height + gap);
-        });
-    }
-
     pressed(x, y) {
-        if (!this.player || !this.items.length) return null;
+        if (!this.player) return null;
 
-        const item = this.items.find(item =>
-            item.count < this.max &&
-            x >= item.x &&
-            x <= item.x + this.layout.width &&
-            y >= item.y &&
-            y <= item.y + this.layout.height
-        );
+        const items = this.player.get().status.items ?? [];
 
-        return item ?? null;
+        return [...items].reverse().find((item, index) => {
+            const itemY = this.p.height - this.layout.padding - this.layout.height - (index * (this.layout.height + this.layout.gap));
+
+            return (
+                item.count < item.max &&
+                x >= this.layout.padding &&
+                x <= this.layout.padding + this.layout.width &&
+                y >= itemY &&
+                y <= itemY + this.layout.height
+            );
+        }) ?? null;
     }
 
     draw(tank) {
         if (!tank) return;
-        if (!tank || !tank.get().updateToken) return;
-
-        if (this.player !== tank || !this.items.length) {
-            this.create(tank);
+        if (tank.get().type === 'player') {
+            this.player = tank;
         }
 
-        this.items.forEach((item, index) => {
-            item.count = tank.tank.status.items[index].count;
-        });
-
         const p = this.p;
-        const status = tank.tank.status;
+        const items = tank.get().status.items ?? [];
 
         p.push();
         p.resetMatrix();
 
         p.textAlign(p.LEFT, p.CENTER);
-        p.textSize(12);
+        p.textSize(this.layout.textSize);
 
-        this.items.forEach(item => {
-            const ratio = item.count / this.max;
-
+        [...items].reverse().forEach((item, index) => {
+            const y = p.height - this.layout.padding - this.layout.height - (index * (this.layout.height + this.layout.gap));
             // ゲージ背景
-            p.noStroke();
-            p.fill(item.color.fill);
+            p.stroke(Color.update.stroke);
+            p.strokeWeight(this.layout.strokeWeight);
+            p.fill(Color.update.back);
             p.rect(
-                item.x,
-                item.y,
+                this.layout.padding,
+                y,
                 this.layout.width,
                 this.layout.height,
-                5
             );
 
             // 強化ゲージ
             p.fill(item.color.border);
             p.rect(
-                item.x,
-                item.y,
-                this.layout.width * ratio,
+                this.layout.padding,
+                y,
+                this.layout.width * item.count / item.max,
                 this.layout.height,
-                5
             );
 
             // 項目名
             p.stroke(Color.name.stroke);
-            p.strokeWeight(3);
+            p.strokeWeight(this.layout.strokeWeight);
             p.fill(Color.name.color);
             p.text(
                 item.name,
-                item.x + 10,
-                item.y + this.layout.height / 2
+                this.layout.padding * 2,
+                y + (this.layout.height / 2),
             );
-
-            // 強化回数
-            p.textAlign(p.RIGHT, p.CENTER);
-            p.text(
-                `${item.count}/${this.max}`,
-                item.x + this.layout.width - 10,
-                item.y + this.layout.height / 2
-            );
-
-            p.textAlign(p.LEFT, p.CENTER);
         });
 
         p.pop();

@@ -9,7 +9,9 @@ export default class TankManager {
         p,
         bulletManager,
         objectManager,
+        upgradeManager,
         wallManager,
+        scoreManager,
         logManager,
     ) {
         this.p = p;
@@ -17,7 +19,9 @@ export default class TankManager {
 
         this.bulletManager = bulletManager;
         this.objectManager = objectManager;
+        this.upgradeManager = upgradeManager;
         this.wallManager = wallManager;
+        this.scoreManager = scoreManager;
         this.logManager = logManager;
         
         this.collision = new Collision();
@@ -69,13 +73,18 @@ export default class TankManager {
                         tankA.death(tankB.get());
 
                         this.logManager.tackle(tankB.get(), tankA.get());
-                        
+                        this.scoreManager.set(this.tanks);
+
                         if (this.watch && tankA.get().id === this.watch.get().id) {
                             this.changeWatch(tankB);
                         }
 
                         if (tankA.get().type === 'player') {
                             this.changeWatch(tankB);
+                        }
+
+                        if (tankB.get().type === 'player') {
+                            this.upgradeManager.set(tankB);
                         }
                     }
 
@@ -84,6 +93,7 @@ export default class TankManager {
                         tankB.death(tankA.get());
 
                         this.logManager.tackle(tankA.get(), tankB.get());
+                        this.scoreManager.set(this.tanks);
 
                         if (this.watch && tankB.get().id === this.watch.get().id) {
                             this.changeWatch(tankA);
@@ -91,6 +101,10 @@ export default class TankManager {
 
                         if (tankB.get().type === 'player') {
                             this.changeWatch(tankA);
+                        }
+
+                        if (tankA.get().type === 'player') {
+                            this.upgradeManager.set(tankA);
                         }
                     }
                 }
@@ -116,13 +130,18 @@ export default class TankManager {
                         tank.death(bullet.owner.get());
 
                         this.logManager.kill(bullet.owner.get(), tank.get());
+                        this.scoreManager.set(this.tanks);
+
+                        if (this.watch && tank.get().id === this.watch.get().id) {
+                            this.changeWatch(bullet.owner);
+                        }
 
                         if (tank.get().type === 'player') {
                             this.changeWatch(bullet.owner);
                         }
 
-                        if (this.watch && tank.get().id === this.watch.get().id) {
-                            this.changeWatch(bullet.owner);
+                        if (bullet.owner.get().type === 'player') {
+                            this.upgradeManager.set(bullet.owner);
                         }
                     }
                 } else {
@@ -141,6 +160,12 @@ export default class TankManager {
                     if (object.hit(tank.get())) {
                         tank.kill(object.get());
                         object.death(tank.get());
+
+                        this.scoreManager.set(this.tanks);
+
+                        if (tank.get().type === 'player') {
+                            this.upgradeManager.set(tank);
+                        }
                     }
 
                     if (tank.hit(object.get())) {
@@ -148,6 +173,7 @@ export default class TankManager {
                         tank.death(object.get());
 
                         this.logManager.destruction(tank.get());
+                        this.scoreManager.set(this.tanks);
 
                         if (object.shapeIndex === 6) {
                             this.logManager.object(object.get());
@@ -179,7 +205,7 @@ export default class TankManager {
                 tank.get().active && tank.get().type === 'cpu'
             )
         ) {
-            // this.setWatch();
+            this.setWatch();
         }
     }
 
@@ -260,6 +286,8 @@ export default class TankManager {
         this.player = player;
 
         this.logManager.spawn(player.get());
+        this.scoreManager.set(this.tanks);
+        this.upgradeManager.set(player);
     }
 
     async spawn() {
@@ -311,7 +339,7 @@ export default class TankManager {
             this.count++;
 
             this.logManager.spawn(cpu.get());
-
+            this.scoreManager.set(this.tanks);
         } finally {
             this.spawning = false;
         }

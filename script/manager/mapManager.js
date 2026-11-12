@@ -8,12 +8,16 @@ export default class mapManager {
         this.wallManager = wallManager;
         this.tankManager = tankManager;
 
-        this.size = 200;
-        this.padding = 10;
+        this.layout = {
+            padding: 10,
+            size: 180,
+            strokeWeight: 3,
+            marker: 5,
+        };
 
         this.scale = Math.min(
-            this.size / Config.map.width,
-            this.size / Config.map.height
+            this.layout.size / Config.map.width,
+            this.layout.size / Config.map.height
         );
     }
 
@@ -25,8 +29,8 @@ export default class mapManager {
         const width = Config.map.width * this.scale;
         const height = Config.map.height * this.scale;
 
-        const x = p.width - width - this.padding;
-        const y = p.height - height - this.padding;
+        const x = p.width - width - this.layout.padding;
+        const y = p.height - height - this.layout.padding;
 
         p.push();
 
@@ -36,7 +40,7 @@ export default class mapManager {
         // マップ背景
         p.rectMode(p.CORNER);
         p.stroke(Color.map.border);
-        p.strokeWeight(3);
+        p.strokeWeight(this.layout.strokeWeight);
         p.fill(Color.map.fill);
         p.rect(x, y, width, height);
 
@@ -65,7 +69,7 @@ export default class mapManager {
             p.circle(
                 tank.get().x,
                 tank.get().y,
-                5 / this.scale
+                this.layout.marker / this.scale
             );
         }
 
@@ -78,7 +82,7 @@ export default class mapManager {
                 p.circle(
                     player.x,
                     player.y,
-                    5 / this.scale
+                    this.layout.marker / this.scale
                 );
             }
         }
@@ -92,7 +96,7 @@ export default class mapManager {
                 p.circle(
                     watch.x,
                     watch.y,
-                    5 / this.scale
+                    this.layout.marker / this.scale
                 );
             }
         }

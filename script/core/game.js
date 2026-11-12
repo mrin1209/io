@@ -38,17 +38,16 @@ export default class Game {
             this.logManager,
         );
 
+        this.scoreManager = new ScoreManager(this.p);
+
         this.tankManager = new TankManager(
             this.p,
             this.bulletManager,
             this.objectManager,
+            this.upgradeManager,
             this.wallManager,
+            this.scoreManager,
             this.logManager,
-        );
-
-        this.scoreManager = new ScoreManager(
-            this.p,
-            this.tankManager
         );
 
         this.mapManager = new MapManager(
@@ -104,8 +103,6 @@ export default class Game {
                 input.value = "";
                 input.style.display = "none";
             }
-
-            this.upgradeManager.create(this.tankManager.player.get());
         });
 
         this.nameInput = input;
@@ -136,13 +133,12 @@ export default class Game {
         this.tankManager.draw();
         this.bulletManager.draw();
 
-        this.updateManager.draw(this.tankManager.player);
+        this.updateManager.draw(this.tankManager.player ?? this.tankManager.watch);
         this.upgradeManager.draw(this.tankManager.player);
-
+        this.levelManager.draw(this.tankManager.player ?? this.tankManager.watch);
         this.mapManager.draw();
         this.scoreManager.draw();
         this.logManager.draw();
-        this.levelManager.draw(this.tankManager.player);
 
         p.pop();
     }
@@ -191,6 +187,7 @@ export default class Game {
         const tank = this.tankManager.player;
 
         if (!tank) return;
+        if (!tank.get().upgradeToken) return;
 
         const TankClass = this.upgradeManager.pressed(x, y);
         if (TankClass) {
@@ -200,6 +197,7 @@ export default class Game {
             this.tankManager.set(tank);
 
             this.logManager.awakening(tank.get());
+            this.upgradeManager.set(tank);
         }
     }
 
@@ -207,6 +205,7 @@ export default class Game {
         const tank = this.tankManager.player;
 
         if (!tank) return;
+        if (!tank.get().updateToken) return;
 
         const item = this.updateManager.pressed(x, y);
         if (item) {
