@@ -100,6 +100,7 @@ export default class Tank {
                 (1 + item.rate * item.direction * item.count);
         }
 
+        this.id = param.id ?? this.id;
         this.name = param.name ?? this.name;
         this.type = param.type ?? this.type;
         this.upgradeToken = param.upgradeToken ?? this.upgradeToken;

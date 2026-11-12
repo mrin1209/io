@@ -7,6 +7,7 @@ export default class Input {
     pressed(x, y) {
         this.game.upgrade(x, y);
         this.game.update(x, y);
+        this.game.watch(x, y);
     }
 
     released(x, y) {

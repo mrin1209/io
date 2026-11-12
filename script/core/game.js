@@ -56,15 +56,11 @@ export default class Game {
             this.tankManager
         );
 
-        if (Config.debug) {
-            this.tankManager.add('debug');
-        } else {
-            // for (let i = 0; i < 100000; i++) {
-            //     this.loop();
-            // }
-        }
-
         this.levelManager = new LevelManager(this.p);
+
+        // for (let i = 0; i < 60 * 60; i++) {
+        //     this.loop();
+        // }
 
         this.setup();
     }
@@ -125,17 +121,21 @@ export default class Game {
 
         p.push();
 
-        this.setCamera();
-        this.field.run();
+        const tank = this.tankManager.player ?? this.tankManager.watch;
+        const view = this.camera.run(tank ? tank.get() : {
+            x: Config.map.width / 2,
+            y: Config.map.height / 2,
+        });
 
-        this.wallManager.draw();
-        this.objectManager.draw();
-        this.tankManager.draw();
-        this.bulletManager.draw();
+        this.field.draw();
+        this.wallManager.draw(view);
+        this.objectManager.draw(view);
+        this.tankManager.draw(view);
+        this.bulletManager.draw(view);
 
-        this.updateManager.draw(this.tankManager.player ?? this.tankManager.watch);
-        this.upgradeManager.draw(this.tankManager.player);
-        this.levelManager.draw(this.tankManager.player ?? this.tankManager.watch);
+        this.updateManager.draw(tank);
+        this.upgradeManager.draw(tank);
+        this.levelManager.draw(tank);
         this.mapManager.draw();
         this.scoreManager.draw();
         this.logManager.draw();
@@ -166,23 +166,6 @@ export default class Game {
 
     }
 
-    setCamera() {
-        if (this.tankManager.player) {
-            this.camera.run(this.tankManager.player.get());
-            return;
-        }
-
-        if (this.tankManager.watch) {
-            this.camera.run(this.tankManager.watch.get());
-            return;
-        }
-
-        this.camera.run({
-            x: Config.map.width / 2,
-            y: Config.map.height / 2,
-        });
-    }
-
     upgrade(x, y) {
         const tank = this.tankManager.player;
 
@@ -211,6 +194,20 @@ export default class Game {
         if (item) {
             if (!tank.update(item)) return;
         }
+    }
+
+    watch(x, y) {
+        if (this.tankManager.player) return;
+
+        const id = this.scoreManager.pressed(x, y);
+        if (!id) return;
+
+        const tank = this.tankManager.tanks.find(
+            item => item.get().id === id
+        );
+        if (!tank) return;
+
+        this.tankManager.changeWatch(tank);
     }
 
     zoom(delta) {

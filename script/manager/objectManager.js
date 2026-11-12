@@ -100,8 +100,14 @@ export default class ObjectManager {
         );
     }
 
-    draw() {
+    draw(view) {
         for (const object of this.objects) {
+            if (
+                object.get().x + object.get().radius < view.left ||
+                object.get().x - object.get().radius > view.right ||
+                object.get().y + object.get().radius < view.top ||
+                object.get().y - object.get().radius > view.bottom
+            ) continue;
             object.draw();
         }
     }
@@ -143,6 +149,7 @@ export default class ObjectManager {
     }
 
     target(object) {
+        return null;
         const { x, y, zoom } = object.get();
 
         const halfWidth = Config.view.width / zoom / 2;

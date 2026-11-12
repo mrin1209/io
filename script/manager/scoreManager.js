@@ -17,6 +17,30 @@ export default class ScoreManager {
         };
     }
 
+    pressed(x, y) {
+        const p = this.p;
+
+        for (let i = 0; i < this.ranking.length; i++) {
+            const tank = this.ranking[i];
+
+            const itemY = this.layout.padding + i * (this.layout.height + this.layout.gap);
+
+            const right = p.width - this.layout.padding;
+            const left = p.width - this.layout.padding - ((tank.baseRadius * 2 + tank.baseLength * 2) * (this.layout.size / tank.baseRadius));
+
+            if (
+                x >= left &&
+                x <= right &&
+                y >= itemY &&
+                y <= itemY + this.layout.height
+            ) {
+                return tank.get().id;
+            }
+        }
+
+        return null;
+    }
+
     set(tanks) {
         const p = this.p;
 
@@ -30,14 +54,15 @@ export default class ScoreManager {
                     x: 0,
                     y: 0,
                     previewScale: this.layout.size / item.tank.get().radius,
-                    level: item.tank.level,
-                    name: item.tank.name,
-                    type: item.tank.type,
+                    level: item.tank.get().level,
+                    id: item.tank.get().id,
+                    name: item.tank.get().name,
+                    type: item.tank.get().type,
                 });
 
                 const y = this.layout.padding + (this.layout.height / 2) + (index * (this.layout.height + this.layout.gap))
 
-                preview.x = p.width - this.layout.padding - ((preview.baseRadius + preview.baseRadius) * (this.layout.size / preview.baseRadius));
+                preview.x = p.width - this.layout.padding - ((preview.baseRadius + preview.baseLength) * (this.layout.size / preview.baseRadius));
                 preview.y = y;
 
                 return preview;
@@ -62,7 +87,7 @@ export default class ScoreManager {
             p.fill(Color.name.color);
             p.text(
                 `${tank.get().name} (${tank.get().level})`,
-                p.width - this.layout.padding - ((tank.baseRadius * 2 + tank.baseRadius * 2) * (this.layout.size / tank.baseRadius)),
+                p.width - this.layout.padding - ((tank.baseRadius * 2 + tank.baseLength * 2) * (this.layout.size / tank.baseRadius)),
                 y
             );
         });

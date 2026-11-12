@@ -73,8 +73,15 @@ export default class BulletManager {
         );
     }
 
-    draw() {
+    draw(view) {
         for (const bullet of this.bullets) {
+            if (
+                bullet.get().x + bullet.get().radius < view.left ||
+                bullet.get().x - bullet.get().radius > view.right ||
+                bullet.get().y + bullet.get().radius < view.top ||
+                bullet.get().y - bullet.get().radius > view.bottom
+            ) continue;
+
             bullet.draw();
         }
     }

@@ -6,7 +6,7 @@ export default class Field {
         this.p = p;
     }
 
-    run() {
+    draw() {
         const p = this.p;
 
         this.p.background(Color.world.back);

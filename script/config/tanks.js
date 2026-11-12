@@ -33,7 +33,6 @@ const Tanks = {
             Side: Side,
             Wide: Wide,
             Sniper: Sniper,
-            Debug: Debug,
         }
     },
     tier3: {

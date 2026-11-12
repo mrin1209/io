@@ -1,7 +1,7 @@
 const Config = {
     map: {
-        width: 5000,
-        height: 5000,
+        width: 4000,
+        height: 4000,
     },
 
     view: {
@@ -18,7 +18,7 @@ const Config = {
 
     max: {
         tank: 20,
-        object: 255,
+        object: 200,
     },
 
     wall: {

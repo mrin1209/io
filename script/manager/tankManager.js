@@ -227,9 +227,15 @@ export default class TankManager {
         );
     }
 
-    draw() {
-        // タンク処理
+    draw(view) {
         for (const tank of this.tanks) {
+            if (
+                tank.get().x + tank.get().radius < view.left ||
+                tank.get().x - tank.get().radius > view.right ||
+                tank.get().y + tank.get().radius < view.top ||
+                tank.get().y - tank.get().radius > view.bottom
+            ) continue;
+
             tank.draw();
         }
     }
@@ -290,59 +296,32 @@ export default class TankManager {
         this.upgradeManager.set(player);
     }
 
-    async spawn() {
-        if (this.spawning) return;
+    spawn() {
+        const position = this.spawnPosition();
+        if (!position) return;
 
-        this.spawning = true;
-
-        try {
-            const position = this.spawnPosition();
-            if (!position) return;
-
-            if (Config.debug) {
-                position.x = Config.map.width / 2;
-                position.y = Config.map.height / 2;
-            }
-
-            let name;
-
-            try {
-                const response = await fetch(
-                    "https://api.sylvain.sh/v6/username"
-                );
-
-                if (!response.ok) {
-                    throw new Error("名前の取得に失敗しました");
-                }
-
-                const data = await response.json();
-                name = data.animal;
-
-            } catch (error) {
-                console.error(error);
-                name = `cpu${this.count}`;
-            }
-
-            const cpu = new Cpu(
-                this.p,
-                new Single({
-                    p: this.p,
-                    x: position.x,
-                    y: position.y,
-                    name: name,
-                    type: 'cpu',
-                })
-            );
-
-            this.tanks.push(cpu);
-
-            this.count++;
-
-            this.logManager.spawn(cpu.get());
-            this.scoreManager.set(this.tanks);
-        } finally {
-            this.spawning = false;
+        if (Config.debug) {
+            position.x = Config.map.width / 2 - 100;
+            position.y = Config.map.height / 2;
         }
+
+        const cpu = new Cpu(
+            this.p,
+            new Single({
+                p: this.p,
+                x: position.x,
+                y: position.y,
+                name: `cpu${this.count}`,
+                type: 'cpu',
+            })
+        );
+
+        this.tanks.push(cpu);
+
+        this.count++;
+
+        this.logManager.spawn(cpu.get());
+        this.scoreManager.set(this.tanks);
     }
 
     target(tank) {

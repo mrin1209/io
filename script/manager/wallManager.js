@@ -31,7 +31,7 @@ export default class WallManager {
         );
 
         const sizes = [
-            { w: 1, h: 1, weight: 5 },
+            // { w: 1, h: 1, weight: 5 },
             { w: 4, h: 1, weight: 4 },
             { w: 1, h: 4, weight: 4 },
             { w: 3, h: 1, weight: 3 },
@@ -121,7 +121,7 @@ export default class WallManager {
         return sizes[0];
     }
 
-    draw() {
+    draw(view) {
         const p = this.p;
 
         p.push();
@@ -131,6 +131,13 @@ export default class WallManager {
         p.fill(...Color.wall.fill);
 
         for (const wall of this.walls) {
+            if (
+                wall.x + wall.width < view.left ||
+                wall.x > view.right ||
+                wall.y + wall.height < view.top ||
+                wall.y > view.bottom
+            ) continue;
+
             p.rect(
                 wall.x,
                 wall.y,
