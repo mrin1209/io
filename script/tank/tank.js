@@ -16,7 +16,6 @@ export default class Tank {
 
         this.status = new Status();
         this.baseRadius = 15;
-        this.baseLength = 15;
 
         this.tank = {
             speed  : 2,   // 移動速度
@@ -35,7 +34,7 @@ export default class Tank {
         this.gun = {
             reload : 60, // 連射速度
             aim    : 10, // 拡散角度
-            length : this.baseLength,  // 砲身サイズ
+            length : 15,  // 砲身サイズ
             count  : 1, // 同時発射数
             recoil : 1, // 発射反動
         }
@@ -355,7 +354,6 @@ export default class Tank {
         if (this.level <= 50) {
             this.tank.radius = this.baseRadius + ((this.level - 1) * 0.25);
             this.tank.zoom = this.baseZoom * Math.pow(this.baseRadius / this.tank.radius, 0.25);
-            this.gun.length = this.baseLength + this.tank.radius;
 
             if (token && this.level <= 40) {
                 this.updateToken++;

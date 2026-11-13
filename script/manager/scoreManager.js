@@ -26,7 +26,7 @@ export default class ScoreManager {
             const itemY = this.layout.padding + i * (this.layout.height + this.layout.gap);
 
             const right = p.width - this.layout.padding;
-            const left = p.width - this.layout.padding - ((tank.baseRadius * 2 + tank.baseLength * 2) * (this.layout.size / tank.baseRadius));
+            const left = right - ((tank.baseRadius * 4) * (this.layout.size / tank.baseRadius));
 
             if (
                 x >= left &&
@@ -61,8 +61,9 @@ export default class ScoreManager {
                 });
 
                 const y = this.layout.padding + (this.layout.height / 2) + (index * (this.layout.height + this.layout.gap))
+                const x = p.width - this.layout.padding - ((preview.baseRadius * 2) * (this.layout.size / preview.baseRadius));
 
-                preview.x = p.width - this.layout.padding - ((preview.baseRadius + preview.baseLength) * (this.layout.size / preview.baseRadius));
+                preview.x = x;
                 preview.y = y;
 
                 return preview;
@@ -77,7 +78,7 @@ export default class ScoreManager {
 
         this.ranking.forEach((tank, index) => {
             const y = this.layout.padding + (this.layout.height / 2) + (index * (this.layout.height + this.layout.gap))
-
+            const x = p.width - this.layout.padding - ((tank.baseRadius * 4) * (this.layout.size / tank.baseRadius));
             tank.draw();
 
             p.textAlign(p.RIGHT, p.CENTER);
@@ -87,7 +88,7 @@ export default class ScoreManager {
             p.fill(Color.name.color);
             p.text(
                 `${tank.get().name} (${tank.get().level})`,
-                p.width - this.layout.padding - ((tank.baseRadius * 2 + tank.baseLength * 2) * (this.layout.size / tank.baseRadius)),
+                x,
                 y
             );
         });
