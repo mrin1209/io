@@ -47,5 +47,6 @@ new p5((p) => {
 
     p.windowResized = () => {
         p.resizeCanvas(p.windowWidth, p.windowHeight);
+        game.resize();
     };
 });

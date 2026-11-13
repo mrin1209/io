@@ -224,4 +224,11 @@ export default class Game {
             this.tankManager.player.tank.baseZoom -= zoomSpeed;
         }
     }
+
+    resize() {
+        if (this.tankManager.player) {
+            this.upgradeManager.set(this.tankManager.player);
+        }
+        this.scoreManager.set(this.tankManager.tanks);
+    }
 }
