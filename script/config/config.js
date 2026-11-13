@@ -25,13 +25,13 @@ const Config = {
         density: 0.2,
     },
 
-    debug: false,
+    debug: true,
 };
 
 if (Config.debug) {
     Config.map.width = 500;
     Config.map.height = 500;
-    Config.max.tank = 1;
+    Config.max.tank = 0;
     Config.max.object = 0;
 }
 
