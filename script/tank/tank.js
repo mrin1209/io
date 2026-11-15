@@ -31,25 +31,32 @@ export default class Tank {
             recoil : 1, // 接触反動
         }
 
-        this.gun = {
-            reload : 60, // 連射速度
-            aim    : 10, // 拡散角度
-            length : 15,  // 砲身サイズ
-            count  : 1, // 同時発射数
-            recoil : 1, // 発射反動
-        }
+        this.gun = [
+            {
+                id     : 1, // 識別番号
+                reload : 60, // 連射速度
+                shot   : 0, // 発射間隔
+                aim    : 10, // 拡散角度
+                length : 15,  // 砲身サイズ
+                count  : 1, // 同時発射数
+                recoil : 1, // 発射反動
+            },
+        ]
 
-        this.bullet = {
-            speed  : 3, // 弾丸速度
-            armor  : 10, // 弾丸耐久力
-            power  : 10, // 攻撃力
-            penetration : 10, // 弾丸攻撃力
-            duration: 60, // 初速持続時間
-            deceleration: 0.25, // 減速率
-            range  : 135, // 消滅時間
-            radius   : 10, // 弾丸半径
-            recoil : 1, // 着弾反動
-        }
+        this.bullet = [
+            {
+                id     : 1, // 識別番号
+                speed  : 3, // 弾丸速度
+                armor  : 10, // 弾丸耐久力
+                power  : 10, // 攻撃力
+                penetration : 10, // 弾丸攻撃力
+                duration: 60, // 初速持続時間
+                deceleration: 0.25, // 減速率
+                range  : 135, // 消滅時間
+                radius   : 10, // 弾丸半径
+                recoil : 1, // 着弾反動
+            },
+        ]
 
         this.id = crypto.randomUUID();
         this.level = 0;
@@ -77,14 +84,14 @@ export default class Tank {
                 power: this.tank.power,
                 speed: this.tank.speed,
             },
-            gun: {
-                reload: this.gun.reload,
-            },
-            bullet: {
-                speed: this.bullet.speed,
-                armor: this.bullet.armor,
-                power: this.bullet.power,
-            },
+            gun: this.gun.map(gun => ({
+                reload: gun.reload,
+            })),
+            bullet: this.bullet.map(bullet => ({
+                speed: bullet.speed,
+                armor: bullet.armor,
+                power: bullet.power,
+            })),
         };
 
         if (param.status) {
@@ -94,9 +101,27 @@ export default class Tank {
         for (const item of this.status.items) {
             const [group, property] = item.key.split(".");
 
-            this[group][property] =
-                this.baseStats[group][property] *
-                (1 + item.rate * item.direction * item.count);
+            if (group === "tank") {
+                this.tank[property] =
+                    this.baseStats.tank[property] *
+                    (1 + item.rate * item.direction * item.count);
+            }
+
+            if (group === "gun") {
+                for (let i = 0; i < this.gun.length; i++) {
+                    this.gun[i][property] =
+                        this.baseStats.gun[i][property] *
+                        (1 + item.rate * item.direction * item.count);
+                }
+            }
+
+            if (group === "bullet") {
+                for (let i = 0; i < this.bullet.length; i++) {
+                    this.bullet[i][property] =
+                        this.baseStats.bullet[i][property] *
+                        (1 + item.rate * item.direction * item.count);
+                }
+            }
         }
 
         this.id = param.id ?? this.id;
@@ -111,7 +136,6 @@ export default class Tank {
         this.tier = param.tier ?? this.tier;
         this.previewScale = param.previewScale ?? this.previewScale;
 
-        this.count = this.gun.reload;
         this.color = this.color ?? (this.type === 'player' ? Color.blue : Color.red);
 
         for (let i = 0; i < (param.level ?? 1); i++) {
@@ -120,8 +144,10 @@ export default class Tank {
     }
 
     run() {
-        if (this.count < this.gun.reload) {
-            this.count++;
+        for (const gun of this.gun) {
+            if (gun.count > 0) {
+                gun.count--;
+            }
         }
 
         if (this.invincible > 0) {
@@ -243,12 +269,12 @@ export default class Tank {
             : this.ry - Math.sign(this.ry) * this.tank.deceleration;
     }
 
-    shot() {
-        if (this.count >= this.gun.reload && this.active) {
-            this.count = 0;
+    shot(gun) {
+        if (gun.count === 0 && this.active) {
+            gun.count = gun.reload;
 
-            this.rx -= Math.cos(this.angle) * this.gun.recoil;
-            this.ry -= Math.sin(this.angle) * this.gun.recoil;
+            this.rx -= Math.cos(this.angle) * gun.recoil;
+            this.ry -= Math.sin(this.angle) * gun.recoil;
 
             return true;
         }
@@ -256,7 +282,7 @@ export default class Tank {
         return false;
     }
 
-    add(x, y, angle) {
+    add(x, y, angle, bullet) {
         return new Bullet(
             this.p,
             x,
@@ -268,7 +294,7 @@ export default class Tank {
             this,
             this.name,
             {
-                ...this.bullet,
+                ...bullet,
             },
         );
     }
@@ -382,24 +408,32 @@ export default class Tank {
 
         const [group, property] = status.key.split(".");
 
-        this[group][property] =
-            this.baseStats[group][property] *
-            (1 + item.rate * item.direction * item.count);
-
-        if (group === "gun" && property === "reload") {
-            this.gun.reload = Math.max(1, this.gun.reload);
+        if (group === "tank") {
+            this.tank[property] =
+                this.baseStats.tank[property] *
+                (1 + item.rate * item.direction * item.count);
         }
 
-        if (group === "tank" && property === "armor") {
-            const increase =
-                this.baseStats.tank.armor *
-                item.rate *
-                item.direction;
+        if (group === "gun") {
+            for (let i = 0; i < this.gun.length; i++) {
+                this.gun[i][property] =
+                    this.baseStats.gun[i][property] *
+                    (1 + item.rate * item.direction * item.count);
+            }
 
-            this.tank.health = Math.min(
-                this.tank.armor,
-                this.tank.health + increase
-            );
+            if (property === "reload") {
+                for (const gun of this.gun) {
+                    gun.reload = Math.max(1, gun.reload);
+                }
+            }
+        }
+
+        if (group === "bullet") {
+            for (let i = 0; i < this.bullet.length; i++) {
+                this.bullet[i][property] =
+                    this.baseStats.bullet[i][property] *
+                    (1 + item.rate * item.direction * item.count);
+            }
         }
 
         return true;
@@ -407,36 +441,38 @@ export default class Tank {
 
     drawLight() {
         const p = this.p;
+        const gun = this.gun[0];
+        const bullet = this.bullet[0];
 
         let distance = 0;
-        let currentSpeed = this.bullet.speed;
+        let currentSpeed = bullet.speed;
 
-        for (let count = 1; count <= this.bullet.range; count++) {
+        for (let count = 1; count <= bullet.range; count++) {
             distance += currentSpeed;
 
-            if (count >= this.bullet.range) break;
+            if (count >= bullet.range) break;
 
-            if (count > this.bullet.duration) {
+            if (count > bullet.duration) {
                 currentSpeed = Math.max(
                     0,
-                    currentSpeed - this.bullet.deceleration
+                    currentSpeed - bullet.deceleration
                 );
             }
 
             if (currentSpeed === 0) break;
         }
 
-        distance = distance + this.bullet.radius + this.gun.length;
+        distance = distance + bullet.radius + gun.length;
 
-        const vx = Math.cos(this.angle) * this.bullet.speed + this.vx;
-        const vy = Math.sin(this.angle) * this.bullet.speed + this.vy;
+        const vx = Math.cos(this.angle) * bullet.speed + this.vx;
+        const vy = Math.sin(this.angle) * bullet.speed + this.vy;
 
         const angle = Math.atan2(vy, vx);
 
-        const radius = this.bullet.radius;
+        const radius = bullet.radius;
 
         const halfAngle =
-            (this.gun.aim / 2) *
+            (gun.aim / 2) *
             Math.PI / 180 +
             Math.asin(Math.min(1, radius / distance)
         );
