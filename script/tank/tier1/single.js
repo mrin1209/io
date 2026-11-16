@@ -68,9 +68,9 @@ export default class Single extends Tank {
         p.fill(Color.gun.fill);
         p.rect(
             0,
-            -this.bullet.radius,
-            this.tank.radius + this.gun.length,
-            this.bullet.radius * 2
+            -this.bullet[0].radius,
+            this.tank.radius + this.gun[0].length,
+            this.bullet[0].radius * 2
         );
 
         p.pop();
@@ -82,15 +82,14 @@ export default class Single extends Tank {
         const bullets = [];
 
         for (const gun of this.gun) {
-            if (gun.id !== bullet.id) continue;
             if (!super.shot(gun)) continue;
 
+            const bullet = this.bullet.find(item => item.id === gun.id);
             const aim = gun.aim / 2 * Math.PI / 180;
             const spread = this.p.random(-aim, aim);
             const angle = this.angle + spread;
 
-            const distance =
-                this.tank.radius + gun.length - bullet.radius / 2;
+            const distance = this.tank.radius + gun.length - bullet.radius / 2;
 
             const x = this.x + Math.cos(this.angle) * distance;
             const y = this.y + Math.sin(this.angle) * distance;
