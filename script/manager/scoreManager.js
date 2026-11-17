@@ -46,7 +46,7 @@ export default class ScoreManager {
 
         this.ranking = tanks
             .filter(item => item.tank.active)
-            .sort((a, b) => b.tank.level - a.tank.level)
+            .sort((a, b) => b.tank.totalExp - a.tank.totalExp)
             .slice(0, this.max)
             .map((item, index) => {
                 const preview = new item.tank.constructor({

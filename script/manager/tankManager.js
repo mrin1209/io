@@ -261,6 +261,7 @@ export default class TankManager {
             }
         }
 
+        this.scoreManager.set(this.tanks);
         this.logManager.awakening(newTank.get());
     }
 
