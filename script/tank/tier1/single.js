@@ -23,6 +23,7 @@ export default class Single extends Tank {
                 length : 15,  // 砲身サイズ
                 count  : 1, // 同時発射数
                 recoil : 1, // 発射反動
+                type: 'normal'
             },
         ]
 

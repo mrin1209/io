@@ -32,8 +32,8 @@ export default class Player {
         this.tank.move(dx, dy, wallManager);
     }
 
-    shot() {
-        return this.tank.shot();
+    shot(mx, my) {
+        return this.tank.shot(mx, my);
     }
 
     hit(target) {

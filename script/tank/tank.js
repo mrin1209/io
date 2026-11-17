@@ -22,8 +22,8 @@ export default class Tank {
             armor  : 100, // 機体体力
             power  : 30,  // 機体攻撃力
             penetration : 30, // 弾丸攻撃力
-            acceleration: 0.025, // 機体加速率
-            deceleration: 0.025, // 機体減速率
+            acceleration: 1 / 60, // 機体加速率
+            deceleration: 1 / 60, // 機体減速率
             zoom   : 1, // ズーム率
             radius : this.baseRadius,  // 機体半径
             regeneration: 0, // 再生速度
@@ -178,13 +178,41 @@ export default class Tank {
             p.translate(gun.x, gun.y);
             p.rotate(gun.angle * Math.PI / 180);
 
-            p.rect(
-                0,
-                -bullet.radius,
-                this.tank.radius + gun.length,
-                bullet.radius * 2
-            );
+            switch (gun.type) {
+                case 'normal':
+                    p.rect(
+                        0,
+                        -bullet.radius,
+                        this.tank.radius + gun.length,
+                        bullet.radius * 2
+                    );
+                    break;
+                case 'wide':
+                    p.beginShape();
+                    p.vertex(0, -bullet.radius);
+                    p.vertex(this.tank.radius, -bullet.radius);
+                    p.vertex(this.tank.radius + gun.length, -bullet.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius + gun.length, bullet.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius, bullet.radius);
+                    p.vertex(0, bullet.radius);
+                    p.endShape(p.CLOSE);
+                    break;
+                case 'shotgun':
+                    p.rect(
+                        0,
+                        -bullet.radius,
+                        this.tank.radius + gun.length,
+                        bullet.radius * 2
+                    );
 
+                    p.beginShape();
+                    p.vertex(this.tank.radius + gun.length / 2, -bullet.radius);
+                    p.vertex(this.tank.radius + gun.length, -bullet.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius + gun.length, bullet.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius + gun.length / 2, bullet.radius);
+                    p.endShape(p.CLOSE);
+                    break;
+            }
             p.pop();
         }
 
@@ -423,7 +451,7 @@ export default class Tank {
         this.level++;
 
         if (this.level <= 50) {
-            this.tank.radius = this.baseRadius + ((this.level - 1) * 0.25);
+            this.tank.radius = this.baseRadius + (this.level - 1) * (2.5 / 9);
             this.tank.zoom = this.baseZoom * Math.pow(this.baseRadius / this.tank.radius, 0.25);
 
             if (token && this.level <= 40) {

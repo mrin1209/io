@@ -285,6 +285,8 @@ export default class TankManager {
                 y: position.y,
                 name: name,
                 type: 'player',
+                level: 20,
+                upgradeToken: 10,
             })
         );
 
