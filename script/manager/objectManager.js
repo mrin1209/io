@@ -149,7 +149,6 @@ export default class ObjectManager {
     }
 
     target(object) {
-        return null;
         const { x, y, zoom } = object.get();
 
         const halfWidth = Config.view.width / zoom / 2;

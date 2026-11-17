@@ -200,14 +200,16 @@ export default class Game {
         if (this.tankManager.player) return;
 
         const id = this.scoreManager.pressed(x, y);
-        if (!id) return;
+        if (id) {
+            const tank = this.tankManager.tanks.find(
+                item => item.get().id === id
+            );
+            if (!tank) return;
 
-        const tank = this.tankManager.tanks.find(
-            item => item.get().id === id
-        );
-        if (!tank) return;
-
-        this.tankManager.changeWatch(tank);
+            this.tankManager.changeWatch(tank);
+        } else {
+            this.tankManager.clearWatch();
+        }
     }
 
     zoom(delta) {

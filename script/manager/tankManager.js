@@ -192,18 +192,14 @@ export default class TankManager {
 
         this.remove();
 
-        if (this.player && this.watch) {
+        if (this.player) {
             this.watch = null;
-        } else if (
-            !this.player &&
-            (
-                !this.watch ||
-                !this.watch.get().active ||
-                this.watch.get().type !== 'cpu'
-            ) &&
-            this.tanks.some(tank =>
-                tank.get().active && tank.get().type === 'cpu'
-            )
+        }
+
+        if (
+            this.watch &&
+            this.watch.get().type === 'player' &&
+            !this.watch.get().active
         ) {
             this.setWatch();
         }
@@ -437,5 +433,9 @@ export default class TankManager {
         if (this.watch) {
             this.logManager.watch(this.watch.get());
         }
+    }
+
+    clearWatch() {
+        this.watch = null;
     }
 }
