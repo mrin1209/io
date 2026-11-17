@@ -29,8 +29,8 @@ const Config = {
 };
 
 if (Config.debug) {
-    Config.map.width = 500;
-    Config.map.height = 500;
+    Config.map.width = 1000;
+    Config.map.height = 1000;
     Config.max.tank = 0;
     Config.max.object = 0;
 }

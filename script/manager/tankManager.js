@@ -285,6 +285,8 @@ export default class TankManager {
                 y: position.y,
                 name: name,
                 type: 'player',
+                level: 20,
+                upgradeToken: 10,
             })
         );
 
@@ -301,7 +303,7 @@ export default class TankManager {
         if (!position) return;
 
         if (Config.debug) {
-            position.x = Config.map.width / 2 - 100;
+            position.x = Config.map.width / 2;
             position.y = Config.map.height / 2;
         }
 
