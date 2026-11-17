@@ -22,7 +22,7 @@ export default class Player {
     }
 
     draw() {
-        this.tank.drawLight();
+        // this.tank.drawLight();
         this.tank.draw();
         this.tank.drawName();
         this.tank.drawHealth();
@@ -56,10 +56,14 @@ export default class Player {
             ...this.get()
         });
 
+        this.debug();
+
         return this;
     }
 
     update(item) {
+        this.debug();
+
         if (!this.tank.update(item)) return false;
     }
 
@@ -68,52 +72,83 @@ export default class Player {
     }
 
     debug() {
-        const gun = this.tank.gun;
-        const bullet = this.tank.bullet;
+        const guns = this.tank.gun;
+        const bullets = this.tank.bullet;
 
-        const dps = bullet.power * gun.count * (60 / gun.reload);
-        const killTime = 100 / dps;
-
+        let dps = 0;
         let distance = 0;
-        let currentSpeed = this.tank.bullet.speed;
 
-        for (let count = 1; count <= this.tank.bullet.range; count++) {
-            distance += currentSpeed;
+        const details = [];
 
-            if (count >= this.tank.bullet.range) break;
+        for (const gun of guns) {
+            const bullet = bullets.find(item => item.id === gun.id);
+            if (!bullet) continue;
 
-            if (count > this.tank.bullet.duration) {
-                currentSpeed = Math.max(
-                    0,
-                    currentSpeed - this.tank.bullet.deceleration
-                );
+            const gunDps = bullet.power * gun.count * (60 / gun.reload);
+            dps += gunDps;
+
+            let currentDistance = 0;
+            let currentSpeed = bullet.speed;
+
+            for (let count = 1; count <= bullet.range; count++) {
+                currentDistance += currentSpeed;
+
+                if (count >= bullet.range) break;
+
+                if (count > bullet.duration) {
+                    currentSpeed = Math.max(
+                        0,
+                        currentSpeed - bullet.deceleration
+                    );
+                }
+
+                if (currentSpeed === 0) break;
             }
 
-            if (currentSpeed === 0) break;
+            currentDistance += bullet.radius + gun.length;
+            distance = Math.max(distance, currentDistance);
+
+            details.push({
+                gun,
+                bullet,
+                dps: gunDps,
+                distance: currentDistance,
+            });
         }
 
-        distance = distance + this.tank.bullet.radius + this.tank.gun.length;
+        const killTime = 100 / dps;
 
         console.clear();
+
         console.log("機体名　　:", this.tank.constructor.name);
         console.log("累計経験値:", this.tank.totalExp);
         console.log("経験値　　:", this.tank.exp);
-        console.log("必要経験値　　:", this.tank.getRequiredExp());
+        console.log("必要経験値:", this.tank.getRequiredExp());
+
         console.log("最大体力　:", this.tank.tank.armor);
         console.log("機体体力　:", this.tank.tank.health);
         console.log("機体速度　:", this.tank.tank.speed);
         console.log("接触耐久力:", this.tank.tank.armor);
         console.log("接触攻撃力:", this.tank.tank.power);
-        console.log("連射速度　:", this.tank.gun.reload);
-        console.log("弾丸速度　:", this.tank.bullet.speed);
-        console.log("耐久力　　:", this.tank.bullet.armor);
-        console.log("攻撃力　　:", this.tank.bullet.power);
-        console.log("弾頭数　　:", this.tank.gun.count);
-        console.log("飛距離　　:", distance);
+
         console.log("--------------------");
-        console.log("秒速火力:",dps.toFixed(2));
-        console.log("撃破時間:", killTime.toFixed(2), "秒");
+
+        for (let i = 0; i < details.length; i++) {
+            const { gun, bullet, dps, distance } = details[i];
+
+            console.log(`Gun ${i + 1} (${gun.id})`);
+            console.log("連射速度　:", gun.reload);
+            console.log("弾頭数　　:", gun.count);
+            console.log("弾丸速度　:", bullet.speed);
+            console.log("耐久力　　:", bullet.armor);
+            console.log("攻撃力　　:", bullet.power);
+            console.log("秒速火力　:", dps.toFixed(2));
+            console.log("飛距離　　:", distance.toFixed(2));
+            console.log("--------------------");
+        }
+
+        console.log("合計秒速火力:", dps.toFixed(2));
+        console.log("撃破時間　　:", killTime.toFixed(2), "秒");
+        console.log("最大飛距離　:", distance.toFixed(2));
     }
-
-
 }

@@ -24,32 +24,42 @@ export default class Tank {
             penetration : 30, // 弾丸攻撃力
             acceleration: 0.025, // 機体加速率
             deceleration: 0.025, // 機体減速率
-            count  : 1, // 同時発射数
             zoom   : 1, // ズーム率
             radius : this.baseRadius,  // 機体半径
             regeneration: 0, // 再生速度
             recoil : 1, // 接触反動
+            count  : 1, // 発射間隔
         }
 
-        this.gun = {
-            reload : 60, // 連射速度
-            aim    : 10, // 拡散角度
-            length : 15,  // 砲身サイズ
-            count  : 1, // 同時発射数
-            recoil : 1, // 発射反動
-        }
+        this.gun = [
+            {
+                id: 1,
+                x: 0,
+                y: 0,
+                angle: 0,
+                shot: 0,
+                reload : 60, // 連射速度
+                aim    : 10, // 拡散角度
+                length : 15,  // 砲身サイズ
+                count  : 1, // 同時発射数
+                recoil : 1, // 発射反動
+            }
+        ]
 
-        this.bullet = {
-            speed  : 3, // 弾丸速度
-            armor  : 10, // 弾丸耐久力
-            power  : 10, // 攻撃力
-            penetration : 10, // 弾丸攻撃力
-            duration: 60, // 初速持続時間
-            deceleration: 0.25, // 減速率
-            range  : 135, // 消滅時間
-            radius   : 10, // 弾丸半径
-            recoil : 1, // 着弾反動
-        }
+        this.bullet = [
+            {
+                id: 1,
+                speed  : 3, // 弾丸速度
+                armor  : 10, // 弾丸耐久力
+                power  : 10, // 攻撃力
+                penetration : 10, // 弾丸攻撃力
+                duration: 30, // 初速持続時間
+                deceleration: 0.01, // 減速率
+                range  : 135, // 消滅時間
+                radius   : 10, // 弾丸半径
+                recoil : 1, // 着弾反動
+            }
+        ]
 
         this.id = crypto.randomUUID();
         this.level = 0;
@@ -72,31 +82,39 @@ export default class Tank {
         this.baseZoom = this.tank.zoom;
 
         this.baseStats = {
-            tank: {
-                armor: this.tank.armor,
-                power: this.tank.power,
-                speed: this.tank.speed,
-            },
-            gun: {
-                reload: this.gun.reload,
-            },
-            bullet: {
-                speed: this.bullet.speed,
-                armor: this.bullet.armor,
-                power: this.bullet.power,
-            },
+            tank: { ...this.tank },
+            gun: this.gun.map(gun => ({ ...gun })),
+            bullet: this.bullet.map(bullet => ({ ...bullet })),
         };
 
         if (param.status) {
             this.status = param.status;
-        }
 
-        for (const item of this.status.items) {
-            const [group, property] = item.key.split(".");
+            for (const item of this.status.items) {
+                const [group, property] = item.key.split(".");
 
-            this[group][property] =
-                this.baseStats[group][property] *
-                (1 + item.rate * item.direction * item.count);
+                if (group === "tank") {
+                    this.tank[property] =
+                        this.baseStats.tank[property] *
+                        (1 + item.rate * item.direction * item.count);
+                }
+
+                if (group === "gun") {
+                    for (let i = 0; i < this.gun.length; i++) {
+                        this.gun[i][property] =
+                            this.baseStats.gun[i][property] *
+                            (1 + item.rate * item.direction * item.count);
+                    }
+                }
+
+                if (group === "bullet") {
+                    for (let i = 0; i < this.bullet.length; i++) {
+                        this.bullet[i][property] =
+                            this.baseStats.bullet[i][property] *
+                            (1 + item.rate * item.direction * item.count);
+                    }
+                }
+            }
         }
 
         this.id = param.id ?? this.id;
@@ -111,7 +129,6 @@ export default class Tank {
         this.tier = param.tier ?? this.tier;
         this.previewScale = param.previewScale ?? this.previewScale;
 
-        this.count = this.gun.reload;
         this.color = this.color ?? (this.type === 'player' ? Color.blue : Color.red);
 
         for (let i = 0; i < (param.level ?? 1); i++) {
@@ -120,8 +137,16 @@ export default class Tank {
     }
 
     run() {
-        if (this.count < this.gun.reload) {
-            this.count++;
+        if (!this.gun.some(gun => gun.shot <= 0)) {
+            for (const gun of this.gun) {
+                if (gun.shot > 0) {
+                    gun.shot -= this.tank.count;
+                }
+            }
+        } else {
+            for (const [i, gun] of this.gun.entries()) {
+                gun.shot = this.baseStats.gun[i].shot;
+            }
         }
 
         if (this.invincible > 0) {
@@ -137,7 +162,31 @@ export default class Tank {
         p.push();
 
         p.translate(this.x, this.y);
+        p.rotate(this.angle);
         p.scale(this.previewScale);
+
+        p.rectMode(p.CORNER);
+
+        p.stroke(Color.gun.border);
+        p.strokeWeight(2);
+        p.fill(Color.gun.fill);
+
+        for (const gun of this.gun) {
+            const bullet = this.bullet.find(item => item.id === gun.id);
+
+            p.push();
+            p.translate(gun.x, gun.y);
+            p.rotate(gun.angle * Math.PI / 180);
+
+            p.rect(
+                0,
+                -bullet.radius,
+                this.tank.radius + gun.length,
+                bullet.radius * 2
+            );
+
+            p.pop();
+        }
 
         p.stroke(this.color.border);
         p.strokeWeight(2);
@@ -243,20 +292,42 @@ export default class Tank {
             : this.ry - Math.sign(this.ry) * this.tank.deceleration;
     }
 
-    shot() {
-        if (this.count >= this.gun.reload && this.active) {
-            this.count = 0;
+    shot(mx, my) {
+        const bullets = [];
 
-            this.rx -= Math.cos(this.angle) * this.gun.recoil;
-            this.ry -= Math.sin(this.angle) * this.gun.recoil;
+        for (const gun of this.gun) {
+            if (gun.shot <= 0  && this.active) {
+                gun.shot = gun.reload;
 
-            return true;
+                const bullet = this.bullet.find(item => item.id === gun.id);
+                const angle = this.angle + gun.angle * Math.PI / 180;
+
+                for (let i = 0; i < gun.count; i++) {
+                    const x = this.x
+                        + Math.cos(angle) * (this.tank.radius + gun.length - bullet.radius / 2)
+                        - Math.sin(angle) * gun.y
+                        + Math.cos(angle) * gun.x;
+
+                    const y = this.y
+                        + Math.sin(angle) * (this.tank.radius + gun.length - bullet.radius / 2)
+                        + Math.cos(angle) * gun.y
+                        + Math.sin(angle) * gun.x;
+
+                    const aim = gun.aim / 2 * Math.PI / 180;
+                    const spread = this.p.random(-aim, aim);
+
+                    bullets.push(this.add(x, y, angle + spread, bullet));
+                }
+
+                this.rx -= Math.cos(angle) * gun.recoil;
+                this.ry -= Math.sin(angle) * gun.recoil;
+            }
         }
 
-        return false;
+        return bullets;
     }
 
-    add(x, y, angle) {
+    add(x, y, angle, bullet) {
         return new Bullet(
             this.p,
             x,
@@ -268,7 +339,7 @@ export default class Tank {
             this,
             this.name,
             {
-                ...this.bullet,
+                ...bullet,
             },
         );
     }
@@ -382,24 +453,38 @@ export default class Tank {
 
         const [group, property] = status.key.split(".");
 
-        this[group][property] =
-            this.baseStats[group][property] *
-            (1 + item.rate * item.direction * item.count);
+        if (group === "tank") {
+            this.tank[property] =
+                this.baseStats.tank[property] *
+                (1 + item.rate * item.direction * item.count);
 
-        if (group === "gun" && property === "reload") {
-            this.gun.reload = Math.max(1, this.gun.reload);
+            if (property === "armor") {
+                const increase = this.baseStats.tank.armor * item.rate * item.direction;
+                this.tank.health = Math.min(
+                    this.tank.armor,
+                    this.tank.health + increase
+                );
+            }
         }
 
-        if (group === "tank" && property === "armor") {
-            const increase =
-                this.baseStats.tank.armor *
-                item.rate *
-                item.direction;
+        if (group === "gun") {
+            for (let i = 0; i < this.gun.length; i++) {
+                this.gun[i][property] =
+                    this.baseStats.gun[i][property] *
+                    (1 + item.rate * item.direction * item.count);
 
-            this.tank.health = Math.min(
-                this.tank.armor,
-                this.tank.health + increase
-            );
+                if (property === "reload") {
+                    this.gun[i][property] = Math.max(1, this.gun[i][property]);
+                }
+            }
+        }
+
+        if (group === "bullet") {
+            for (let i = 0; i < this.bullet.length; i++) {
+                this.bullet[i][property] =
+                    this.baseStats.bullet[i][property] *
+                    (1 + item.rate * item.direction * item.count);
+            }
         }
 
         return true;

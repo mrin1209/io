@@ -4,6 +4,9 @@ const Tanks = {
     tier1: {
         Single: Single,
     },
+    tier2: {
+        Single: Single,
+    },
 };
 
 export default Tanks;
