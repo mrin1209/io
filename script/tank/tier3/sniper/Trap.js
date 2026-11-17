@@ -44,7 +44,7 @@ export default class Trap extends Tank {
             }
         ]
 
-        this.previewColor = Color.yellow;
+        this.previewColor = Color.green;
 
         super.setup(param);
     }
