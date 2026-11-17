@@ -24,11 +24,16 @@ export default class Bullet {
         this.id = crypto.randomUUID();
 
         this.count = 0;
+        this.invincible = 0;
         this.active = true;
         this.collisions = new Set();
     }
 
     run() {
+        if (this.invincible > 0) {
+            this.invincible--;
+        }
+
         this.move();
     }
 
@@ -69,9 +74,13 @@ export default class Bullet {
     }
 
     hit(target) {
-        if (this.collisions.has(target.id)) return false;
-
-        this.collisions.add(target.id);
+        if (target.class !== "wall") {
+            if (this.collisions.has(target.id)) return false;
+            this.collisions.add(target.id);
+        } else {
+            if (this.invincible > 0) return false;
+            this.invincible = 30;
+        }
 
         this.config.armor -= target.penetration;
 

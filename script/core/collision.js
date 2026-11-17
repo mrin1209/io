@@ -35,4 +35,12 @@ export default class Collision {
             object.y + object.radius > Config.map.height
         );
     }
+
+    get() {
+        return {
+            class: 'wall',
+            power: 10,
+            penetration: 10,
+        }
+    }
 }

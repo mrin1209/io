@@ -12,48 +12,24 @@ export default class Machinegun extends Tank {
         }
 
         this.gun = [
-            {
-                ...this.gun[0],
-                y: 5,
-                shot: 0,
-                reload : 30, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.2, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                y: -5,
-                shot: 0,
-                reload : 30, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                recoil : 0.2, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                y: 15,
-                shot: 15,
-                reload : 30, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 10,  // 砲身サイズ
-                recoil : 0.2, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                y: -15,
-                shot: 15,
-                reload : 30, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 10,  // 砲身サイズ
-                recoil : 0.2, // 発射反動
-                type: 'normal',
-            }
-        ]
+            [5, 0, 15],
+            [-5, 0, 15],
+            [15, 15, 10],
+            [-15, 15, 10],
+        ].map(([y, shot, length]) => ({
+            ...this.gun[0],
+            id: 1,
+            x: 0,
+            y: y,
+            angle: 0,
+            shot: shot,
+            reload : 30, // 連射速度
+            aim    : 10, // 拡散角度
+            length : length,  // 砲身サイズ
+            count  : 1, // 同時発射数
+            recoil: 0.2, // 発射反動
+            type: "normal",
+        }));
 
         this.bullet = [
             {

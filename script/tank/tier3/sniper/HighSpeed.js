@@ -44,7 +44,7 @@ export default class HighSpeed extends Tank {
             }
         ]
 
-        this.previewColor = Color.red;
+        this.previewColor = Color.yellow;
 
         super.setup(param);
     }

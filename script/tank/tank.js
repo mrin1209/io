@@ -131,7 +131,7 @@ export default class Tank {
 
         this.color = this.color ?? (this.type === 'player' ? Color.blue : Color.red);
 
-        for (let i = 0; i < (param.level ?? 1); i++) {
+        for (let i = 0; i < (param.level ?? 0); i++) {
             this.levelUp(false);
         }
     }
@@ -211,6 +211,14 @@ export default class Tank {
                     p.vertex(this.tank.radius + gun.length, bullet.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
                     p.vertex(this.tank.radius + gun.length / 2, bullet.radius);
                     p.endShape(p.CLOSE);
+                    break;
+                case 'trap':
+                    p.rect(
+                        0,
+                        -bullet.radius,
+                        this.tank.radius + gun.length,
+                        bullet.radius * 2
+                    );
                     break;
             }
             p.pop();
@@ -375,7 +383,7 @@ export default class Tank {
     hit(target) {
         if (target.class === 'tank') {
             if (this.invincible > 0) return false;
-            this.invincible = 15;
+            this.invincible = 30;
 
             const dx = this.x - target.x;
             const dy = this.y - target.y;
@@ -451,7 +459,7 @@ export default class Tank {
         this.level++;
 
         if (this.level <= 50) {
-            this.tank.radius = this.baseRadius + (this.level - 1) * (2.5 / 9);
+            this.tank.radius = this.baseRadius + this.level * 0.25;
             this.tank.zoom = this.baseZoom * Math.pow(this.baseRadius / this.tank.radius, 0.25);
 
             if (token && this.level <= 40) {

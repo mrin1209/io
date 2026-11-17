@@ -12,49 +12,23 @@ export default class Rocket extends Tank {
         }
 
         this.gun = [
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: 0,
-                angle: 0,
-                shot: 0,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.25, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: 0,
-                angle: 135,
-                shot: 30,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 1.5, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: 0,
-                angle: 225,
-                shot: 30,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 1.5, // 発射反動
-                type: 'normal',
-            },
-        ]
+            [0, 0, 0.25],
+            [135, 30, 1.5],
+            [225, 30, 1.5],
+        ].map(([angle, shot, recoil]) => ({
+            ...this.gun[0],
+            id: 1,
+            x: 0,
+            y: 0,
+            angle: angle,
+            shot: shot,
+            reload: 60,
+            aim: 10,
+            length: 15,
+            count: 1,
+            recoil: recoil,
+            type: "normal",
+        }));
 
         this.bullet = [
             {

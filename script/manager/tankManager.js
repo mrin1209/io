@@ -2,7 +2,7 @@ import Cpu from "../entity/cpu.js";
 import Player from "../entity/player.js";
 import Collision from "../core/collision.js";
 import Config from "../config/config.js";
-import Single from "../tank/tier1/single.js";
+import Single from "../tank/tier1/Single.js";
 
 export default class TankManager {
     constructor(
@@ -285,8 +285,6 @@ export default class TankManager {
                 y: position.y,
                 name: name,
                 type: 'player',
-                level: 20,
-                upgradeToken: 10,
             })
         );
 

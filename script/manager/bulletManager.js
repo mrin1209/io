@@ -24,7 +24,7 @@ export default class BulletManager {
             const data = bullet.get();
 
             if (this.collision.outside(data)) {
-                if (bullet.hit(this.wallManager.get())) {
+                if (bullet.hit(this.collision.get())) {
                     bullet.death();
                 }
                 continue;

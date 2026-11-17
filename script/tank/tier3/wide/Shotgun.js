@@ -12,117 +12,45 @@ export default class Shotgun extends Tank {
         }
 
         this.gun = [
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: 0,
-                angle: 0,
-                shot: 0,
-                reload : 60, // 連射速度
-                aim    : 30, // 拡散角度
-                length : 20,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
-                type: 'shotgun',
-            },
-            {
-                ...this.gun[0],
-                id: 2,
-                x: 0,
-                y: 0,
-                angle: 0,
-                shot: 0,
-                reload : 60, // 連射速度
-                aim    : 25, // 拡散角度
-                length : 20,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
-            },
-            {
-                ...this.gun[0],
-                id: 3,
-                x: 0,
-                y: 0,
-                angle: 0,
-                shot: 0,
-                reload : 60, // 連射速度
-                aim    : 20, // 拡散角度
-                length : 20,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
-            },
-            {
-                ...this.gun[0],
-                id: 4,
-                x: 0,
-                y: 0,
-                angle: 0,
-                shot: 0,
-                reload : 60, // 連射速度
-                aim    : 15, // 拡散角度
-                length : 20,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
-            },
-        ]
+            [1, 30, "shotgun"],
+            [2, 25, ""],
+            [3, 20, ""],
+            [4, 15, ""],
+        ].map(([id, aim, type]) => ({
+            ...this.gun[0],
+            id: id,
+            x: 0,
+            y: 0,
+            angle: 0,
+            shot: 0,
+            reload: 60,
+            aim: aim,
+            length: 20,
+            count: 1,
+            recoil: 0.5,
+            type: type,
+        }));
 
         this.bullet = [
-            {
-                ...this.bullet[0],
-                id: 1,
-                speed  : 3, // 弾丸速度
-                armor  : 10, // 弾丸耐久力
-                power  : 10, // 攻撃力
-                penetration : 10, // 弾丸攻撃力
-                duration: 30, // 初速持続時間
-                deceleration: 0.01, // 減速率
-                range  : 135, // 消滅時間
-                radius   : 10, // 弾丸半径
-                recoil : 1, // 着弾反動
-            },
-            {
-                ...this.bullet[0],
-                id: 2,
-                speed  : 2.7, // 弾丸速度
-                armor  : 10, // 弾丸耐久力
-                power  : 10, // 攻撃力
-                penetration : 10, // 弾丸攻撃力
-                duration: 30, // 初速持続時間
-                deceleration: 0.01, // 減速率
-                range  : 150, // 消滅時間
-                radius   : 10, // 弾丸半径
-                recoil : 1, // 着弾反動
-            },
-            {
-                ...this.bullet[0],
-                id: 3,
-                speed  : 2.5, // 弾丸速度
-                armor  : 10, // 弾丸耐久力
-                power  : 10, // 攻撃力
-                penetration : 10, // 弾丸攻撃力
-                duration: 30, // 初速持続時間
-                deceleration: 0.01, // 減速率
-                range  : 165, // 消滅時間
-                radius   : 10, // 弾丸半径
-                recoil : 1, // 着弾反動
-            },
-            {
-                ...this.bullet[0],
-                id: 4,
-                speed  : 2.3, // 弾丸速度
-                armor  : 10, // 弾丸耐久力
-                power  : 10, // 攻撃力
-                penetration : 10, // 弾丸攻撃力
-                duration: 30, // 初速持続時間
-                deceleration: 0.01, // 減速率
-                range  : 180, // 消滅時間
-                radius   : 10, // 弾丸半径
-                recoil : 1, // 着弾反動
-            }
-        ]
+            [1, 3, 135],
+            [2, 2.7, 150],
+            [3, 2.5, 165],
+            [4, 2.3, 180],
+        ].map(([id, speed, range]) => ({
+            ...this.bullet[0],
+            id: id,
+            speed: speed,
+            armor: 10,
+            power: 10,
+            penetration: 10,
+            duration: 30,
+            deceleration: 0.01,
+            range: range,
+            radius: 10,
+            recoil: 1,
+        }));
 
-        this.previewColor = Color.yellow;
+        this.previewColor = Color.red;
 
         super.setup(param);
     }

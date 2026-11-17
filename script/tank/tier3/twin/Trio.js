@@ -17,11 +17,11 @@ export default class Trio extends Tank {
                 id: 1,
                 x: 0,
                 y: 12.5,
-                angle: 10,
+                angle: 15,
                 shot: 30,
                 reload : 60, // 連射速度
                 aim    : 20, // 拡散角度
-                length : 12.5,  // 砲身サイズ
+                length : 10,  // 砲身サイズ
                 count  : 1, // 同時発射数
                 recoil : 0.3, // 発射反動
                 type: 'normal',
@@ -31,11 +31,11 @@ export default class Trio extends Tank {
                 id: 1,
                 x: 0,
                 y: -12.5,
-                angle: -10,
+                angle: -15,
                 shot: 30,
                 reload : 60, // 連射速度
                 aim    : 20, // 拡散角度
-                length : 12.5,  // 砲身サイズ
+                length : 10,  // 砲身サイズ
                 count  : 1, // 同時発射数
                 recoil : 0.3, // 発射反動
                 type: 'normal',

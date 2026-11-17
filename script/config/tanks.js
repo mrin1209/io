@@ -1,24 +1,33 @@
-import Single from "../tank/tier1/single.js";
+import Single from "../tank/tier1/Single.js";
 import Twin from "../tank/tier2/twin.js";
 import Side from "../tank/tier2/side.js";
 import Wide from "../tank/tier2/wide.js";
-import Sniper from "../tank/tier2/sniper.js";
-import Triple from "../tank/tier3/twin/triple.js";
-import Trio from "../tank/tier3/twin/trio.js";
-import Machinegun from "../tank/tier3/twin/machinegun.js";
-import Hitting from "../tank/tier3/twin/hitting.js";
-import Quad from "../tank/tier3/side/quad.js";
-import SideTwin from "../tank/tier3/side/sideTwin.js";
-import SideGunner from "../tank/tier3/side/sideGunner.js";
-import Rocket from "../tank/tier3/side/rocket.js";
-import Gunner from "../tank/tier3/wide/Gunner.js";
-import Shotgun from "../tank/tier3/wide/Shotgun.js";
-import Cannon from "../tank/tier3/wide/Cannon.js";
-import Diffusion from "../tank/tier3/wide/Diffusion.js";
-import Assassin from "../tank/tier3/sniper/Assassin.js";
-import HighSpeed from "../tank/tier3/sniper/HighSpeed.js";
-import Double from "../tank/tier3/sniper/Double.js";
-import Trap from "../tank/tier3/sniper/Trap.js";
+import Sniper from "../tank/tier2/Sniper.js";
+import Triple from "../tank/tier3/Twin/Triple.js";
+import Trio from "../tank/tier3/Twin/Trio.js";
+import Machinegun from "../tank/tier3/Twin/Machinegun.js";
+import Hitting from "../tank/tier3/Twin/Hitting.js";
+import Quad from "../tank/tier3/Side/Quad.js";
+import SideTwin from "../tank/tier3/Side/SideTwin.js";
+import SideGunner from "../tank/tier3/Side/SideGunner.js";
+import Rocket from "../tank/tier3/Side/Rocket.js";
+import Gunner from "../tank/tier3/Wide/Gunner.js";
+import Shotgun from "../tank/tier3/Wide/Shotgun.js";
+import Cannon from "../tank/tier3/Wide/Cannon.js";
+import Diffusion from "../tank/tier3/Wide/Diffusion.js";
+import Assassin from "../tank/tier3/Sniper/Assassin.js";
+import HighSpeed from "../tank/tier3/Sniper/HighSpeed.js";
+import Double from "../tank/tier3/Sniper/Double.js";
+import Trap from "../tank/tier3/Sniper/Trap.js";
+import Penta from "../tank/tier4/Triple/Penta.js";
+import WidePellet from "../tank/tier4/Trio/WidePellet.js";
+import Gatling from "../tank/tier4/Machinegun/Gatling.js";
+import Octopus from "../tank/tier4/Quad/Octopus.js"
+import Booster from "../tank/tier4/Rocket/Booster.js"
+import ShotRifle from "../tank/tier4/Shotgun/ShotRifle.js"
+import DoubleBarrel from "../tank/tier4/Shotgun/DoubleBarrel.js"
+import MicroShotgun from "../tank/tier4/Shotgun/MicroShotgun.js"
+import Gardener from "../tank/tier4/Shotgun/Gardener.js"
 
 const Tanks = {
     tier1: {
@@ -47,59 +56,57 @@ const Tanks = {
         },
         Wide: {
             Gunner: Gunner,
-            Cannon: Cannon,
             Shotgun: Shotgun,
-            diffusion: Diffusion,
+            Diffusion: Diffusion,
+            Trap: Trap,
         },
         Sniper: {
             Assassin: Assassin,
+            Cannon: Cannon,
             highSpeed: HighSpeed,
             Double: Double,
-            trap: Trap,
         },
     },
     tier4: {
         Triple : {
-            // Penta: Penta,
-            // chargeTriple: ChargeTriple,
+            Penta: Penta,
         },
         Trio: {
-            // widePellet: WidePellet,
+            WidePellet: WidePellet,
         },
-        Machinegun: {},
+        Machinegun: {
+            Gatling: Gatling
+        },
         Hitting: {},
         Quad: {
-            // Octopus: Octopus,
+            Octopus: Octopus,
         },
         SideTwin: {},
         SideGunner: {},
         Rocket: {
-            // booster: Booster,
+            Booster: Booster,
         },
         Gunner: {},
         Shotgun: {
-            // ShotRifle: ShotRifle,
-            // DoubleBarrel: DoubleBarrel,
-            // microShotgun: MicroShotgun,
-            // gardener: Gardener,
+            ShotRifle: ShotRifle,
+            DoubleBarrel: DoubleBarrel,
+            MicroShotgun: MicroShotgun,
+            Gardener: Gardener,
         },
         Cannon: {
             // Launcher: Launcher,
-            // chargeCannon: ChargeCannon,
-            // autoCannon: AutoCannon,
         },
         Diffusion: {
             // crossFire: CrossFire,
         },
         Assassin: {
             // Deadeye: Deadeye,
-            // autoAssassin: AutoAssassin,
-            // chargeAssassin: ChargeAssassin,
         },
         Double: {
             // third: Third,
             // beamSaber: BeamSaber,
             // burst: Burst,
+            // mix
         },
         HighSpeed: {
             // speedStar: SpeedStar,
@@ -108,22 +115,16 @@ const Tanks = {
             // triTrap: TriTrap,
             // megaTrap: MegaTrap,
             // hybrid: Hybrid,
-            // autoTrap: AutoTrap,
         },
     },
     tier5: {
-        // penta
-        // Converge: Converge,
-        // octopus
-        // Crown: Crown,
-        // widePellet
-        // barrage: Barrage,
-        // deadeye
-        // Oneshot: Oneshot,
-        // third
-        // Laser: Laser,
-        // launcher
-        // Destroy: Destroy,
+        // Converge
+        // Balkan
+        // Crown
+        // Barrage
+        // Oneshot
+        // Laser
+        // Destroy
     }
 };
 

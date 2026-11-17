@@ -71,7 +71,7 @@ export default class Diffusion extends Tank {
             },
         ]
 
-        this.previewColor = Color.green;
+        this.previewColor = Color.yellow;
 
         super.setup(param);
     }

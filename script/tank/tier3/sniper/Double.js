@@ -58,7 +58,7 @@ export default class Double extends Tank {
             }
         ]
 
-        this.previewColor = Color.yellow;
+        this.previewColor = Color.green;
 
         super.setup(param);
     }

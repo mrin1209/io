@@ -25,7 +25,7 @@ const Config = {
         density: 0.2,
     },
 
-    debug: true,
+    debug: false,
 };
 
 if (Config.debug) {
