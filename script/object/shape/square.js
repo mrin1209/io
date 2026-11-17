@@ -11,7 +11,7 @@ export default class Square {
         this.armor = 40;
         this.power = 20;
         this.penetration = 20;
-        this.recoil = 1.3;
+        this.recoil = 0.6;
     }
 
     draw() {

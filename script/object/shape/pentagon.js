@@ -11,7 +11,7 @@ export default class Pentagon {
         this.armor = 50;
         this.power = 25;
         this.penetration = 50;
-        this.recoil = 1.45;
+        this.recoil = 0.8;
     }
 
     draw() {

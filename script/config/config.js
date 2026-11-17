@@ -22,7 +22,7 @@ const Config = {
     },
 
     wall: {
-        density: 0.2,
+        density: 0.175,
     },
 
     debug: false,

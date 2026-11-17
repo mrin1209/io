@@ -11,7 +11,7 @@ export default class Hexagon {
         this.armor = 100;
         this.power = 30;
         this.penetration = 75;
-        this.recoil = 1.6;
+        this.recoil = 1;
     }
 
     draw() {

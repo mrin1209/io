@@ -11,7 +11,7 @@ export default class Heptagon {
         this.armor = 200;
         this.power = 40;
         this.penetration = 80;
-        this.recoil = 1.75;
+        this.recoil = 1.2;
     }
 
     draw() {

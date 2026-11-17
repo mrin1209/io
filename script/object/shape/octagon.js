@@ -11,7 +11,7 @@ export default class Octagon {
         this.armor = 50;
         this.power = 10;
         this.penetration = 100;
-        this.recoil = 2;
+        this.recoil = 1.4;
     }
 
     draw() {

@@ -11,7 +11,7 @@ export default class Triangle {
         this.armor = 30;
         this.power = 15;
         this.penetration = 15;
-        this.recoil = 1.15;
+        this.recoil = 0.4;
     }
 
     draw() {

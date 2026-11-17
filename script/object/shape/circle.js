@@ -11,7 +11,7 @@ export default class Circle {
         this.armor = 20;
         this.power = 10;
         this.penetration = 10;
-        this.recoil = 1;
+        this.recoil = 0.2;
     }
 
     draw() {
