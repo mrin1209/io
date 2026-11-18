@@ -1,5 +1,5 @@
 export default class Random {
-    constructor(seed = 12345) {
+    constructor(seed = 52519) {
         this.seed = seed;
     }
 
