@@ -122,13 +122,13 @@ export default class ObjectManager {
 
         if (position.level === 1) {
             candidates = [0, 1, 2, 3];
-            weights = [40, 30, 20, 10];
+            weights = [50, 30, 18, 2];
         } else if (position.level === 2) {
             candidates = [0, 1, 2, 3];
-            weights = [20, 30, 40, 10];
+            weights = [15, 50, 25, 10];
         } else {
-            candidates = [3];
-            weights = [100];
+            candidates = [3, 4, 5];
+            weights = [90, 9, 1];
         }
 
         let random = Math.random() * weights.reduce((a, b) => a + b);
@@ -204,7 +204,6 @@ export default class ObjectManager {
     }
 
     target(object) {
-        return null;
         const { x, y, zoom } = object.get();
 
         const halfWidth = Config.view.width / zoom / 2;
