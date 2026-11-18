@@ -7,19 +7,22 @@ import Pentagon from "./shape/pentagon.js";
 import Hexagon from "./shape/hexagon.js";
 import Heptagon from "./shape/heptagon.js";
 import Octagon from "./shape/octagon.js";
+import Random from "../core/random.js";
 
 
 export default class Object {
-    constructor(p, x, y, shapeIndex = 0) {
+    constructor(p, x, y, exp = 0) {
+        this.random = new Random();
+
         this.p = p;
         this.x = x;
         this.y = y;
 
         this.object = {
-            angle: Math.random() * Math.PI * 2,
-            rotationSpeed: (0.0025 + Math.random() * 0.005) * (Math.random() < 0.5 ? -1 : 1),
+            angle: this.random.get() * Math.PI * 2,
+            rotationSpeed: (0.0025 + this.random.get() * 0.005) * (this.random.get() < 0.5 ? -1 : 1),
             power: 5,
-            speed: 0.1 + Math.random() * 0.15,
+            speed: 0.1 + this.random.get() * 0.15,
             deceleration: 0.005,
             regeneration: 0,
             zoom: 2.5,
@@ -35,17 +38,22 @@ export default class Object {
             new Octagon(p)
         ];
 
-        this.shapeIndex = shapeIndex;
+        this.shapeIndex = 0;
         this.shape = this.shapes[this.shapeIndex];
 
-        const direction = Math.random() * Math.PI * 2;
+        const direction = this.random.get() * Math.PI * 2;
         this.rx = Math.cos(direction) * this.object.speed;
         this.ry = Math.sin(direction) * this.object.speed;
 
         this.id = crypto.randomUUID();
         this.level = 1;
-        this.exp = 0;
-        this.totalExp = 50;
+        this.exp = exp;
+        this.totalExp = exp + 50;
+
+        while (this.exp >= this.getRequiredExp()) {
+            this.exp -= this.getRequiredExp();
+            this.levelUp();
+        }
 
         this.object.health = this.shape.armor;
 

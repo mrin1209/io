@@ -1,10 +1,12 @@
 import Config from "../config/config.js";
 import Tanks from "../config/tanks.js";
+import Random from "../core/random.js"
 
 export default class Cpu {
     constructor(p, tank) {
         this.p = p;
         this.tank = tank;
+        this.random = new Random();
     }
 
     run(wallManager) {
@@ -25,14 +27,14 @@ export default class Cpu {
 
     move(wallManager) {
         if (this.moveTimer === undefined || this.moveTimer <= 0) {
-            const moveAngle = Math.random() * Math.PI * 2;
+            const moveAngle = this.random.get() * Math.PI * 2;
 
             this.dx = Math.cos(moveAngle);
             this.dy = Math.sin(moveAngle);
 
-            this.tank.angle = Math.random() * Math.PI * 2;
+            this.tank.angle = this.random.get() * Math.PI * 2;
 
-            this.moveTimer = 60 + Math.floor(Math.random() * 120);
+            this.moveTimer = 60 + Math.floor(this.random.get() * 120);
         }
 
         this.tank.move(this.dx, this.dy, wallManager);
@@ -72,7 +74,7 @@ export default class Cpu {
         const candidates = Tanks[tier][name];
         if (!candidates || !Object.keys(candidates).length) return false;
         const classes = Object.values(candidates);
-        const TankClass = classes[Math.floor(Math.random() * classes.length)];
+        const TankClass = classes[Math.floor(this.random.get() * classes.length)];
 
         if (!this.tank.upgrade()) return false;
 
@@ -90,7 +92,7 @@ export default class Cpu {
         );
 
         if (!items.length) return false;
-        const item = items[Math.floor(Math.random() * items.length)];
+        const item = items[Math.floor(this.random.get() * items.length)];
 
         if (!this.tank.update(item)) return false;
     }

@@ -3,6 +3,7 @@ import Player from "../entity/player.js";
 import Collision from "../core/collision.js";
 import Config from "../config/config.js";
 import Single from "../tank/tier1/Single.js";
+import Random from "../core/random.js";
 
 export default class TankManager {
     constructor(
@@ -25,6 +26,7 @@ export default class TankManager {
         this.logManager = logManager;
         
         this.collision = new Collision();
+        this.random = new Random();
 
         this.count = 0;
 
@@ -39,7 +41,7 @@ export default class TankManager {
 
         if (
             cpuCount < Config.max.tank &&
-            Math.random() < 0.01
+            this.random.get() < 0.01
         ) {
             this.spawn();
         }
@@ -389,11 +391,11 @@ export default class TankManager {
 
         for (let i = 0; i < maxAttempts; i++) {
             const position = {
-                x: this.p.random(
+                x: this.random.get(
                     radius,
                     Config.map.width - radius
                 ),
-                y: this.p.random(
+                y: this.random.get(
                     radius,
                     Config.map.height - radius
                 ),

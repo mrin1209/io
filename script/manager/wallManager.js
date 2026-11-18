@@ -1,6 +1,7 @@
 import Color from "../config/color.js";
 import Collision from "../core/collision.js";
 import Config from "../config/config.js";
+import Random from "../core/random.js";
 
 export default class WallManager {
     constructor(p) {
@@ -9,6 +10,7 @@ export default class WallManager {
         this.walls = [];
 
         this.collision = new Collision();
+        this.random = new Random();
 
         this.chunk = Config.view.chunk;
         this.mapWidth = Config.map.width;
@@ -72,11 +74,11 @@ export default class WallManager {
             const size = this.randomSize(sizes);
 
             const col = Math.floor(
-                Math.random() * (this.columns - size.w - 1)
+                this.random.get() * (this.columns - size.w - 1)
             ) + 1;
 
             const row = Math.floor(
-                Math.random() * (this.rows - size.h - 1)
+                this.random.get() * (this.rows - size.h - 1)
             ) + 1;
 
             // 配置先の重なりを確認
@@ -120,7 +122,7 @@ export default class WallManager {
             0
         );
 
-        let random = Math.random() * totalWeight;
+        let random = this.random.get() * totalWeight;
 
         for (const size of sizes) {
             random -= size.weight;

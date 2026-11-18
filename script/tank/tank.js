@@ -2,9 +2,13 @@ import Status from "../model/status.js";
 import Color from "../config/color.js";
 import Collision from "../core/collision.js";
 import Bullet from "../bullet/bullet.js";
+import Random from "../core/random.js";
 
 export default class Tank {
     constructor(param) {
+        this.collision = new Collision();
+        this.random = new Random();
+
         this.p = param.p;
         this.x = param.x;
         this.y = param.y;
@@ -74,8 +78,6 @@ export default class Tank {
 
         this.active = true;
         this.invincible = 0;
-
-        this.collision = new Collision();
     }
 
     setup(param) {
@@ -350,7 +352,7 @@ export default class Tank {
                         + Math.sin(angle) * gun.x;
 
                     const aim = gun.aim / 2 * Math.PI / 180;
-                    const spread = this.p.random(-aim, aim);
+                    const spread = this.random.get(-aim, aim);
 
                     bullets.push(this.add(x, y, angle + spread, bullet));
                 }

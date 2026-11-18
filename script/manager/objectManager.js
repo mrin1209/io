@@ -1,6 +1,7 @@
 import Collision from "../core/collision.js";
 import Object from "../object/object.js";
 import Config from "../config/config.js";
+import Random from "../core/random.js";
 
 export default class ObjectManager {
     constructor(
@@ -17,12 +18,13 @@ export default class ObjectManager {
         this.logManager = logManager;
 
         this.collision = new Collision();
+        this.random = new Random();
     }
 
     run() {
         if (
             this.objects.length < Config.max.object &&
-            Math.random() < 1
+            this.random.get() < 1
         ) {
             this.spawn();
         }
@@ -121,25 +123,25 @@ export default class ObjectManager {
         let weights;
 
         if (position.level === 1) {
-            candidates = [0, 1, 2, 3];
-            weights = [50, 30, 18, 2];
+            candidates = [0, 50, 150, 350];
+            weights = [53, 40, 10, 2];
         } else if (position.level === 2) {
-            candidates = [0, 1, 2, 3];
-            weights = [15, 50, 25, 10];
+            candidates = [0, 50, 150, 350];
+            weights = [10, 50, 30, 10];
         } else {
-            candidates = [3, 4, 5];
+            candidates = [350, 750, 1550];
             weights = [90, 9, 1];
         }
 
-        let random = Math.random() * weights.reduce((a, b) => a + b);
+        let random = this.random.get() * weights.reduce((a, b) => a + b);
 
-        let shapeIndex = candidates[candidates.length - 1];
+        let exp = candidates[candidates.length - 1];
 
         for (let i = 0; i < weights.length; i++) {
             random -= weights[i];
 
             if (random < 0) {
-                shapeIndex = candidates[i];
+                exp = candidates[i];
                 break;
             }
         }
@@ -148,15 +150,15 @@ export default class ObjectManager {
             this.p,
             position.x,
             position.y,
-            shapeIndex
+            exp
         );
 
         this.objects.push(object);
     }
 
     spawnPosition() {
-        const maxAttempts = 1000;
-        const radius = 50;
+        const maxAttempts = 1;
+        const radius = 100;
 
         const centerX = Config.map.width / 2;
         const centerY = Config.map.height / 2;
@@ -169,8 +171,8 @@ export default class ObjectManager {
 
         for (let i = 0; i < maxAttempts; i++) {
             const position = {
-                x: Math.random() * (Config.map.width - radius * 2) + radius,
-                y: Math.random() * (Config.map.height - radius * 2) + radius,
+                x: this.random.get() * (Config.map.width - radius * 2) + radius,
+                y: this.random.get() * (Config.map.height - radius * 2) + radius,
                 radius,
             };
 
@@ -204,6 +206,7 @@ export default class ObjectManager {
     }
 
     target(object) {
+        return null;
         const { x, y, zoom } = object.get();
 
         const halfWidth = Config.view.width / zoom / 2;
