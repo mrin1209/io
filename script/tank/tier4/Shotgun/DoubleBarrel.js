@@ -27,7 +27,7 @@ export default class DoubleBarrel extends Tank {
             aim: aim,
             length: 20,
             count: 2,
-            recoil: 0.5,
+            recoil: 2,
             type: type,
         }));
 
@@ -47,7 +47,7 @@ export default class DoubleBarrel extends Tank {
             deceleration: 0.01,
             range: range,
             radius: 10,
-            recoil: 1,
+            recoil: 0.5,
         }));
 
         this.previewColor = Color.yellow;

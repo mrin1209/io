@@ -13,8 +13,8 @@ export default class Rocket extends Tank {
 
         this.gun = [
             [0, 0, 0.25],
-            [135, 30, 1.5],
-            [225, 30, 1.5],
+            [135, 30, 0.75],
+            [225, 30, 0.75],
         ].map(([angle, shot, recoil]) => ({
             ...this.gun[0],
             id: 1,
@@ -42,7 +42,7 @@ export default class Rocket extends Tank {
                 deceleration: 0.01, // 減速率
                 range  : 135, // 消滅時間
                 radius   : 10, // 弾丸半径
-                recoil : 1, // 着弾反動
+                recoil : 0.5, // 着弾反動
             }
         ]
 

@@ -12,49 +12,23 @@ export default class Triple extends Tank {
         }
 
         this.gun = [
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: 12.5,
-                angle: 0,
-                shot: 30,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 10,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.3, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: -12.5,
-                angle: 0,
-                shot: 30,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 10,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.3, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: 0,
-                angle: 0,
-                shot: 0,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.3, // 発射反動
-                type: 'normal',
-            },
-        ]
+            [12.5, 30],
+            [-12.5, 30],
+            [0, 0],
+        ].map(([y, shot ]) => ({
+            ...this.gun[0],
+            id: 1,
+            x: 0,
+            y: y,
+            angle: 0,
+            shot: shot,
+            reload : 60, // 連射速度
+            aim    : 10, // 拡散角度
+            length : 10,  // 砲身サイズ
+            count  : 1, // 同時発射数
+            recoil : 0.125, // 発射反動
+            type: 'normal',
+        }));
 
         this.bullet = [
             {
@@ -68,7 +42,7 @@ export default class Triple extends Tank {
                 deceleration: 0.01, // 減速率
                 range  : 135, // 消滅時間
                 radius   : 7.5, // 弾丸半径
-                recoil : 1, // 着弾反動
+                recoil : 0.125, // 着弾反動
             }
         ]
 

@@ -23,7 +23,7 @@ export default class Twin extends Tank {
                 aim    : 10, // 拡散角度
                 length : 15,  // 砲身サイズ
                 count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
+                recoil : 0.25, // 発射反動
                 type: 'normal',
             },
             {
@@ -37,7 +37,7 @@ export default class Twin extends Tank {
                 aim    : 10, // 拡散角度
                 length : 15,  // 砲身サイズ
                 count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
+                recoil : 0.25, // 発射反動
                 type: 'normal',
             },
         ]
@@ -54,7 +54,7 @@ export default class Twin extends Tank {
                 deceleration: 0.01, // 減速率
                 range  : 135, // 消滅時間
                 radius   : 7.5, // 弾丸半径
-                recoil : 1, // 着弾反動
+                recoil : 0.25, // 着弾反動
             }
         ]
 

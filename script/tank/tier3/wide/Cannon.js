@@ -23,7 +23,7 @@ export default class Cannon extends Tank {
                 aim    : 5, // 拡散角度
                 length : 15,  // 砲身サイズ
                 count  : 1, // 同時発射数
-                recoil : 2, // 発射反動
+                recoil : 1, // 発射反動
                 type: 'normal'
             },
         ]

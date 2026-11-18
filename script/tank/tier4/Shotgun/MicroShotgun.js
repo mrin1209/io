@@ -55,7 +55,7 @@ export default class MicroShotgun extends Tank {
             deceleration: 0.01, // 減速率
             range  : range, // 消滅時間
             radius   : 4, // 弾丸半径
-            recoil : 0.2, // 着弾反動
+            recoil : 0.125, // 着弾反動
         }));
 
         this.previewColor = Color.yellow;

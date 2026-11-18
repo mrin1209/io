@@ -27,7 +27,7 @@ export default class Machinegun extends Tank {
             aim    : 10, // 拡散角度
             length : length,  // 砲身サイズ
             count  : 1, // 同時発射数
-            recoil: 0.2, // 発射反動
+            recoil: 0.1, // 発射反動
             type: "normal",
         }));
 
@@ -43,7 +43,7 @@ export default class Machinegun extends Tank {
                 deceleration: 0.01, // 減速率
                 range  : 135, // 消滅時間
                 radius   : 4, // 弾丸半径
-                recoil : 0.2, // 着弾反動
+                recoil : 0.1, // 着弾反動
             }
         ]
 

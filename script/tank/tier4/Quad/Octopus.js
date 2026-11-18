@@ -11,14 +11,22 @@ export default class Octopus extends Tank {
             recoil : 1, // 接触反動
         }
 
-        const angles = [45, 135, 225, 315, 0, 180, 90, 270];
-        this.gun = angles.map((angle, i) => ({
+        this.gun = [
+            [45, 30],
+            [135, 30],
+            [225, 30],
+            [315, 30],
+            [0, 0],
+            [90, 0],
+            [180, 0],
+            [270, 0],
+        ].map(([angle, shot]) => ({
             ...this.gun[0],
             id: 1,
             x: 0,
             y: 0,
             angle: angle,
-            shot: i < 4 ? 30 : 0,
+            shot: shot,
             reload : 60, // 連射速度
             aim    : 10, // 拡散角度
             length : 15,  // 砲身サイズ

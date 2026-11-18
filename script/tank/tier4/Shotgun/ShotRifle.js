@@ -45,7 +45,7 @@ export default class ShotRifle extends Tank {
             deceleration: 0.01,
             range: range,
             radius: 10,
-            recoil: 1,
+            recoil: 0.5,
         }));
 
         this.previewColor = Color.yellow;

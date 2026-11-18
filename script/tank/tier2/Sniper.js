@@ -23,7 +23,7 @@ export default class Sniper extends Tank {
                 aim    : 8, // 拡散角度
                 length : 20,  // 砲身サイズ
                 count  : 1, // 同時発射数
-                recoil : 1.2, // 発射反動
+                recoil : 0.75, // 発射反動
                 type: 'normal',
             },
         ]
@@ -40,7 +40,7 @@ export default class Sniper extends Tank {
                 deceleration: 0.01, // 減速率
                 range  : 135, // 消滅時間
                 radius   : 10, // 弾丸半径
-                recoil : 1.2, // 着弾反動
+                recoil : 0.75, // 着弾反動
             }
         ]
 

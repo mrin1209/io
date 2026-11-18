@@ -47,7 +47,7 @@ export default class Shotgun extends Tank {
             deceleration: 0.01,
             range: range,
             radius: 10,
-            recoil: 1,
+            recoil: 0.25,
         }));
 
         this.previewColor = Color.red;

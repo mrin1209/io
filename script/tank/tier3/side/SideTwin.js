@@ -12,63 +12,24 @@ export default class SideTwin extends Tank {
         }
 
         this.gun = [
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: 10,
-                angle: 0,
-                shot: 0,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: -10,
-                angle: 0,
-                shot: 30,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: 10,
-                angle: 180,
-                shot: 0,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
-                type: 'normal',
-            },
-            {
-                ...this.gun[0],
-                id: 1,
-                x: 0,
-                y: -10,
-                angle: 180,
-                shot: 30,
-                reload : 60, // 連射速度
-                aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
-                count  : 1, // 同時発射数
-                recoil : 0.5, // 発射反動
-                type: 'normal',
-            },
-        ]
+            [10, 0, 0],
+            [-10, 0, 30],
+            [10, 180, 30],
+            [-10, 180, 0]
+        ].map(([y, angle, shot]) => ({
+            ...this.gun[0],
+            id: 1,
+            x: 0,
+            y: y,
+            angle: angle,
+            shot: shot,
+            reload : 60, // 連射速度
+            aim    : 10, // 拡散角度
+            length : 15,  // 砲身サイズ
+            count  : 1, // 同時発射数
+            recoil : 0.25, // 発射反動
+            type: 'normal',
+        }));
 
         this.bullet = [
             {
@@ -82,7 +43,7 @@ export default class SideTwin extends Tank {
                 deceleration: 0.01, // 減速率
                 range  : 135, // 消滅時間
                 radius   : 7.5, // 弾丸半径
-                recoil : 1, // 着弾反動
+                recoil : 0.25, // 着弾反動
             }
         ]
 

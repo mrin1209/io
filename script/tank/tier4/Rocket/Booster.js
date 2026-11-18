@@ -13,10 +13,10 @@ export default class Booster extends Tank {
 
         this.gun = [
             [0, 0, 0.25, 15],
-            [125, 20, 1.5, 10],
-            [235, 20, 1.5, 10],
-            [155, 40, 0.75, 15],
-            [205, 40, 0.75, 15],
+            [125, 20, 0.75, 10],
+            [235, 20, 0.75, 10],
+            [155, 40, 0.5, 15],
+            [205, 40, 0.5, 15],
         ].map(([angle, shot, recoil, length]) => ({
             ...this.gun[0],
             id: 1,
@@ -44,7 +44,7 @@ export default class Booster extends Tank {
                 deceleration: 0.01, // 減速率
                 range  : 135, // 消滅時間
                 radius   : 10, // 弾丸半径
-                recoil : 1, // 着弾反動
+                recoil : 0.5, // 着弾反動
             }
         ]
 
