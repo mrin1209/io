@@ -9,12 +9,35 @@ export default class Field {
     draw() {
         const p = this.p;
 
-        this.p.background(Color.world.back);
+        p.background(Color.world.back);
 
         p.push();
 
-        p.strokeWeight(1);
+        p.noStroke();
 
+        const spawnWidth = Config.map.width * Config.spawn.width;
+        const spawnHeight = Config.map.height * Config.spawn.height;
+
+        p.fill(Color.world.spawn);
+        p.rect(
+            (Config.map.width - spawnWidth) / 2,
+            (Config.map.height - spawnHeight) / 2,
+            spawnWidth,
+            spawnHeight
+        );
+
+        const areaWidth = Config.map.width * Config.area.width;
+        const areaHeight = Config.map.height * Config.area.height;
+
+        p.fill(Color.world.center);
+        p.rect(
+            (Config.map.width - areaWidth) / 2,
+            (Config.map.height - areaHeight) / 2,
+            areaWidth,
+            areaHeight
+        );
+
+        p.strokeWeight(1);
         p.stroke(Color.world.grid);
 
         for (let x = 0; x <= Config.map.width; x += Config.view.grid) {

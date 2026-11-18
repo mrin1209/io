@@ -1,7 +1,7 @@
 const Config = {
     map: {
-        width: 4000,
-        height: 4000,
+        width: 5000,
+        height: 5000,
     },
 
     view: {
@@ -9,6 +9,16 @@ const Config = {
         height: 500,
         chunk: 200,
         grid: 20,
+    },
+
+    area: {
+        width: 0.2,
+        height: 0.2,
+    },
+
+    spawn: {
+        width: 0.6,
+        height: 0.6,
     },
 
     canvas: {
@@ -22,7 +32,7 @@ const Config = {
     },
 
     wall: {
-        density: 0.175,
+        density: 0.2,
     },
 
     debug: false,

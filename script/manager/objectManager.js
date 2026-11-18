@@ -117,18 +117,55 @@ export default class ObjectManager {
         const position = this.spawnPosition();
         if (!position) return;
 
+        let candidates;
+        let weights;
+
+        if (position.level === 1) {
+            candidates = [0, 1, 2, 3];
+            weights = [40, 30, 20, 10];
+        } else if (position.level === 2) {
+            candidates = [0, 1, 2, 3];
+            weights = [20, 30, 40, 10];
+        } else {
+            candidates = [3];
+            weights = [100];
+        }
+
+        let random = Math.random() * weights.reduce((a, b) => a + b);
+
+        let shapeIndex = candidates[candidates.length - 1];
+
+        for (let i = 0; i < weights.length; i++) {
+            random -= weights[i];
+
+            if (random < 0) {
+                shapeIndex = candidates[i];
+                break;
+            }
+        }
+
         const object = new Object(
             this.p,
             position.x,
-            position.y
+            position.y,
+            shapeIndex
         );
 
         this.objects.push(object);
     }
 
     spawnPosition() {
-        const maxAttempts = 1;
-        const radius = 20;
+        const maxAttempts = 1000;
+        const radius = 50;
+
+        const centerX = Config.map.width / 2;
+        const centerY = Config.map.height / 2;
+
+        const areaW = Config.map.width * Config.area.width;
+        const areaH = Config.map.height * Config.area.height;
+
+        const spawnW = Config.map.width * Config.spawn.width;
+        const spawnH = Config.map.height * Config.spawn.height;
 
         for (let i = 0; i < maxAttempts; i++) {
             const position = {
@@ -141,7 +178,25 @@ export default class ObjectManager {
             if (this.collision.outside(position)) continue;
             if (this.wallManager.check(position)) continue;
 
-            return { x: position.x, y: position.y };
+            // スポーン位置からレベルを決定
+            const dx = Math.abs(position.x - centerX);
+            const dy = Math.abs(position.y - centerY);
+
+            let level;
+
+            if (dx <= areaW / 2 && dy <= areaH / 2) {
+                level = 3;
+            } else if (dx <= spawnW / 2 && dy <= spawnH / 2) {
+                level = 2;
+            } else {
+                level = 1;
+            }
+
+            return {
+                x: position.x,
+                y: position.y,
+                level,
+            };
         }
 
         // 安全な座標を見つけられなかった場合
@@ -149,6 +204,7 @@ export default class ObjectManager {
     }
 
     target(object) {
+        return null;
         const { x, y, zoom } = object.get();
 
         const halfWidth = Config.view.width / zoom / 2;

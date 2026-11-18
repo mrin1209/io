@@ -28,6 +28,12 @@ import ShotRifle from "../tank/tier4/Shotgun/ShotRifle.js"
 import DoubleBarrel from "../tank/tier4/Shotgun/DoubleBarrel.js"
 import MicroShotgun from "../tank/tier4/Shotgun/MicroShotgun.js"
 import Gardener from "../tank/tier4/Shotgun/Gardener.js"
+import Crown from "../tank/tier5/Octopus/Crown.js";
+import Mix from "../tank/tier4/Diffusion/Mix.js";
+import Third from "../tank/tier4/Double/Third.js";
+import Burst from "../tank/tier4/Double/Burst.js";
+import CrossFire from "../tank/tier4/Diffusion/CrossFire.js";
+import Trinity from "../tank/tier4/Diffusion/Trinity.js";
 
 const Tanks = {
     tier1: {
@@ -97,16 +103,17 @@ const Tanks = {
             // Launcher: Launcher,
         },
         Diffusion: {
-            // crossFire: CrossFire,
+            CrossFire: CrossFire,
+            Mix: Mix,
+            Trinity: Trinity,
         },
         Assassin: {
             // Deadeye: Deadeye,
         },
         Double: {
-            // third: Third,
+            Third: Third,
             // beamSaber: BeamSaber,
-            // burst: Burst,
-            // mix
+            Burst: Burst,
         },
         HighSpeed: {
             // speedStar: SpeedStar,
@@ -120,7 +127,9 @@ const Tanks = {
     tier5: {
         // Converge
         // Balkan
-        // Crown
+        // Octopus: {
+        //     Crown: Crown,
+        // }
         // Barrage
         // Oneshot
         // Laser

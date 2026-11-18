@@ -282,6 +282,9 @@ export default class TankManager {
                 y: position.y,
                 name: name,
                 type: 'player',
+                // level: 30,
+                // upgradeToken: 5,
+                // updateToken: 100,
             })
         );
 
@@ -375,8 +378,14 @@ export default class TankManager {
     }
 
     spawnPosition() {
-        const maxAttempts = 1000;
-        const radius = 50;
+        const maxAttempts = 2000;
+        const radius = 100;
+
+        const centerX = Config.map.width / 2;
+        const centerY = Config.map.height / 2;
+
+        const areaW = Config.map.width * Config.spawn.width;
+        const areaH = Config.map.height * Config.spawn.height;
 
         for (let i = 0; i < maxAttempts; i++) {
             const position = {
@@ -390,6 +399,12 @@ export default class TankManager {
                 ),
                 radius,
             };
+
+            const insideYellowArea =
+                Math.abs(position.x - centerX) < areaW / 2 &&
+                Math.abs(position.y - centerY) < areaH / 2;
+
+            if (insideYellowArea) continue;
 
             // マップ外・壁との衝突をチェック
             if (this.collision.outside(position)) continue;

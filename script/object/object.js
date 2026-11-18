@@ -10,7 +10,7 @@ import Octagon from "./shape/octagon.js";
 
 
 export default class Object {
-    constructor(p, x, y) {
+    constructor(p, x, y, shapeIndex = 0) {
         this.p = p;
         this.x = x;
         this.y = y;
@@ -35,7 +35,7 @@ export default class Object {
             new Octagon(p)
         ];
 
-        this.shapeIndex = 0;
+        this.shapeIndex = shapeIndex;
         this.shape = this.shapes[this.shapeIndex];
 
         const direction = Math.random() * Math.PI * 2;

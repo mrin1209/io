@@ -30,6 +30,18 @@ export default class WallManager {
             () => Array(this.columns).fill(false)
         );
 
+        const centerW = Math.floor(this.columns * Config.area.width);
+        const centerH = Math.floor(this.rows * Config.area.height);
+
+        const startX = Math.floor((this.columns - centerW) / 2);
+        const startY = Math.floor((this.rows - centerH) / 2);
+
+        for (let y = startY; y < startY + centerH; y++) {
+            for (let x = startX; x < startX + centerW; x++) {
+                occupied[y][x] = true;
+            }
+        }
+
         const sizes = [
             // { w: 1, h: 1, weight: 5 },
             { w: 4, h: 1, weight: 4 },
