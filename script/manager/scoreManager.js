@@ -4,6 +4,8 @@ export default class ScoreManager {
     constructor(p) {
         this.p = p;
 
+        this.tankManager = null;
+
         this.ranking = [];
         this.max = 10;
 
@@ -41,8 +43,9 @@ export default class ScoreManager {
         return null;
     }
 
-    set(tanks) {
+    set() {
         const p = this.p;
+        const tanks = this.tankManager.tanks;
 
         this.ranking = tanks
             .filter(item => item.tank.active)

@@ -33,6 +33,9 @@ export default class Player {
     }
 
     shot(mx, my) {
+        if (Config.debug) {
+            this.debug();
+        }
         return this.tank.shot(mx, my);
     }
 
@@ -128,7 +131,7 @@ export default class Player {
         console.log("最大体力　:", this.tank.tank.armor);
         console.log("機体体力　:", this.tank.tank.health);
         console.log("機体速度　:", this.tank.tank.speed);
-        console.log("接触耐久力:", this.tank.tank.armor);
+        console.log("反動速度　:", this.tank.tank.maxSpeed);
         console.log("接触攻撃力:", this.tank.tank.power);
 
         console.log("--------------------");
@@ -137,9 +140,10 @@ export default class Player {
             const { gun, bullet, dps, distance } = details[i];
 
             console.log(`Gun ${i + 1} (${gun.id})`);
-            console.log("連射速度　:", gun.reload);
+            console.log("連射速度　:", gun.reload / this.tank.tank.count);
             console.log("弾頭数　　:", gun.count);
             console.log("弾丸速度　:", bullet.speed);
+            console.log("消滅時間　:", bullet.range);
             console.log("耐久力　　:", bullet.armor);
             console.log("攻撃力　　:", bullet.power);
             console.log("秒速火力　:", dps.toFixed(2));

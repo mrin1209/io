@@ -23,9 +23,10 @@ export default class Tank {
 
         this.tank = {
             speed  : 2,   // 移動速度
+            maxSpeed: 2,   // 最大速度
             armor  : 100, // 機体体力
-            power  : 30,  // 機体攻撃力
-            penetration : 30, // 弾丸攻撃力
+            power  : 25,  // 機体攻撃力
+            penetration : 25, // 弾丸攻撃力
             acceleration: 1 / 60, // 機体加速率
             deceleration: 1 / 60, // 機体減速率
             zoom   : 1, // ズーム率
@@ -95,27 +96,7 @@ export default class Tank {
             for (const item of this.status.items) {
                 const [group, property] = item.key.split(".");
 
-                if (group === "tank") {
-                    this.tank[property] =
-                        this.baseStats.tank[property] *
-                        (1 + item.rate * item.direction * item.count);
-                }
-
-                if (group === "gun") {
-                    for (let i = 0; i < this.gun.length; i++) {
-                        this.gun[i][property] =
-                            this.baseStats.gun[i][property] *
-                            (1 + item.rate * item.direction * item.count);
-                    }
-                }
-
-                if (group === "bullet") {
-                    for (let i = 0; i < this.bullet.length; i++) {
-                        this.bullet[i][property] =
-                            this.baseStats.bullet[i][property] *
-                            (1 + item.rate * item.direction * item.count);
-                    }
-                }
+                this.applyStatus(item, group, property, item.count);
             }
         }
 
@@ -124,7 +105,6 @@ export default class Tank {
         this.type = param.type ?? this.type;
         this.upgradeToken = param.upgradeToken ?? this.upgradeToken;
         this.updateToken = param.updateToken ?? this.updateToken;
-        this.tank.health = param.health ?? this.tank.armor;
         this.tank.regeneration = param.regeneration ?? this.tank.regeneration;
         this.exp = param.exp ?? this.exp;
         this.totalExp = param.totalExp ?? this.totalExp;
@@ -133,9 +113,16 @@ export default class Tank {
 
         this.color = this.color ?? (this.type === 'player' ? Color.blue : Color.red);
 
+        const health = param.health;
+
         for (let i = 0; i < (param.level ?? 0); i++) {
             this.levelUp(false);
         }
+
+        this.tank.health = Math.min(
+            health ?? this.tank.armor,
+            this.tank.armor
+        );
     }
 
     run() {
@@ -357,8 +344,8 @@ export default class Tank {
                     bullets.push(this.add(x, y, angle + spread, bullet));
                 }
 
-                this.rx -= Math.cos(angle) * gun.recoil;
-                this.ry -= Math.sin(angle) * gun.recoil;
+                this.rx = Math.max(-this.tank.maxSpeed, Math.min(this.tank.maxSpeed, this.rx - Math.cos(angle) * gun.recoil));
+                this.ry = Math.max(-this.tank.maxSpeed, Math.min(this.tank.maxSpeed, this.ry - Math.sin(angle) * gun.recoil));
             }
         }
 
@@ -412,8 +399,8 @@ export default class Tank {
         }
 
         if (target.class === 'bullet') {
-            this.rx += Math.cos(target.angle) * target.recoil;
-            this.ry += Math.sin(target.angle) * target.recoil;
+            this.rx = Math.max(-this.tank.maxSpeed, Math.min(this.tank.maxSpeed, this.rx + Math.cos(target.angle) * target.recoil));
+            this.ry = Math.max(-this.tank.maxSpeed, Math.min(this.tank.maxSpeed, this.ry + Math.sin(target.angle) * target.recoil));
         }
 
         this.tank.health -= target.power;
@@ -464,6 +451,14 @@ export default class Tank {
             this.tank.radius = this.baseRadius + this.level * 0.25;
             this.tank.zoom = this.baseZoom * Math.pow(this.baseRadius / this.tank.radius, 0.25);
 
+            this.tank.recoil +=  0.01;
+            this.tank.speed = Math.round((this.tank.speed - 0.01) * 100) / 100;
+            this.tank.maxSpeed = Math.round((this.tank.maxSpeed + 0.01) * 100) / 100;
+            this.tank.power +=  0.5;
+            this.tank.penetration +=  0.5;
+            this.tank.armor +=  2;
+            this.tank.health = Math.min(this.tank.health + 2, this.tank.armor);
+
             if (token && this.level <= 40) {
                 this.updateToken++;
 
@@ -484,48 +479,53 @@ export default class Tank {
 
     update(status) {
         if (!this.updateToken) return false;
-        this.updateToken--;
 
         const item = this.status.update(status.key);
         if (!item) return false;
 
+        this.updateToken--;
+
         const [group, property] = status.key.split(".");
 
+        this.applyStatus(item, group, property, 1);
+
+        return true;
+    }
+
+    applyStatus(item, group, property, count) {
         if (group === "tank") {
-            this.tank[property] =
-                this.baseStats.tank[property] *
-                (1 + item.rate * item.direction * item.count);
+            if (property === "count") {
+                this.tank[property] = this.baseStats.tank[property] * (1 + item.rate * item.direction * item.count);
+            } else {
+                this.tank[property] = Math.round((this.tank[property] + item.rate * item.direction * count) * 100) / 100;
+            }
 
             if (property === "armor") {
-                const increase = this.baseStats.tank.armor * item.rate * item.direction;
-                this.tank.health = Math.min(
-                    this.tank.armor,
-                    this.tank.health + increase
-                );
+                this.tank.health = Math.min(this.tank.health + item.rate * item.direction * count, this.tank.armor);
             }
-        }
 
-        if (group === "gun") {
-            for (let i = 0; i < this.gun.length; i++) {
-                this.gun[i][property] =
-                    this.baseStats.gun[i][property] *
-                    (1 + item.rate * item.direction * item.count);
+            if (property === "power") {
+                this.tank.penetration = Math.round((this.tank.penetration + item.rate * item.direction * count) * 100) / 100;
+            }
 
-                if (property === "reload") {
-                    this.gun[i][property] = Math.max(1, this.gun[i][property]);
-                }
+            if (property === "speed") {
+                this.tank.maxSpeed = Math.round((this.tank.maxSpeed + item.rate * item.direction * count) * 100) / 100;
             }
         }
 
         if (group === "bullet") {
             for (let i = 0; i < this.bullet.length; i++) {
-                this.bullet[i][property] =
-                    this.baseStats.bullet[i][property] *
-                    (1 + item.rate * item.direction * item.count);
+                this.bullet[i][property] = this.baseStats.bullet[i][property] * (1 + item.rate * item.direction * item.count);
+
+                if (property === "power") {
+                    this.bullet[i].penetration = this.baseStats.bullet[i].penetration * (1 + item.rate * item.direction * item.count);
+                }
+
+                if (property === "speed") {
+                    this.bullet[i].range = this.bullet[i].range - count * 2.5;
+                }
             }
         }
-
-        return true;
     }
 
     drawLight() {

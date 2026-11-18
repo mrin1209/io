@@ -8,6 +8,8 @@ export default class ObjectManager {
         p,
         wallManager,
         bulletManager,
+        upgradeManager,
+        scoreManager,
         logManager,
     ) {
         this.p = p;
@@ -15,6 +17,8 @@ export default class ObjectManager {
 
         this.wallManager = wallManager;
         this.bulletManager = bulletManager;
+        this.upgradeManager = upgradeManager;
+        this.scoreManager = scoreManager;
         this.logManager = logManager;
 
         this.collision = new Collision();
@@ -82,6 +86,12 @@ export default class ObjectManager {
                     if (object.hit(bullet.get())) {
                         bullet.owner.kill(object.get());
                         object.death(bullet.get());
+
+                        this.scoreManager.set();
+
+                        if (bullet.owner.get().type === 'player') {
+                            this.upgradeManager.set(bullet.owner);
+                        }
                     }
                 } else {
                     bullet.collisions.delete(object.get().id);

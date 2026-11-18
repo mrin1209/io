@@ -26,6 +26,8 @@ export default class Game {
         this.upgradeManager = new UpgradeManager(this.p);
         this.updateManager = new UpdateManager(this.p);
 
+        this.scoreManager = new ScoreManager(this.p);
+
         this.bulletManager = new BulletManager(
             this.p,
             this.wallManager,
@@ -35,10 +37,10 @@ export default class Game {
             this.p,
             this.wallManager,
             this.bulletManager,
+            this.upgradeManager,
+            this.scoreManager,
             this.logManager,
         );
-
-        this.scoreManager = new ScoreManager(this.p);
 
         this.tankManager = new TankManager(
             this.p,
@@ -49,6 +51,8 @@ export default class Game {
             this.scoreManager,
             this.logManager,
         );
+
+        this.scoreManager.tankManager = this.tankManager;
 
         this.mapManager = new MapManager(
             this.p,
@@ -231,6 +235,6 @@ export default class Game {
         if (this.tankManager.player) {
             this.upgradeManager.set(this.tankManager.player);
         }
-        this.scoreManager.set(this.tankManager.tanks);
+        this.scoreManager.set();
     }
 }

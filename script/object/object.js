@@ -9,7 +9,6 @@ import Heptagon from "./shape/heptagon.js";
 import Octagon from "./shape/octagon.js";
 import Random from "../core/random.js";
 
-
 export default class Object {
     constructor(p, x, y, exp = 0) {
         this.random = new Random();
@@ -23,6 +22,7 @@ export default class Object {
             rotationSpeed: (0.0025 + this.random.get() * 0.005) * (this.random.get() < 0.5 ? -1 : 1),
             power: 5,
             speed: 0.1 + this.random.get() * 0.15,
+            maxSpeed: 1,
             deceleration: 0.005,
             regeneration: 0,
             zoom: 2.5,
@@ -88,7 +88,7 @@ export default class Object {
         p.strokeWeight(2);
         p.fill(this.shape.color.fill);
 
-        this.shape.draw();;
+        this.shape.draw();
 
         p.pop();
     }
@@ -146,8 +146,8 @@ export default class Object {
 
     hit(target) {
         if (target.class === 'bullet') {
-            this.rx += Math.cos(target.angle) * target.recoil;
-            this.ry += Math.sin(target.angle) * target.recoil;
+            this.rx = Math.max(-this.object.maxSpeed, Math.min(this.object.maxSpeed, this.rx + Math.cos(target.angle) * target.recoil));
+            this.ry = Math.max(-this.object.maxSpeed, Math.min(this.object.maxSpeed, this.ry + Math.sin(target.angle) * target.recoil));
 
             this.object.health -= target.power;
         }
