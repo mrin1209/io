@@ -267,7 +267,7 @@ export default class TankManager {
         if (!tank.update()) return false;
     }
 
-    add(name) {
+    spawn(name) {
         const position = this.spawnPosition();
         if (!position) return;
 
@@ -276,55 +276,44 @@ export default class TankManager {
             position.y = Config.map.height / 2;
         }
 
-        const player = new Player(
-            this.p,
-            new Single({
-                p: this.p,
-                x: position.x,
-                y: position.y,
-                name: name,
-                type: 'player',
-                ...(Config.debug && {
-                    level: 0,
-                    upgradeToken: 5,
-                    updateToken: 100,
-                }),
-            })
-        );
+        let tank;
 
-        this.tanks.push(player);
-        this.player = player;
+        if (name) {
+            tank = new Player(
+                this.p,
+                new Single({
+                    p: this.p,
+                    x: position.x,
+                    y: position.y,
+                    name: name,
+                    type: 'player',
+                    ...(Config.debug && {
+                        level: 0,
+                        upgradeToken: 5,
+                        updateToken: 100,
+                    }),
+                })
+            );
 
-        this.logManager.spawn(player.get());
-        this.scoreManager.set();
-        this.upgradeManager.set(player);
-    }
+            this.player = tank;
+            this.upgradeManager.set(tank);
+        } else {
+            tank = new Cpu(
+                this.p,
+                new Single({
+                    p: this.p,
+                    x: position.x,
+                    y: position.y,
+                    name: `cpu${this.count}`,
+                    type: 'cpu',
+                })
+            );
 
-    spawn() {
-        const position = this.spawnPosition();
-        if (!position) return;
-
-        if (Config.debug) {
-            position.x = Config.map.width / 2;
-            position.y = Config.map.height / 2;
+            this.count++;
         }
 
-        const cpu = new Cpu(
-            this.p,
-            new Single({
-                p: this.p,
-                x: position.x,
-                y: position.y,
-                name: `cpu${this.count}`,
-                type: 'cpu',
-            })
-        );
-
-        this.tanks.push(cpu);
-
-        this.count++;
-
-        this.logManager.spawn(cpu.get());
+        this.tanks.push(tank);
+        this.logManager.spawn(tank.get());
         this.scoreManager.set();
     }
 

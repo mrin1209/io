@@ -66,11 +66,34 @@ export default class Game {
         this.drawHealth = new Health(this.p);
         this.drawName = new Name(this.p);
 
-        // for (let i = 0; i < 60 * 60; i++) {
-        //     this.loop();
-        // }
+        const start = performance.now();
+        const total = 60 * 60;
+
+        for (let i = 0; i < total; i++) {
+            this.loop();
+
+            if (i % (total / 10) === 0) {
+                console.log(`Loading... ${Math.floor(i / total * 100)}%`);
+            }
+        }
+        console.log("Loading complete!");
+        console.log(`Loading time: ${((performance.now() - start) / 1000).toFixed(2)} seconds`);
 
         this.setup();
+    }
+
+    setup() {
+        const input = document.getElementById("name-input");
+
+        addEventListener("keydown", event => {
+            if (this.tankManager.player) return;
+            if (event.key !== "Enter") return;
+            if (this.tankManager.spawn(input.value.trim())) {
+                input.style.display = "none";
+            }
+        });
+
+        this.nameInput = input;
     }
 
     run() {
@@ -78,7 +101,11 @@ export default class Game {
 
         this.loop();
 
-        this.updateNameInput();
+        if (this.tankManager.player) {
+            this.nameInput.style.display = "none";
+        } else {
+            this.nameInput.style.display = "block";
+        }
 
         p.push();
 
@@ -176,6 +203,13 @@ export default class Game {
         }
     }
 
+    resize() {
+        if (this.tankManager.player) {
+            this.upgradeManager.set(this.tankManager.player);
+        }
+        this.scoreManager.set();
+    }
+
     zoom(delta) {
         if (!Config.debug) return;
         if (!this.tankManager.player) return;
@@ -188,60 +222,6 @@ export default class Game {
         } else {
             this.tankManager.player.tank.tank.zoom -= zoomSpeed;
             this.tankManager.player.tank.baseZoom -= zoomSpeed;
-        }
-    }
-
-    resize() {
-        if (this.tankManager.player) {
-            this.upgradeManager.set(this.tankManager.player);
-        }
-        this.scoreManager.set();
-    }
-
-    setup() {
-        const input = document.createElement("input");
-
-        input.type = "text";
-        input.value = "player";
-        input.placeholder = "名前を入力してください";
-        input.maxLength = 10;
-
-        input.style.position = "fixed";
-        input.style.left = "50%";
-        input.style.top = "70%";
-        input.style.transform = "translate(-50%, -50%)";
-        input.style.width = "200px";
-        input.style.padding = "12px";
-        input.style.fontSize = "18px";
-        input.style.textAlign = "center";
-        input.style.zIndex = "1000";
-        input.style.display = "none";
-
-        document.body.appendChild(input);
-
-        addEventListener("keydown", event => {
-            if (event.key !== "Enter") return;
-
-            const name = input.value.trim();
-
-            if (this.tankManager.player) return;
-
-            const success = this.tankManager.add(name);
-
-            if (success) {
-                input.value = "";
-                input.style.display = "none";
-            }
-        });
-
-        this.nameInput = input;
-    }
-
-    updateNameInput() {
-        if (this.tankManager.player) {
-            this.nameInput.style.display = "none";
-        } else {
-            this.nameInput.style.display = "block";
         }
     }
 }

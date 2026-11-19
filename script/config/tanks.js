@@ -127,9 +127,9 @@ const Tanks = {
     tier5: {
         // Converge
         // Balkan
-        // Octopus: {
-        //     Crown: Crown,
-        // }
+        Octopus: {
+            Crown: Crown,
+        }
         // Barrage
         // Oneshot
         // Laser

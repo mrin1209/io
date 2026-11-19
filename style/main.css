@@ -1,0 +1,21 @@
+html {
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#name-input {
+    position: fixed;
+    left: 50%;
+    top: 70%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    padding: 12px;
+    font-size: 18px;
+    text-align: center;
+    z-index: 1000;
+    display: none;
+}
