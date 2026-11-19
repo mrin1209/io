@@ -19,10 +19,10 @@ export default class Health {
 
         const p = this.p;
 
-        const max = target.get().armor;
+        const max = tank.armor;
         const rate = Math.max(
             0,
-            Math.min(1, target.get().health / max)
+            Math.min(1, tank.health / max)
         );
 
         p.push();
@@ -52,7 +52,7 @@ export default class Health {
         p.textSize(this.layout.textSize);
         p.textAlign(p.CENTER, p.CENTER);
         p.text(
-            `${Math.round(target.get().armor)} / ${Math.round(target.get().health)}`,
+            `${Math.round(tank.armor)} / ${Math.round(tank.health)}`,
             p.width / 2,
             this.layout.padding + this.layout.height / 2
         );
