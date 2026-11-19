@@ -57,6 +57,7 @@ export default class ScoreManager {
                     x: 0,
                     y: 0,
                     previewScale: this.layout.size / item.tank.get().radius,
+                    totalExp: item.tank.get().totalExp,
                     level: item.tank.get().level,
                     id: item.tank.get().id,
                     name: item.tank.get().name,
@@ -90,7 +91,7 @@ export default class ScoreManager {
             p.strokeWeight(this.layout.strokeWeight);
             p.fill(Color.name.color);
             p.text(
-                `${tank.get().name} (${tank.get().level})`,
+                `${tank.name} - ${tank.totalExp >= 1000 ? (tank.totalExp / 1000).toFixed(1).replace(/\.0$/, '') + 'K' : tank.totalExp}`,
                 x,
                 y
             );

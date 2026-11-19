@@ -56,14 +56,20 @@ export default class ObjectManager {
                         objectA.death(objectB.get());
 
                         if (objectB.shapeIndex === 6) {
-                            this.logManager.object(objectB.get());
+                            if (!objectB.lastShape && !objectA.lastShape) {
+                                objectB.lastShape = true;
+                                this.logManager.object(objectB.get());
+                            }
                         }
                     } else if (objectB.hit(objectA.get())) {
                         objectA.kill(objectB.get());
                         objectB.death(objectA.get());
 
                         if (objectA.shapeIndex === 6) {
-                            this.logManager.object(objectA.get());
+                            if (!objectA.lastShape && !objectB.lastShape) {
+                                objectA.lastShape = true;
+                                this.logManager.object(objectA.get());
+                            }
                         }
                     }
                 }

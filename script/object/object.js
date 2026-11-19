@@ -48,7 +48,8 @@ export default class Object {
         this.id = crypto.randomUUID();
         this.level = 1;
         this.exp = exp;
-        this.totalExp = exp + 50;
+        this.totalExp = exp;
+        this.lastShape = false;
 
         while (this.exp >= this.getRequiredExp()) {
             this.exp -= this.getRequiredExp();
@@ -212,10 +213,15 @@ export default class Object {
                 this.shape.armor,
                 this.object.health + target.armor
             );
+
+            this.exp += target.totalExp + 50;
+            this.totalExp += target.totalExp + 50;
         }
 
-        this.exp += target.totalExp;
-        this.totalExp += target.totalExp;
+        if (target.class === 'tank') {
+            this.exp += target.totalExp + 100;
+            this.totalExp += target.totalExp + 100;
+        }
 
         while (this.exp >= this.getRequiredExp()) {
             this.exp -= this.getRequiredExp();
@@ -235,7 +241,7 @@ export default class Object {
         this.level++;
 
         if (this.shapeIndex >= this.shapes.length - 1) {
-            this.shape.armor += 10;
+            this.shape.armor += 50;
             this.shape.power += 10;
             this.shape.penetration += 10;
             this.shape.radius += 2;

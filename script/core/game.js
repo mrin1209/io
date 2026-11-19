@@ -1,3 +1,4 @@
+import Config from "../config/config.js";
 import Camera from "./camera.js";
 import Field from "./field.js";
 import LogManager from "../manager/logManager.js";
@@ -9,8 +10,8 @@ import UpgradeManager from "../manager/upgradeManager.js";
 import UpdateManager from "../manager/updateManager.js";
 import ScoreManager from "../manager/scoreManager.js";
 import MapManager from "../manager/mapManager.js";
-import LevelManager from "../manager/levelManager.js"
-import Config from "../config/config.js";
+import Level from "../draw/level.js"
+import Health from "../draw/health.js";
 
 export default class Game {
     constructor(p) {
@@ -60,60 +61,14 @@ export default class Game {
             this.tankManager
         );
 
-        this.levelManager = new LevelManager(this.p);
+        this.drawLevel = new Level(this.p);
+        this.drawHealth = new Health(this.p);
 
         // for (let i = 0; i < 60 * 60; i++) {
         //     this.loop();
         // }
 
         this.setup();
-    }
-
-    setup() {
-        const input = document.createElement("input");
-
-        input.type = "text";
-        input.value = "player";
-        input.placeholder = "名前を入力してください";
-        input.maxLength = 10;
-
-        input.style.position = "fixed";
-        input.style.left = "50%";
-        input.style.top = "70%";
-        input.style.transform = "translate(-50%, -50%)";
-        input.style.width = "200px";
-        input.style.padding = "12px";
-        input.style.fontSize = "18px";
-        input.style.textAlign = "center";
-        input.style.zIndex = "1000";
-        input.style.display = "none";
-
-        document.body.appendChild(input);
-
-        addEventListener("keydown", event => {
-            if (event.key !== "Enter") return;
-
-            const name = input.value.trim();
-
-            if (this.tankManager.player) return;
-
-            const success = this.tankManager.add(name);
-
-            if (success) {
-                input.value = "";
-                input.style.display = "none";
-            }
-        });
-
-        this.nameInput = input;
-    }
-
-    updateNameInput() {
-        if (this.tankManager.player) {
-            this.nameInput.style.display = "none";
-        } else {
-            this.nameInput.style.display = "block";
-        }
     }
 
     run() {
@@ -139,10 +94,12 @@ export default class Game {
 
         this.updateManager.draw(tank);
         this.upgradeManager.draw(tank);
-        this.levelManager.draw(tank);
         this.mapManager.draw();
         this.scoreManager.draw();
         this.logManager.draw();
+
+        this.drawLevel.draw(tank);
+        this.drawHealth.draw(tank);
 
         p.pop();
     }
@@ -236,5 +193,52 @@ export default class Game {
             this.upgradeManager.set(this.tankManager.player);
         }
         this.scoreManager.set();
+    }
+
+    setup() {
+        const input = document.createElement("input");
+
+        input.type = "text";
+        input.value = "player";
+        input.placeholder = "名前を入力してください";
+        input.maxLength = 10;
+
+        input.style.position = "fixed";
+        input.style.left = "50%";
+        input.style.top = "70%";
+        input.style.transform = "translate(-50%, -50%)";
+        input.style.width = "200px";
+        input.style.padding = "12px";
+        input.style.fontSize = "18px";
+        input.style.textAlign = "center";
+        input.style.zIndex = "1000";
+        input.style.display = "none";
+
+        document.body.appendChild(input);
+
+        addEventListener("keydown", event => {
+            if (event.key !== "Enter") return;
+
+            const name = input.value.trim();
+
+            if (this.tankManager.player) return;
+
+            const success = this.tankManager.add(name);
+
+            if (success) {
+                input.value = "";
+                input.style.display = "none";
+            }
+        });
+
+        this.nameInput = input;
+    }
+
+    updateNameInput() {
+        if (this.tankManager.player) {
+            this.nameInput.style.display = "none";
+        } else {
+            this.nameInput.style.display = "block";
+        }
     }
 }

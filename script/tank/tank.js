@@ -31,9 +31,11 @@ export default class Tank {
             deceleration: 1 / 60, // 機体減速率
             zoom   : 1, // ズーム率
             radius : this.baseRadius,  // 機体半径
-            regeneration: 0, // 再生速度
+            regeneration: 600, // 再生時間
+            heal: 0.1, // 再生力
             recoil : 1, // 接触反動
-            count  : 1, // 発射間隔
+            healCount : 0,
+            shotCount  : 1, // 発射間隔
         }
 
         this.gun = [
@@ -69,7 +71,7 @@ export default class Tank {
         this.id = crypto.randomUUID();
         this.level = 0;
         this.exp = 0;
-        this.totalExp = 100;
+        this.totalExp = 0;
         this.upgradeToken = 0;
         this.updateToken = 0;
         this.tier = 1;
@@ -105,7 +107,7 @@ export default class Tank {
         this.type = param.type ?? this.type;
         this.upgradeToken = param.upgradeToken ?? this.upgradeToken;
         this.updateToken = param.updateToken ?? this.updateToken;
-        this.tank.regeneration = param.regeneration ?? this.tank.regeneration;
+        this.tank.healCount = param.healCount ?? this.tank.healCount;
         this.exp = param.exp ?? this.exp;
         this.totalExp = param.totalExp ?? this.totalExp;
         this.tier = param.tier ?? this.tier;
@@ -129,7 +131,7 @@ export default class Tank {
         if (!this.gun.some(gun => gun.shot <= 0)) {
             for (const gun of this.gun) {
                 if (gun.shot > 0) {
-                    gun.shot -= this.tank.count;
+                    gun.shot -= this.tank.shotCount;
                 }
             }
         } else {
@@ -142,7 +144,7 @@ export default class Tank {
             this.invincible--;
         }
 
-        this.heel();
+        this.heal();
     }
 
     draw() {
@@ -404,25 +406,25 @@ export default class Tank {
         }
 
         this.tank.health -= target.power;
-        this.tank.regeneration = 600;
+        this.tank.healCount = this.tank.regeneration;
 
         return this.tank.health <= 0;
     }
 
-    heel() {
+    heal() {
         if (this.tank.health >= this.tank.armor) {
             this.tank.health = this.tank.armor;
             return;
         }
 
-        if (this.tank.regeneration > 0) {
-            this.tank.regeneration--;
+        if (this.tank.healCount > 0) {
+            this.tank.healCount--;
             return;
         }
 
         this.tank.health = Math.min(
             this.tank.armor,
-            this.tank.health + 0.1
+            this.tank.health + this.tank.heal
         );
     }
 
@@ -431,8 +433,15 @@ export default class Tank {
     }
 
     kill(target) {
-        this.exp += target.totalExp;
-        this.totalExp += target.totalExp;
+        if (target.class === 'object') {
+            this.exp += target.totalExp + 50;
+            this.totalExp += target.totalExp + 50;
+        }
+
+        if (target.class === 'tank') {
+            this.exp += target.totalExp + 100;
+            this.totalExp += target.totalExp + 100;
+        }
 
         while (this.exp >= this.getRequiredExp()) {
             this.exp -= this.getRequiredExp();
@@ -454,10 +463,12 @@ export default class Tank {
             this.tank.recoil +=  0.01;
             this.tank.speed = Math.round((this.tank.speed - 0.01) * 100) / 100;
             this.tank.maxSpeed = Math.round((this.tank.maxSpeed + 0.01) * 100) / 100;
-            this.tank.power +=  0.5;
-            this.tank.penetration +=  0.5;
-            this.tank.armor +=  2;
+            this.tank.power = Math.round((this.tank.power + 0.5) * 100) / 100;
+            this.tank.penetration = Math.round((this.tank.penetration + 0.5) * 100) / 100;
+            this.tank.armor = Math.round((this.tank.armor + 2) * 100) / 100;
             this.tank.health = Math.min(this.tank.health + 2, this.tank.armor);
+            this.tank.regeneration = Math.round((this.tank.regeneration - 2.4) * 100) / 100;
+            this.tank.heal = Math.round((this.tank.heal + 0.002) * 1000) / 1000;
 
             if (token && this.level <= 40) {
                 this.updateToken++;
@@ -502,6 +513,8 @@ export default class Tank {
 
             if (property === "armor") {
                 this.tank.health = Math.min(this.tank.health + item.rate * item.direction * count, this.tank.armor);
+                this.tank.regeneration = Math.max(0, this.tank.regeneration - 12 * count);
+                this.tank.heal = Math.round((this.tank.heal + 0.01 * count) * 1000) / 1000;
             }
 
             if (property === "power") {
@@ -660,7 +673,7 @@ export default class Tank {
             name: this.name,
             active: this.active,
             health: this.tank.health,
-            regeneration: this.tank.regeneration,
+            healCount: this.tank.healCount,
             power: this.tank.power,
             armor: this.tank.armor,
             penetration : this.tank.penetration,
