@@ -56,13 +56,13 @@ export default class Tank {
         this.bullet = [
             {
                 id: 1,
-                speed  : 3, // 弾丸速度
+                speed  : 2, // 弾丸速度
                 armor  : 10, // 弾丸耐久力
                 power  : 10, // 攻撃力
                 penetration : 10, // 弾丸攻撃力
                 duration: 30, // 初速持続時間
                 deceleration: 0.01, // 減速率
-                range  : 135, // 消滅時間
+                range  : 180, // 消滅時間
                 radius   : 10, // 弾丸半径
                 recoil : 0.5, // 着弾反動
             }
@@ -145,87 +145,6 @@ export default class Tank {
         }
 
         this.heal();
-    }
-
-    draw() {
-        const p = this.p;
-
-        p.push();
-
-        p.translate(this.x, this.y);
-        p.rotate(this.angle);
-        p.scale(this.previewScale);
-
-        p.rectMode(p.CORNER);
-
-        p.stroke(Color.gun.border);
-        p.strokeWeight(2);
-        p.fill(Color.gun.fill);
-
-        for (const gun of this.gun) {
-            const bullet = this.bullet.find(item => item.id === gun.id);
-
-            p.push();
-            p.translate(gun.x, gun.y);
-            p.rotate(gun.angle * Math.PI / 180);
-
-            switch (gun.type) {
-                case 'normal':
-                    p.rect(
-                        0,
-                        -bullet.radius,
-                        this.tank.radius + gun.length,
-                        bullet.radius * 2
-                    );
-                    break;
-                case 'wide':
-                    p.beginShape();
-                    p.vertex(0, -bullet.radius);
-                    p.vertex(this.tank.radius, -bullet.radius);
-                    p.vertex(this.tank.radius + gun.length, -bullet.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
-                    p.vertex(this.tank.radius + gun.length, bullet.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
-                    p.vertex(this.tank.radius, bullet.radius);
-                    p.vertex(0, bullet.radius);
-                    p.endShape(p.CLOSE);
-                    break;
-                case 'shotgun':
-                    p.rect(
-                        0,
-                        -bullet.radius,
-                        this.tank.radius + gun.length,
-                        bullet.radius * 2
-                    );
-
-                    p.beginShape();
-                    p.vertex(this.tank.radius + gun.length / 2, -bullet.radius);
-                    p.vertex(this.tank.radius + gun.length, -bullet.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
-                    p.vertex(this.tank.radius + gun.length, bullet.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
-                    p.vertex(this.tank.radius + gun.length / 2, bullet.radius);
-                    p.endShape(p.CLOSE);
-                    break;
-                case 'trap':
-                    p.rect(
-                        0,
-                        -bullet.radius,
-                        this.tank.radius + gun.length,
-                        bullet.radius * 2
-                    );
-                    break;
-            }
-            p.pop();
-        }
-
-        p.stroke(this.color.border);
-        p.strokeWeight(2);
-        p.fill(this.color.fill);
-
-        p.circle(
-            0,
-            0,
-            this.tank.radius * 2,
-        );
-
-        p.pop();
     }
 
     move(x, y, wallManager) {
@@ -535,10 +454,95 @@ export default class Tank {
                 }
 
                 if (property === "speed") {
-                    this.bullet[i].range = this.bullet[i].range - count * 2.5;
+                    const distance = this.baseStats.bullet[i].speed
+                        * this.baseStats.bullet[i].range
+                        + 20 * item.direction * item.count;
+
+                    this.bullet[i].range = distance / this.bullet[i].speed;
                 }
             }
         }
+    }
+
+    draw() {
+        const p = this.p;
+
+        p.push();
+
+        p.translate(this.x, this.y);
+        p.rotate(this.angle);
+        p.scale(this.previewScale);
+
+        p.rectMode(p.CORNER);
+
+        p.stroke(Color.gun.border);
+        p.strokeWeight(2);
+        p.fill(Color.gun.fill);
+
+        for (const gun of this.gun) {
+            const bullet = this.bullet.find(item => item.id === gun.id);
+
+            p.push();
+            p.translate(gun.x, gun.y);
+            p.rotate(gun.angle * Math.PI / 180);
+
+            switch (gun.type) {
+                case 'normal':
+                    p.rect(
+                        0,
+                        -bullet.radius,
+                        this.tank.radius + gun.length,
+                        bullet.radius * 2
+                    );
+                    break;
+                case 'wide':
+                    p.beginShape();
+                    p.vertex(0, -bullet.radius);
+                    p.vertex(this.tank.radius, -bullet.radius);
+                    p.vertex(this.tank.radius + gun.length, -bullet.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius + gun.length, bullet.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius, bullet.radius);
+                    p.vertex(0, bullet.radius);
+                    p.endShape(p.CLOSE);
+                    break;
+                case 'shotgun':
+                    p.rect(
+                        0,
+                        -bullet.radius,
+                        this.tank.radius + gun.length,
+                        bullet.radius * 2
+                    );
+
+                    p.beginShape();
+                    p.vertex(this.tank.radius + gun.length / 2, -bullet.radius);
+                    p.vertex(this.tank.radius + gun.length, -bullet.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius + gun.length, bullet.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius + gun.length / 2, bullet.radius);
+                    p.endShape(p.CLOSE);
+                    break;
+                case 'trap':
+                    p.rect(
+                        0,
+                        -bullet.radius,
+                        this.tank.radius + gun.length,
+                        bullet.radius * 2
+                    );
+                    break;
+            }
+            p.pop();
+        }
+
+        p.stroke(this.color.border);
+        p.strokeWeight(2);
+        p.fill(this.color.fill);
+
+        p.circle(
+            0,
+            0,
+            this.tank.radius * 2,
+        );
+
+        p.pop();
     }
 
     drawLight() {
@@ -616,7 +620,7 @@ export default class Tank {
 
         const p = this.p;
 
-        const width = this.tank.radius * 2;
+        const width = this.tank.armor / 3.75;
         const height = 4;
 
         const maxHealth = this.tank.armor;

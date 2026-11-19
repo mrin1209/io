@@ -12,7 +12,7 @@ export default class UpgradeManager {
             width: 80,
             height: 80,
             gap: 10,
-            textSize: 14,
+            textSize: 10,
             strokeWeight: 3,
             size: 15,
         };
@@ -26,7 +26,7 @@ export default class UpgradeManager {
 
         this.tanks = tanks.map(([key, value], index) => {
             const x = ((p.width - total) / 2) + (index * (this.layout.width + this.layout.gap)) + (this.layout.width / 2);
-            const y = p.height - this.layout.padding - (this.layout.height / 2);
+            const y = this.layout.padding + (this.layout.height / 2);
 
             const preview = new value({
                 p: this.p,
@@ -51,7 +51,7 @@ export default class UpgradeManager {
 
         const index = this.tanks.findIndex((tank, index) => {
             const itemX = (p.width - total) / 2 + index * (this.layout.width + this.layout.gap);
-            const itemY = p.height - this.layout.padding - this.layout.height;
+            const itemY = this.layout.padding;
 
             return (
                 x >= itemX &&
@@ -78,7 +78,7 @@ export default class UpgradeManager {
 
         this.tanks.forEach((tank, index) => {
             const x = (p.width - total) / 2 + index * (this.layout.width + this.layout.gap);
-            const y = p.height - this.layout.padding - this.layout.height;
+            const y = this.layout.padding;
 
             p.stroke(Color.upgrade.stroke);
             p.strokeWeight(this.layout.strokeWeight);
@@ -90,8 +90,19 @@ export default class UpgradeManager {
                 this.layout.height,
             );
 
+            p.stroke(Color.name.stroke);
+            p.strokeWeight(this.layout.strokeWeight);
+            p.fill(Color.name.color);
+            p.textSize(this.layout.textSize);
+            p.textAlign(p.CENTER, p.CENTER);
+            p.textStyle(p.BOLD);
+            p.text(
+                `${tank.name}`,
+                x + this.layout.width / 2,
+                y + this.layout.height - this.layout.padding,
+            );
+
             tank.draw();
-            tank.drawName();
         });
 
         p.pop();

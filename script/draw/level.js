@@ -32,7 +32,7 @@ export default class Level {
         p.fill(Color.level.back);
         p.rect(
             (p.width - this.layout.width) / 2,
-            this.layout.padding,
+            p.height - this.layout.padding - this.layout.height,
             this.layout.width,
             this.layout.height
         );
@@ -40,7 +40,7 @@ export default class Level {
         p.fill(Color.level.fill);
         p.rect(
             (p.width - this.layout.width) / 2,
-            this.layout.padding,
+            p.height - this.layout.padding - this.layout.height,
             this.layout.width * rate,
             this.layout.height
         );
@@ -51,9 +51,9 @@ export default class Level {
         p.textSize(this.layout.textSize);
         p.textAlign(p.CENTER, p.CENTER);
         p.text(
-            `${tank.name} - ${tank.totalExp >= 1000 ? (tank.totalExp / 1000).toFixed(1).replace(/\.0$/, '') + 'K' : tank.totalExp} Lv. ${tank.level}`,
+            `Lv. ${tank.level} - ${tank.totalExp >= 1000 ? (tank.totalExp / 1000).toFixed(1).replace(/\.0$/, '') + 'K' : tank.totalExp}`,
             p.width / 2,
-            this.layout.padding + this.layout.height / 2
+            p.height - this.layout.padding - this.layout.height / 2,
         );
 
         p.pop();

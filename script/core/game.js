@@ -12,6 +12,7 @@ import ScoreManager from "../manager/scoreManager.js";
 import MapManager from "../manager/mapManager.js";
 import Level from "../draw/level.js"
 import Health from "../draw/health.js";
+import Name from "../draw/name.js";
 
 export default class Game {
     constructor(p) {
@@ -63,6 +64,7 @@ export default class Game {
 
         this.drawLevel = new Level(this.p);
         this.drawHealth = new Health(this.p);
+        this.drawName = new Name(this.p);
 
         // for (let i = 0; i < 60 * 60; i++) {
         //     this.loop();
@@ -100,6 +102,7 @@ export default class Game {
 
         this.drawLevel.draw(tank);
         this.drawHealth.draw(tank);
+        this.drawName.draw(tank);
 
         p.pop();
     }

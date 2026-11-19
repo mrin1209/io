@@ -31,13 +31,13 @@ export default class Single extends Tank {
             {
                 ...this.bullet[0],
                 id: 1,
-                speed  : 3, // 弾丸速度
+                speed  : 2, // 弾丸速度
                 armor  : 10, // 弾丸耐久力
                 power  : 10, // 攻撃力
                 penetration : 10, // 弾丸攻撃力
                 duration: 30, // 初速持続時間
                 deceleration: 0.01, // 減速率
-                range  : 135, // 消滅時間
+                range  : 180, // 消滅時間
                 radius   : 10, // 弾丸半径
                 recoil : 0.5, // 着弾反動
             }

@@ -5,8 +5,8 @@ const Config = {
     },
 
     view: {
-        width: 750,
-        height: 500,
+        width: 800,
+        height: 600,
         chunk: 200,
         grid: 20,
     },

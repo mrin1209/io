@@ -32,17 +32,17 @@ export default class Health {
         p.strokeWeight(this.layout.strokeWeight);
         p.fill(Color.health.back);
         p.rect(
-            (p.width - this.layout.width) / 2,
-            this.layout.padding,
-            this.layout.width,
+            (p.width - max * 1.5) / 2,
+            p.height - this.layout.padding - this.layout.height,
+            max * 1.5,
             this.layout.height
         );
 
         p.fill(Color.health.fill);
         p.rect(
-            (p.width - this.layout.width) / 2,
-            this.layout.padding,
-            this.layout.width * rate,
+            (p.width - max * 1.5) / 2,
+            p.height - this.layout.padding - this.layout.height,
+            max * 1.5 * rate,
             this.layout.height
         );
 
@@ -54,7 +54,7 @@ export default class Health {
         p.text(
             `${Math.round(tank.armor)} / ${Math.round(tank.health)}`,
             p.width / 2,
-            this.layout.padding + this.layout.height / 2
+            p.height - this.layout.padding - this.layout.height / 2,
         );
 
         p.pop();
