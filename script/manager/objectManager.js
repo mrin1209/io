@@ -23,8 +23,6 @@ export default class ObjectManager {
 
         this.collision = new Collision();
         this.random = new Random();
-
-        this.timer = 60;
     }
 
     run() {
@@ -224,13 +222,6 @@ export default class ObjectManager {
     }
 
     target(object) {
-        if (this.timer === 0) {
-            this.timer = 60;
-        } else {
-            this.timer--;
-            return null;
-        }
-
         const { x, y, zoom } = object.get();
 
         const halfWidth = Config.view.width / zoom / 2;
