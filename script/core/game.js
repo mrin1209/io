@@ -66,18 +66,7 @@ export default class Game {
         this.drawHealth = new Health(this.p);
         this.drawName = new Name(this.p);
 
-        const start = performance.now();
-        const total = 60 * 60;
-
-        for (let i = 0; i < total; i++) {
-            this.loop();
-
-            if (i % (total / 10) === 0) {
-                console.log(`Loading... ${Math.floor(i / total * 100)}%`);
-            }
-        }
-        console.log("Loading complete!");
-        console.log(`Loading time: ${((performance.now() - start) / 1000).toFixed(2)} seconds`);
+        // this.simulation();
 
         this.setup();
     }
@@ -138,6 +127,21 @@ export default class Game {
         this.objectManager.run();
         this.tankManager.run();
         this.bulletManager.run();
+    }
+
+    simulation() {
+        const start = performance.now();
+        const total = 60 * 60;
+
+        for (let i = 0; i < total; i++) {
+            this.loop();
+
+            if (i % (total / 10) === 0) {
+                console.log(`Loading... ${Math.floor(i / total * 100)}%`);
+            }
+        }
+        console.log("Loading complete!");
+        console.log(`Loading time: ${((performance.now() - start) / 1000).toFixed(2)} seconds`);
     }
 
     move(dx, dy) {

@@ -81,6 +81,7 @@ export default class Tank {
 
         this.active = true;
         this.invincible = 0;
+        this.search = 0;
     }
 
     setup(param) {
@@ -112,6 +113,7 @@ export default class Tank {
         this.totalExp = param.totalExp ?? this.totalExp;
         this.tier = param.tier ?? this.tier;
         this.previewScale = param.previewScale ?? this.previewScale;
+        this.target = param.target ?? null;
 
         this.color = this.color ?? (this.type === 'player' ? Color.blue : Color.red);
 
@@ -142,6 +144,10 @@ export default class Tank {
 
         if (this.invincible > 0) {
             this.invincible--;
+        }
+
+        if (this.search > 0) {
+            this.search--;
         }
 
         this.heal();
@@ -238,7 +244,13 @@ export default class Tank {
             : this.ry - Math.sign(this.ry) * this.tank.deceleration;
     }
 
-    shot(mx, my) {
+    setTarget(tanks) {
+        if (tanks.includes(this.target)) return;
+
+        this.target = tanks[0] ?? null;
+    }
+
+    shot() {
         const bullets = [];
 
         for (const gun of this.gun) {
@@ -303,6 +315,8 @@ export default class Tank {
                 this.rx += (dx / distance) * target.recoil;
                 this.ry += (dy / distance) * target.recoil;
             }
+
+            this.target = target.owner;
         }
 
         if (target.class === 'object') {
@@ -322,6 +336,8 @@ export default class Tank {
         if (target.class === 'bullet') {
             this.rx = Math.max(-this.tank.maxSpeed, Math.min(this.tank.maxSpeed, this.rx + Math.cos(target.angle) * target.recoil));
             this.ry = Math.max(-this.tank.maxSpeed, Math.min(this.tank.maxSpeed, this.ry + Math.sin(target.angle) * target.recoil));
+
+            this.target = target.owner;
         }
 
         this.tank.health -= target.power;
@@ -360,6 +376,10 @@ export default class Tank {
         if (target.class === 'tank') {
             this.exp += target.totalExp + 100;
             this.totalExp += target.totalExp + 100;
+        }
+
+        if (this.target && target.id === this.target.get().id) {
+            this.target = null;
         }
 
         while (this.exp >= this.getRequiredExp()) {
@@ -689,6 +709,8 @@ export default class Tank {
             upgradeToken: this.upgradeToken,
             updateToken: this.updateToken,
             tier: this.tier,
+            target: this.target,
+            owner: this,
         }
     }
 }

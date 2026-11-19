@@ -51,8 +51,20 @@ export default class TankManager {
             tank.run(this.wallManager);
 
             if (tank instanceof Cpu) {
-                const target = this.target(tank);
-                const bullet = tank.shot(target);
+                if (tank.tank.search <= 0) {
+                    /**
+                     * 現状の仕様
+                     * 1秒に一回視野内のtankをサーチ
+                     * 視野内の一番近いtankをターゲットにする
+                     * ターゲットがいれば次のサーチでもっと近いtankが見つかってもターゲットは変わらない
+                     * 次のサーチでターゲットが視野内にいなければターゲットを解除
+                     * ターゲット外の敵から被弾すればターゲット変更
+                     * ターゲットがいなければ射撃は行わない
+                     */
+                    tank.setTarget(this.target(tank));
+                }
+
+                const bullet = tank.shot();
 
                 if (bullet) {
                     this.bulletManager.add(bullet);
@@ -318,6 +330,36 @@ export default class TankManager {
     }
 
     target(tank) {
+        const { x, y, zoom, id } = tank.get();
+
+        const halfWidth = Config.view.width / zoom / 2;
+        const halfHeight = Config.view.height / zoom / 2;
+
+        return this.tanks
+            .filter(target => {
+                const data = target.get();
+
+                if (data.id === id) return false;
+                if (!data.active) return false;
+
+                const dx = data.x - x;
+                const dy = data.y - y;
+
+                return Math.abs(dx) <= halfWidth &&
+                    Math.abs(dy) <= halfHeight;
+            })
+            .sort((a, b) => {
+                const A = a.get();
+                const B = b.get();
+
+                const distanceA = (A.x - x) ** 2 + (A.y - y) ** 2;
+                const distanceB = (B.x - x) ** 2 + (B.y - y) ** 2;
+
+                return distanceA - distanceB;
+            });
+    }
+
+    search(tank) {
         const { x, y, zoom } = tank.get();
 
         const halfWidth = Config.view.width / zoom / 2;
@@ -326,10 +368,9 @@ export default class TankManager {
         let nearest = null;
         let minDistance = Infinity;
 
-        for (const targetTank of this.tanks) {
-            const target = targetTank.get();
+        for (const object of this.objectManager.objects) {
+            const target = object.get();
 
-            if (target.id === tank.get().id) continue;
             if (!target.active) continue;
 
             const dx = target.x - x;
@@ -343,27 +384,6 @@ export default class TankManager {
             if (distance < minDistance) {
                 minDistance = distance;
                 nearest = target;
-            }
-        }
-
-        if (!nearest) {
-            for (const object of this.objectManager.objects) {
-                const target = object.get();
-
-                if (!target.active) continue;
-
-                const dx = target.x - x;
-                const dy = target.y - y;
-
-                if (Math.abs(dx) > halfWidth) continue;
-                if (Math.abs(dy) > halfHeight) continue;
-
-                const distance = dx * dx + dy * dy;
-
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearest = target;
-                }
             }
         }
 

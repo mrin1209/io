@@ -41,15 +41,15 @@ export default class Cpu {
         this.moveTimer--;
     }
 
-    shot(target) {
+    shot() {
         if (Config.debug) {
             return false;
         }
 
-        if (target) {
+        if (this.tank.target) {
             this.tank.angle = Math.atan2(
-                target.y - this.tank.y,
-                target.x - this.tank.x,
+                this.tank.target.get().y - this.tank.y,
+                this.tank.target.get().x - this.tank.x,
             );
 
             return this.tank.shot();
@@ -95,6 +95,11 @@ export default class Cpu {
         const item = items[Math.floor(this.random.get() * items.length)];
 
         if (!this.tank.update(item)) return false;
+    }
+
+    setTarget(target) {
+        this.tank.setTarget(target)
+        this.search = 60;
     }
 
     get() {
