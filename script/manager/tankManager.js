@@ -66,50 +66,51 @@ export default class TankManager {
 
         // 機体同士の衝突判定
         for (let i = 0; i < this.tanks.length; i++) {
+            const tankA = this.tanks[i];
+            const dataA = tankA.get();
+            if (!dataA.active) continue;
             for (let j = i + 1; j < this.tanks.length; j++) {
-                const tankA = this.tanks[i];
                 const tankB = this.tanks[j];
+                const dataB = tankB.get();
+                if (!dataB.active) continue;
 
-                if (!tankA.get().active) continue;
-                if (!tankB.get().active) continue;
+                if (this.collision.circleCircle(dataA, dataB)) {
+                    if (tankA.hit(dataB)) {
+                        tankB.kill(dataA);
+                        tankA.death(dataB);
 
-                if (this.collision.circleCircle(tankA.get(), tankB.get())) {
-                    if (tankA.hit(tankB.get())) {
-                        tankB.kill(tankA.get());
-                        tankA.death(tankB.get());
-
-                        this.logManager.tackle(tankB.get(), tankA.get());
+                        this.logManager.tackle(dataB, dataA);
                         this.scoreManager.set();
 
-                        if (this.watch && tankA.get().id === this.watch.get().id) {
+                        if (this.watch && dataA.id === this.watch.get().id) {
                             this.changeWatch(tankB);
                         }
 
-                        if (tankA.get().type === 'player') {
+                        if (dataA.type === 'player') {
                             this.changeWatch(tankB);
                         }
 
-                        if (tankB.get().type === 'player') {
+                        if (dataB.type === 'player') {
                             this.upgradeManager.set(tankB);
                         }
                     }
 
-                    if (tankB.hit(tankA.get())) {
-                        tankA.kill(tankB.get());
-                        tankB.death(tankA.get());
+                    if (tankB.hit(dataA)) {
+                        tankA.kill(dataB);
+                        tankB.death(dataA);
 
-                        this.logManager.tackle(tankA.get(), tankB.get());
+                        this.logManager.tackle(dataA, dataB);
                         this.scoreManager.set();
 
-                        if (this.watch && tankB.get().id === this.watch.get().id) {
+                        if (this.watch && dataB.id === this.watch.get().id) {
                             this.changeWatch(tankA);
                         }
 
-                        if (tankB.get().type === 'player') {
+                        if (dataB.type === 'player') {
                             this.changeWatch(tankA);
                         }
 
-                        if (tankA.get().type === 'player') {
+                        if (dataA.type === 'player') {
                             this.upgradeManager.set(tankA);
                         }
                     }
@@ -119,70 +120,75 @@ export default class TankManager {
 
         // 機体と弾丸の衝突処理
         for (const tank of this.tanks) {
+            const tankData = tank.get();
+            if (!tankData.active) continue;
             for (const bullet of this.bulletManager.bullets) {
-                if (!tank.get().active) continue;
-                if (!bullet.get().active) continue;
-                if (bullet.owner?.get().id === tank.get().id) continue;
+                const bulletData = bullet.get();
+                const ownerData = bullet.owner.get();
+                if (!bulletData.active) continue;
+                if (ownerData.id === tankData.id) continue;
                 
-                if (this.collision.circleCircle(tank.get(), bullet.get())) {
-                    if (bullet.collisions.has(tank.get().id)) continue;
+                if (this.collision.circleCircle(tankData, bulletData)) {
+                    if (bullet.collisions.has(tankData.id)) continue;
 
-                    if (bullet.hit(tank.get())) {
+                    if (bullet.hit(tankData)) {
                         bullet.death();
                     }
 
-                    if (tank.hit(bullet.get())) {
-                        bullet.owner.kill(tank.get());
-                        tank.death(bullet.owner.get());
+                    if (tank.hit(bulletData)) {
+                        bullet.owner.kill(tankData);
+                        tank.death(ownerData);
 
-                        this.logManager.kill(bullet.owner.get(), tank.get());
+                        this.logManager.kill(ownerData, tankData);
                         this.scoreManager.set();
 
-                        if (this.watch && tank.get().id === this.watch.get().id) {
+                        if (this.watch && tankData.id === this.watch.get().id) {
                             this.changeWatch(bullet.owner);
                         }
 
-                        if (tank.get().type === 'player') {
+                        if (tankData.type === 'player') {
                             this.changeWatch(bullet.owner);
                         }
 
-                        if (bullet.owner.get().type === 'player') {
+                        if (ownerData.type === 'player') {
                             this.upgradeManager.set(bullet.owner);
                         }
                     }
                 } else {
-                    bullet.collisions.delete(tank.get().id);
+                    bullet.collisions.delete(tankData.id);
                 }
             }
         }
 
         // 機体とオブジェクトの衝突処理
         for (const tank of this.tanks) {
+            const tankData = tank.get();
+            if (!tankData.active) continue;
             for (const object of this.objectManager.objects) {
-                if (!tank.get().active) continue;
-                if (!object.get().active) continue;
+                const objectData = object.get();
+                if (!objectData.active) continue;
 
-                if (this.collision.circleCircle(tank.get(), object.get())) {
-                    if (object.hit(tank.get())) {
-                        tank.kill(object.get());
-                        object.death(tank.get());
+                if (this.collision.circleCircle(tankData, objectData)) {
+                    if (object.hit(tankData)) {
+                        tank.kill(objectData);
+                        object.death(tankData);
 
                         this.scoreManager.set();
 
-                        if (tank.get().type === 'player') {
+                        if (tankData.type === 'player') {
                             this.upgradeManager.set(tank);
                         }
                     }
 
-                    if (tank.hit(object.get())) {
-                        object.kill(tank.get());
-                        tank.death(object.get());
+                    if (tank.hit(objectData)) {
+                        object.kill(tankData);
+                        tank.death(objectData);
 
-                        this.logManager.destruction(tank.get());
+                        this.logManager.destruction(tankData);
                         this.scoreManager.set();
 
                         if (object.shapeIndex === 6) {
-                            this.logManager.object(object.get());
+                            this.logManager.object(objectData);
                         }
                     }
                 }
@@ -231,11 +237,12 @@ export default class TankManager {
 
     draw(view) {
         for (const tank of this.tanks) {
+            const tankData = tank.get();
             if (
-                tank.get().x + tank.get().radius < view.left ||
-                tank.get().x - tank.get().radius > view.right ||
-                tank.get().y + tank.get().radius < view.top ||
-                tank.get().y - tank.get().radius > view.bottom
+                tankData.x + tankData.radius < view.left ||
+                tankData.x - tankData.radius > view.right ||
+                tankData.y + tankData.radius < view.top ||
+                tankData.y - tankData.radius > view.bottom
             ) continue;
 
             tank.draw();

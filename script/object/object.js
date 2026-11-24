@@ -60,6 +60,7 @@ export default class Object {
 
         this.active = true;
         this.invincible = 0;
+        this.search = 0;
 
         this.collision = new Collision();
     }
@@ -67,6 +68,10 @@ export default class Object {
     run(wallManager, target) {
         if (this.invincible > 0) {
             this.invincible--;
+        }
+
+        if (this.search > 0) {
+            this.search--;
         }
 
         this.object.angle += this.object.rotationSpeed;

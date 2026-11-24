@@ -17,11 +17,12 @@ export default class BulletManager {
     run() {
         // 弾丸処理
         for (const bullet of this.bullets) {
+            const bulletData = bullet.get();
             bullet.run();
 
-            if (!bullet.get().active) continue;
+            if (!bulletData.active) continue;
 
-            const data = bullet.get();
+            const data = bulletData;
 
             if (this.collision.outside(data)) {
                 if (bullet.hit(this.collision.get())) {
@@ -39,27 +40,29 @@ export default class BulletManager {
 
         // 弾丸同士の衝突判定
         for (let i = 0; i < this.bullets.length; i++) {
+            const bulletA = this.bullets[i];
+            const dataA = bulletA.get();
+            if (!dataA.active) continue;
             for (let j = i + 1; j < this.bullets.length; j++) {
-                const bulletA = this.bullets[i];
                 const bulletB = this.bullets[j];
+                const dataB = bulletB.get();
+                if (!dataB.active) continue;
 
-                if (!bulletA.get().active) continue;
-                if (!bulletB.get().active) continue;
                 if (bulletA.owner.get().id === bulletB.owner.get().id) continue;
 
-                if (this.collision.circleCircle(bulletA.get(),bulletB.get())){
-                    if (bulletA.hit(bulletB.get())) {
-                        bulletB.kill(bulletA.get());
-                        bulletA.death(bulletB.get());
+                if (this.collision.circleCircle(dataA,dataB)){
+                    if (bulletA.hit(dataB)) {
+                        bulletB.kill(dataA);
+                        bulletA.death(dataB);
                     }
 
-                    if (bulletB.hit(bulletA.get())) {
-                        bulletA.kill(bulletB.get());
-                        bulletB.death(bulletA.get());
+                    if (bulletB.hit(dataA)) {
+                        bulletA.kill(dataB);
+                        bulletB.death(dataA);
                     }
                 } else {
-                    bulletA.collisions.delete(bulletB.get().id);
-                    bulletB.collisions.delete(bulletA.get().id);
+                    bulletA.collisions.delete(dataB.id);
+                    bulletB.collisions.delete(dataA.id);
                 }
             }
         }
@@ -75,11 +78,12 @@ export default class BulletManager {
 
     draw(view) {
         for (const bullet of this.bullets) {
+            const bulletData = bullet.get();
             if (
-                bullet.get().x + bullet.get().radius < view.left ||
-                bullet.get().x - bullet.get().radius > view.right ||
-                bullet.get().y + bullet.get().radius < view.top ||
-                bullet.get().y - bullet.get().radius > view.bottom
+                bulletData.x + bulletData.radius < view.left ||
+                bulletData.x - bulletData.radius > view.right ||
+                bulletData.y + bulletData.radius < view.top ||
+                bulletData.y - bulletData.radius > view.bottom
             ) continue;
 
             bullet.draw();

@@ -35,40 +35,48 @@ export default class ObjectManager {
 
         // タンク処理
         for (const object of this.objects) {
+            let target = null;
+
+            if (object.search <= 0) {
+                target = this.target(object);
+                object.search = 15;
+            }
+
             object.run(
                 this.wallManager,
-                this.target(object)
+                target
             );
         }
 
         // オブジェクト同士の衝突判定
         for (let i = 0; i < this.objects.length; i++) {
+            const objectA = this.objects[i];
+            const dataA = objectA.get();
+            if (!dataA.active) continue;
             for (let j = i + 1; j < this.objects.length; j++) {
-                const objectA = this.objects[i];
                 const objectB = this.objects[j];
+                const dataB = objectB.get();
+                if (!dataB.active) continue;
 
-                if (!objectA.get().active) continue;
-                if (!objectB.get().active) continue;
-
-                if (this.collision.circleCircle(objectA.get(), objectB.get())) {
-                    if (objectA.hit(objectB.get())) {
-                        objectB.kill(objectA.get());
-                        objectA.death(objectB.get());
+                if (this.collision.circleCircle(dataA, dataB)) {
+                    if (objectA.hit(dataB)) {
+                        objectB.kill(dataA);
+                        objectA.death(dataB);
 
                         if (objectB.shapeIndex === 6) {
                             if (!objectB.lastShape && !objectA.lastShape) {
                                 objectB.lastShape = true;
-                                this.logManager.object(objectB.get());
+                                this.logManager.object(dataB);
                             }
                         }
-                    } else if (objectB.hit(objectA.get())) {
-                        objectA.kill(objectB.get());
-                        objectB.death(objectA.get());
+                    } else if (objectB.hit(dataA)) {
+                        objectA.kill(dataB);
+                        objectB.death(dataA);
 
                         if (objectA.shapeIndex === 6) {
                             if (!objectA.lastShape && !objectB.lastShape) {
                                 objectA.lastShape = true;
-                                this.logManager.object(objectA.get());
+                                this.logManager.object(dataA);
                             }
                         }
                     }
@@ -78,20 +86,22 @@ export default class ObjectManager {
         
         // オブジェクトと弾丸の衝突処理
         for (const object of this.objects) {
+            const objectData = object.get();
+            if (!objectData.active) continue;
             for (const bullet of this.bulletManager.bullets) {
-                if (!bullet.get().active) continue;
-                if (!object.get().active) continue;
+                const bulletData = bullet.get();
+                if (!bulletData.active) continue;
 
-                if (this.collision.circleCircle(bullet.get(), object.get())) {
-                    if (bullet.collisions.has(object.get().id)) continue;
+                if (this.collision.circleCircle(bulletData, objectData)) {
+                    if (bullet.collisions.has(objectData.id)) continue;
 
-                    if (bullet.hit(object.get())) {
+                    if (bullet.hit(objectData)) {
                         bullet.death();
                     }
 
-                    if (object.hit(bullet.get())) {
-                        bullet.owner.kill(object.get());
-                        object.death(bullet.get());
+                    if (object.hit(bulletData)) {
+                        bullet.owner.kill(objectData);
+                        object.death(bulletData);
 
                         this.scoreManager.set();
 
@@ -100,7 +110,7 @@ export default class ObjectManager {
                         }
                     }
                 } else {
-                    bullet.collisions.delete(object.get().id);
+                    bullet.collisions.delete(objectData.id);
                 }
             }
         }
@@ -120,11 +130,12 @@ export default class ObjectManager {
 
     draw(view) {
         for (const object of this.objects) {
+            const objectData = object.get();
             if (
-                object.get().x + object.get().radius < view.left ||
-                object.get().x - object.get().radius > view.right ||
-                object.get().y + object.get().radius < view.top ||
-                object.get().y - object.get().radius > view.bottom
+                objectData.x + objectData.radius < view.left ||
+                objectData.x - objectData.radius > view.right ||
+                objectData.y + objectData.radius < view.top ||
+                objectData.y - objectData.radius > view.bottom
             ) continue;
             object.draw();
         }
@@ -222,7 +233,7 @@ export default class ObjectManager {
     }
 
     target(object) {
-        const { x, y, zoom } = object.get();
+        const { id, x, y, zoom } = object.get();
 
         const halfWidth = Config.view.width / zoom / 2;
         const halfHeight = Config.view.height / zoom / 2;
@@ -231,11 +242,13 @@ export default class ObjectManager {
         let minDistance = Infinity;
 
         for (const target of this.objects) {
-            if (target.get().id === object.get().id) continue;
-            if (!target.get().active) continue;
+            const targetData = target.get();
 
-            const dx = target.get().x - x;
-            const dy = target.get().y - y;
+            if (targetData.id === id) continue;
+            if (!targetData.active) continue;
+
+            const dx = targetData.x - x;
+            const dy = targetData.y - y;
 
             if (Math.abs(dx) > halfWidth) continue;
             if (Math.abs(dy) > halfHeight) continue;
@@ -244,7 +257,7 @@ export default class ObjectManager {
 
             if (distance < minDistance) {
                 minDistance = distance;
-                nearest = target.get();
+                nearest = targetData;
             }
         }
 
