@@ -1,4 +1,3 @@
-import Config from "../config/config.js";
 import Tanks from "../config/tanks.js";
 import Random from "../core/random.js"
 
@@ -84,6 +83,7 @@ export default class Cpu {
             } else {
                 this.dx = dx / distance;
                 this.dy = dy / distance;
+                this.rotate(Math.atan2(dy, dx), 60);
             }
         } else if (target?.active) {
             const dx = target.x - this.tank.x;
@@ -112,15 +112,17 @@ export default class Cpu {
                 this.dx /= length;
                 this.dy /= length;
             }
-        } else if (this.moveTimer === undefined || this.moveTimer <= 0) {
-            const moveAngle = this.random.get() * Math.PI * 2;
+        } else {
+            if (this.moveTimer === undefined || this.moveTimer <= 0) {
+                const moveAngle = this.random.get() * Math.PI * 2;
 
-            this.dx = Math.cos(moveAngle);
-            this.dy = Math.sin(moveAngle);
+                this.dx = Math.cos(moveAngle);
+                this.dy = Math.sin(moveAngle);
 
-            this.rotate(this.random.get() * Math.PI * 2);
+                this.moveTimer = 60 + Math.floor(this.random.get() * 120);
+            }
 
-            this.moveTimer = 60 + Math.floor(this.random.get() * 120);
+            this.rotate(Math.atan2(this.dy, this.dx), 180);
         }
 
         this.tank.move(this.dx, this.dy, wallManager);
@@ -162,19 +164,17 @@ export default class Cpu {
             dx + vx * time
         );
 
-        this.rotate(angle);
+        this.rotate(angle, 10);
 
         return this.tank.shot();
     }
 
-    rotate(angle) {
+    rotate(angle, speed) {
         let diff = angle - this.tank.angle;
 
         diff = Math.atan2(Math.sin(diff), Math.cos(diff));
 
-        const speed = Math.PI / 10;
-
-        this.tank.angle += Math.max(-speed, Math.min(speed, diff));
+        this.tank.angle += Math.max(-Math.PI / speed, Math.min(Math.PI / speed, diff));
     }
 
     hit(target) {

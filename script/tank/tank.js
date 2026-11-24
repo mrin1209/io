@@ -477,10 +477,13 @@ export default class Tank {
 
             if (property === "power") {
                 this.tank.penetration = Math.round((this.tank.penetration + item.rate * item.direction * count) * 100) / 100;
+                this.tank.radius = Math.round((this.tank.radius + 0.75 * count) * 100) / 100;
+                this.tank.recoil = Math.round((this.tank.recoil + 0.025 * count) * 10000) / 10000;
             }
 
             if (property === "speed") {
                 this.tank.maxSpeed = Math.round((this.tank.maxSpeed + item.rate * item.direction * count) * 100) / 100;
+                this.tank.recoil = Math.round((this.tank.recoil + 0.025 * count) * 10000) / 10000;
             }
         }
 
@@ -488,8 +491,18 @@ export default class Tank {
             for (let i = 0; i < this.bullet.length; i++) {
                 this.bullet[i][property] = this.baseStats.bullet[i][property] * (1 + item.rate * item.direction * item.count);
 
+                if (property === "armor") {
+
+                }
+
                 if (property === "power") {
                     this.bullet[i].penetration = this.baseStats.bullet[i].penetration * (1 + item.rate * item.direction * item.count);
+                    this.bullet[i].radius = this.baseStats.bullet[i].radius * (1 + 0.025 * item.count);
+
+                    for (let i = 0; i < this.gun.length; i++) {
+                        this.gun[i].recoil = Math.round((this.baseStats.gun[i].recoil * (1 + 0.05 * item.count)) * 100) / 100;
+
+                    }
                 }
 
                 if (property === "speed") {
@@ -498,6 +511,11 @@ export default class Tank {
                         + 20 * item.direction * item.count;
 
                     this.bullet[i].range = distance / this.bullet[i].speed;
+                    this.bullet[i].recoil = Math.round((this.baseStats.bullet[i].recoil * (1 + 0.05 * item.count)) * 100) / 100;
+
+                    for (let i = 0; i < this.gun.length; i++) {
+                        this.gun[i].length = Math.round((this.gun[i].length + 0.5 * count) * 100) / 100;
+                    }
                 }
             }
         }

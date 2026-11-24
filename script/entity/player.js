@@ -135,6 +135,7 @@ export default class Player {
         console.log("機体速度　:", this.tank.tank.speed);
         console.log("反動速度　:", this.tank.tank.maxSpeed);
         console.log("接触攻撃力:", this.tank.tank.power);
+        console.log("接触反動　:", this.tank.tank.recoil);
 
         console.log("--------------------");
 
@@ -144,10 +145,13 @@ export default class Player {
             console.log(`Gun ${i + 1} (${gun.id})`);
             console.log("連射速度　:", gun.reload / this.tank.tank.shotCount);
             console.log("弾頭数　　:", gun.count);
+            console.log("発射反動　　:", gun.recoil);
             console.log("弾丸速度　:", bullet.speed);
             console.log("消滅時間　:", bullet.range);
             console.log("耐久力　　:", bullet.armor);
             console.log("攻撃力　　:", bullet.power);
+            console.log("着弾反動　　:", bullet.recoil);
+            console.log("弾丸半径　　:", bullet.radius);
             console.log("秒速火力　:", dps.toFixed(2));
             console.log("飛距離　　:", distance.toFixed(2));
             console.log("--------------------");
