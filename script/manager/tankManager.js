@@ -53,6 +53,7 @@ export default class TankManager {
             if (tank instanceof Cpu) {
                 if (tank.tank.search <= 0) {
                     tank.setTarget(this.target(tank));
+                    tank.setObject(this.search(tank));
                 }
 
                 const bullet = tank.shot();
@@ -351,34 +352,32 @@ export default class TankManager {
     }
 
     search(tank) {
-        const { x, y, zoom } = tank.get();
+        const { x, y, zoom, id } = tank.get();
 
         const halfWidth = Config.view.width / zoom / 2;
         const halfHeight = Config.view.height / zoom / 2;
 
-        let nearest = null;
-        let minDistance = Infinity;
+        return this.objectManager.objects
+            .filter(target => {
+                const data = target.get();
 
-        for (const object of this.objectManager.objects) {
-            const target = object.get();
+                if (data.id === id) return false;
+                if (!data.active) return false;
 
-            if (!target.active) continue;
+                const dx = data.x - x;
+                const dy = data.y - y;
 
-            const dx = target.x - x;
-            const dy = target.y - y;
+                return Math.abs(dx) <= halfWidth &&
+                    Math.abs(dy) <= halfHeight;
+            })
+            .sort((a, b) => {
+                const A = a.get();
+                const B = b.get();
 
-            if (Math.abs(dx) > halfWidth) continue;
-            if (Math.abs(dy) > halfHeight) continue;
-
-            const distance = dx * dx + dy * dy;
-
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearest = target;
-            }
-        }
-
-        return nearest;
+                return B.totalExp - A.totalExp ||
+                    ((A.x - x) ** 2 + (A.y - y) ** 2) -
+                    ((B.x - x) ** 2 + (B.y - y) ** 2);
+            });
     }
 
     spawnPosition() {

@@ -116,6 +116,8 @@ export default class Tank {
         this.previewScale = param.previewScale ?? this.previewScale;
         this.target = param.target ?? null;
         this.targets = param.targets ?? [];
+        this.object = param.object ?? null;
+        this.objects = param.objects ?? [];
 
         this.color = this.color ?? (this.type === 'player' ? Color.blue : Color.red);
 
@@ -250,6 +252,10 @@ export default class Tank {
         this.targets = tanks ?? [];
 
         this.search = 60;
+    }
+
+    setObject(objects) {
+        this.objects = objects ?? [];
     }
 
     scan(target) {
@@ -703,6 +709,8 @@ export default class Tank {
             status: this.status,
             x: this.x,
             y: this.y,
+            vx: this.vx,
+            vy: this.vy,
             angle: this.angle,
             radius: this.tank.radius,
             zoom: this.tank.zoom,
