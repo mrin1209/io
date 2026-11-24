@@ -33,9 +33,6 @@ export default class Player {
     }
 
     shot(mx, my) {
-        if (Config.debug) {
-            this.debug();
-        }
         return this.tank.shot(mx, my);
     }
 
