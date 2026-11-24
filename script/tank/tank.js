@@ -3,6 +3,7 @@ import Color from "../config/color.js";
 import Collision from "../core/collision.js";
 import Bullet from "../bullet/bullet.js";
 import Random from "../core/random.js";
+import Config from "../config/config.js";
 
 export default class Tank {
     constructor(param) {
@@ -114,6 +115,7 @@ export default class Tank {
         this.tier = param.tier ?? this.tier;
         this.previewScale = param.previewScale ?? this.previewScale;
         this.target = param.target ?? null;
+        this.targets = param.targets ?? [];
 
         this.color = this.color ?? (this.type === 'player' ? Color.blue : Color.red);
 
@@ -245,9 +247,20 @@ export default class Tank {
     }
 
     setTarget(tanks) {
-        if (tanks.includes(this.target)) return;
+        this.targets = tanks ?? [];
 
-        this.target = tanks[0] ?? null;
+        this.search = 60;
+    }
+
+    scan(target) {
+        const halfWidth = Config.view.width / this.tank.zoom / 2;
+        const halfHeight = Config.view.height / this.tank.zoom / 2;
+
+        const dx = target.x - this.x;
+        const dy = target.y - this.y;
+
+        return Math.abs(dx) <= halfWidth &&
+            Math.abs(dy) <= halfHeight;
     }
 
     shot() {
@@ -710,6 +723,7 @@ export default class Tank {
             updateToken: this.updateToken,
             tier: this.tier,
             target: this.target,
+            targets: this.targets,
             owner: this,
         }
     }

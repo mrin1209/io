@@ -52,15 +52,6 @@ export default class TankManager {
 
             if (tank instanceof Cpu) {
                 if (tank.tank.search <= 0) {
-                    /**
-                     * 現状の仕様
-                     * 1秒に一回視野内のtankをサーチ
-                     * 視野内の一番近いtankをターゲットにする
-                     * ターゲットがいれば次のサーチでもっと近いtankが見つかってもターゲットは変わらない
-                     * 次のサーチでターゲットが視野内にいなければターゲットを解除
-                     * ターゲット外の敵から被弾すればターゲット変更
-                     * ターゲットがいなければ射撃は行わない
-                     */
                     tank.setTarget(this.target(tank));
                 }
 

@@ -17,6 +17,18 @@ export default class Cpu {
         } else {
             this.move(wallManager);
         }
+
+        this.tank.targets = this.tank.targets.filter(target =>
+            target.get().active && this.tank.scan(target.get())
+        );
+
+        if (
+            !this.tank.target ||
+            !this.tank.target.get().active ||
+            !this.tank.scan(this.tank.target.get())
+        ) {
+            this.tank.target = this.tank.targets[0] ?? null;
+        }
     }
 
     draw() {
@@ -99,7 +111,6 @@ export default class Cpu {
 
     setTarget(target) {
         this.tank.setTarget(target)
-        this.search = 60;
     }
 
     get() {
