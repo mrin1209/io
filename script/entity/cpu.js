@@ -117,7 +117,7 @@ export default class Cpu {
                 const direction = Math.floor(this.random.get() * 3);
 
                 this.turning = [-1, 0, 1][direction];
-                this.moveTimer = 60;
+                this.moveTimer = 120;
             }
 
             const forward =
@@ -133,8 +133,41 @@ export default class Cpu {
                 this.dx /= length;
                 this.dy /= length;
             }
-        } else {
-            if (this.moveTimer <= 0) {
+        } else if (this.moveTimer <= 0) {
+            if (this.random.get() < 0.2) {
+                const { x, y, zoom, radius } = this.tank.get();
+
+                const halfWidth = Config.view.width / zoom / 2;
+                const halfHeight = Config.view.height / zoom / 2;
+
+                for (let i = 0; i < 200; i++) {
+                    const goal = {
+                        x: this.random.get(x - halfWidth, x + halfWidth),
+                        y: this.random.get(y - halfHeight, y + halfHeight)
+                    };
+
+                    if (this.collision.outside({ ...goal, radius })) continue;
+
+                    const line = {
+                        x1: x,
+                        y1: y,
+                        x2: goal.x,
+                        y2: goal.y,
+                    };
+
+                    const blocked = wallManager.walls.some(wall =>
+                        this.collision.lineRect(line, wall)
+                    );
+
+                    if (blocked) continue;
+
+                    this.goal = goal;
+                    
+                    this.moveTimer = 180;
+
+                    break;
+                }
+            } else {
                 const moveAngle = this.random.get() * Math.PI * 2;
 
                 this.dx = Math.cos(moveAngle);
@@ -142,7 +175,7 @@ export default class Cpu {
 
                 this.moveTimer = 60;
             }
-
+        } else {
             this.rotate(Math.atan2(this.dy, this.dx), 180);
         }
 
