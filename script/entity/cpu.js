@@ -1,5 +1,7 @@
 import Tanks from "../config/tanks.js";
 import Random from "../core/random.js"
+import Collision from "../core/collision.js";
+import Config from "../config/config.js";
 
 export default class Cpu {
     constructor(p, tank) {
@@ -7,6 +9,10 @@ export default class Cpu {
         this.tank = tank;
         this.random = new Random();
         this.goal = null;
+        this.moveTimer = 0;
+        this.strafeDirection = this.random.get() < 0.5 ? -1 : 1;
+
+        this.collision = new Collision();
     }
 
     run(wallManager) {
@@ -75,7 +81,21 @@ export default class Cpu {
             const dy = this.goal.y - this.tank.y;
             const distance = Math.hypot(dx, dy);
 
-            if (distance < this.tank.get().radius) {
+            const line = {
+                x1: this.tank.x,
+                y1: this.tank.y,
+                x2: this.goal.x,
+                y2: this.goal.y,
+            };
+
+            const blocked = wallManager.walls.some(wall =>
+                this.collision.lineRect(line, wall)
+            );
+
+            if (
+                distance < this.tank.get().radius ||
+                blocked
+            ) {
                 this.goal = null;
                 this.moveTimer = 0;
                 this.dx = 0;
@@ -93,18 +113,19 @@ export default class Cpu {
             const angle = Math.atan2(dy, dx);
             const desiredDistance = this.tank.bullet[0].duration * this.tank.bullet[0].speed;
 
-            if (this.moveTimer === undefined || this.moveTimer <= 0) {
-                this.strafeDirection = this.random.get() < 0.5 ? -1 : 1;
-                this.moveTimer = 60 + Math.floor(this.random.get() * 120);
+            if (this.moveTimer <= 0) {
+                const direction = Math.floor(this.random.get() * 3);
+
+                this.turning = [-1, 0, 1][direction];
+                this.moveTimer = 60;
             }
 
-            const forward = distance > desiredDistance + 30 ? 1 :
+            const forward =
+                distance > desiredDistance + 30 ? 1 :
                 distance < desiredDistance - 30 ? -1 : 0;
 
-            const strafe = 0.7 * this.strafeDirection;
-
-            this.dx = Math.cos(angle) * forward - Math.sin(angle) * strafe;
-            this.dy = Math.sin(angle) * forward + Math.cos(angle) * strafe;
+            this.dx = Math.cos(angle) * forward - Math.sin(angle) * this.turning;
+            this.dy = Math.sin(angle) * forward + Math.cos(angle) * this.turning;
 
             const length = Math.hypot(this.dx, this.dy);
 
@@ -113,13 +134,13 @@ export default class Cpu {
                 this.dy /= length;
             }
         } else {
-            if (this.moveTimer === undefined || this.moveTimer <= 0) {
+            if (this.moveTimer <= 0) {
                 const moveAngle = this.random.get() * Math.PI * 2;
 
                 this.dx = Math.cos(moveAngle);
                 this.dy = Math.sin(moveAngle);
 
-                this.moveTimer = 60 + Math.floor(this.random.get() * 120);
+                this.moveTimer = 60;
             }
 
             this.rotate(Math.atan2(this.dy, this.dx), 180);

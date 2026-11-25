@@ -69,7 +69,7 @@ export default class Game {
         this.objectManager.setup();
         this.tankManager.setup();
 
-        this.simulation();
+        // this.simulation();
 
         this.setup();
     }
