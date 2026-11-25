@@ -3,12 +3,15 @@ import Input from "./core/input.js";
 import Config from "./config/config.js";
 
 new p5((p) => {
-    const game = new Game(p);
-    const input = new Input(p, game);
+    let game;
+    let input;
 
     p.setup = () => {
         p.frameRate(60);
         p.createCanvas(Config.canvas.width, Config.canvas.height);
+
+        game = new Game(p);
+        input = new Input(p, game);
     };
 
     p.draw = () => {

@@ -25,6 +25,12 @@ export default class ObjectManager {
         this.random = new Random();
     }
 
+    setup() {
+        while (this.objects.length < Config.max.object) {
+            this.spawn();
+        }
+    }
+
     run() {
         if (
             this.objects.length < Config.max.object &&
@@ -33,13 +39,13 @@ export default class ObjectManager {
             this.spawn();
         }
 
-        // タンク処理
+        // オブジェクト処理
         for (const object of this.objects) {
             let target = null;
 
             if (object.search <= 0) {
                 target = this.target(object);
-                object.search = 15;
+                object.search = 60;
             }
 
             object.run(
@@ -185,7 +191,7 @@ export default class ObjectManager {
 
     spawnPosition() {
         const maxAttempts = 1;
-        const radius = 100;
+        const radius = 40;
 
         const centerX = Config.map.width / 2;
         const centerY = Config.map.height / 2;
@@ -203,11 +209,9 @@ export default class ObjectManager {
                 radius,
             };
 
-            // マップ外・壁との衝突をチェック
             if (this.collision.outside(position)) continue;
             if (this.wallManager.check(position)) continue;
 
-            // スポーン位置からレベルを決定
             const dx = Math.abs(position.x - centerX);
             const dy = Math.abs(position.y - centerY);
 
@@ -228,7 +232,6 @@ export default class ObjectManager {
             };
         }
 
-        // 安全な座標を見つけられなかった場合
         return null;
     }
 

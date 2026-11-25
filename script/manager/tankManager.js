@@ -34,6 +34,12 @@ export default class TankManager {
         this.watch = null;
     }
 
+    setup() {
+        while (this.tanks.length < Config.max.tank) {
+            this.spawn();
+        }
+    }
+
     run() {
         const cpuCount = this.tanks.filter(tank =>
             tank.get().type === 'cpu'
@@ -344,8 +350,23 @@ export default class TankManager {
                 const dx = data.x - x;
                 const dy = data.y - y;
 
-                return Math.abs(dx) <= halfWidth &&
-                    Math.abs(dy) <= halfHeight;
+                if (
+                    Math.abs(dx) > halfWidth ||
+                    Math.abs(dy) > halfHeight
+                ) return false;
+
+                const line = {
+                    x1: x,
+                    y1: y,
+                    x2: data.x,
+                    y2: data.y,
+                };
+
+                if (this.wallManager.walls.some(wall =>
+                    this.collision.lineRect(line, wall)
+                )) return false;
+
+                return true;
             })
             .sort((a, b) => {
                 const A = a.get();
@@ -374,8 +395,23 @@ export default class TankManager {
                 const dx = data.x - x;
                 const dy = data.y - y;
 
-                return Math.abs(dx) <= halfWidth &&
-                    Math.abs(dy) <= halfHeight;
+                if (
+                    Math.abs(dx) > halfWidth ||
+                    Math.abs(dy) > halfHeight
+                ) return false;
+
+                const line = {
+                    x1: x,
+                    y1: y,
+                    x2: data.x,
+                    y2: data.y,
+                };
+
+                if (this.wallManager.walls.some(wall =>
+                    this.collision.lineRect(line, wall)
+                )) return false;
+
+                return true;
             })
             .sort((a, b) => {
                 const A = a.get();
@@ -389,7 +425,10 @@ export default class TankManager {
 
     spawnPosition() {
         const maxAttempts = 2000;
-        const radius = 100;
+
+        const wallRadius = 15;
+        const tankRadius = 400;
+        const objectRadius = 40;
 
         const centerX = Config.map.width / 2;
         const centerY = Config.map.height / 2;
@@ -398,39 +437,40 @@ export default class TankManager {
         const areaH = Config.map.height * Config.spawn.height;
 
         for (let i = 0; i < maxAttempts; i++) {
-            const position = {
-                x: this.random.get(
-                    radius,
-                    Config.map.width - radius
-                ),
-                y: this.random.get(
-                    radius,
-                    Config.map.height - radius
-                ),
-                radius,
-            };
+            const x = this.random.get(
+                wallRadius,
+                Config.map.width - wallRadius
+            );
+
+            const y = this.random.get(
+                wallRadius,
+                Config.map.height - wallRadius
+            );
 
             const insideYellowArea =
-                Math.abs(position.x - centerX) < areaW / 2 &&
-                Math.abs(position.y - centerY) < areaH / 2;
+                Math.abs(x - centerX) < areaW / 2 &&
+                Math.abs(y - centerY) < areaH / 2;
 
             if (insideYellowArea) continue;
 
-            // マップ外・壁との衝突をチェック
-            if (this.collision.outside(position)) continue;
-            if (this.wallManager.check(position)) continue;
+            if (this.collision.outside({x, y, radius: wallRadius})) continue;
+            if (this.wallManager.check({x, y, radius: wallRadius})) continue;
 
-            // 既存の戦車との重なりも防ぐ
             const overlapsTank = this.tanks.some(tank =>
-                this.collision.circleCircle(position, tank.get())
+                this.collision.circleCircle({x, y, radius: tankRadius}, tank.get())
             );
+
+            const overlapsObject = this.objectManager.objects.some(object =>
+                this.collision.circleCircle({x, y, radius: objectRadius}, object.get())
+            );
+
+            if (overlapsObject) continue;
 
             if (overlapsTank) continue;
 
-            return { x: position.x, y: position.y };
+            return { x, y };
         }
 
-        // 安全な座標を見つけられなかった場合
         return null;
     }
 

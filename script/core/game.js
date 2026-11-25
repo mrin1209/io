@@ -66,7 +66,10 @@ export default class Game {
         this.drawHealth = new Health(this.p);
         this.drawName = new Name(this.p);
 
-        // this.simulation();
+        this.objectManager.setup();
+        this.tankManager.setup();
+
+        this.simulation();
 
         this.setup();
     }
@@ -131,7 +134,9 @@ export default class Game {
 
     simulation() {
         const start = performance.now();
-        const total = 60 * 60;
+        const total = 60 * 60 * 6;
+
+        console.clear();
 
         for (let i = 0; i < total; i++) {
             this.loop();
