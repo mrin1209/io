@@ -433,8 +433,8 @@ export default class TankManager {
         const centerX = Config.map.width / 2;
         const centerY = Config.map.height / 2;
 
-        const areaW = Config.map.width * Config.spawn.width;
-        const areaH = Config.map.height * Config.spawn.height;
+        const areaW = Config.spawn.width;
+        const areaH = Config.spawn.height;
 
         for (let i = 0; i < maxAttempts; i++) {
             const x = this.random.get(

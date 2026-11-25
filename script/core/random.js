@@ -1,5 +1,7 @@
+import Config from "../config/config.js"
+
 export default class Random {
-    constructor(seed = 52519) {
+    constructor(seed = Config.seed) {
         this.seed = seed;
     }
 

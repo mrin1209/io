@@ -1,7 +1,7 @@
 const Config = {
     map: {
-        width: 5000,
-        height: 5000,
+        width: 10000,
+        height: 10000,
     },
 
     view: {
@@ -12,13 +12,13 @@ const Config = {
     },
 
     area: {
-        width: 0.2,
-        height: 0.2,
+        width: 800,
+        height: 800,
     },
 
     spawn: {
-        width: 0.6,
-        height: 0.6,
+        width: 2400,
+        height: 2400,
     },
 
     canvas: {
@@ -35,8 +35,13 @@ const Config = {
         density: 0.2,
     },
 
+    // seed: Math.floor(Math.random() * 900000) + 100000,
+    seed: 367313,
+
     debug: false,
 };
+
+console.log(Config.seed);
 
 if (Config.debug) {
     Config.map.width = 1000;

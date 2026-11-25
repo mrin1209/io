@@ -196,11 +196,11 @@ export default class ObjectManager {
         const centerX = Config.map.width / 2;
         const centerY = Config.map.height / 2;
 
-        const areaW = Config.map.width * Config.area.width;
-        const areaH = Config.map.height * Config.area.height;
+        const areaW = Config.area.width;
+        const areaH = Config.area.height;
 
-        const spawnW = Config.map.width * Config.spawn.width;
-        const spawnH = Config.map.height * Config.spawn.height;
+        const spawnW = Config.spawn.width;
+        const spawnH = Config.spawn.height;
 
         for (let i = 0; i < maxAttempts; i++) {
             const position = {

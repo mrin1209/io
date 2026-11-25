@@ -8,6 +8,9 @@ export default class Cpu {
         this.p = p;
         this.tank = tank;
         this.random = new Random();
+        this.dx = 0;
+        this.dy = 0;
+        this.turning = 0;
         this.goal = null;
         this.moveTimer = 0;
         this.strafeDirection = this.random.get() < 0.5 ? -1 : 1;
@@ -162,9 +165,17 @@ export default class Cpu {
                     if (blocked) continue;
 
                     this.goal = goal;
-                    
-                    this.moveTimer = 180;
 
+                    const dx = goal.x - x;
+                    const dy = goal.y - y;
+                    const distance = Math.hypot(dx, dy);
+
+                    this.dx = dx / distance;
+                    this.dy = dy / distance;
+
+                    this.rotate(Math.atan2(dy, dx), 60);
+
+                    this.moveTimer = 180;
                     break;
                 }
             } else {
@@ -283,6 +294,4 @@ export default class Cpu {
     get() {
         return this.tank.get();
     }
-
-
 }

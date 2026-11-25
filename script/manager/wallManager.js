@@ -32,8 +32,8 @@ export default class WallManager {
             () => Array(this.columns).fill(false)
         );
 
-        const centerW = Math.floor(this.columns * Config.area.width);
-        const centerH = Math.floor(this.rows * Config.area.height);
+        const centerW = Math.ceil(Config.area.width / this.chunk);
+        const centerH = Math.ceil(Config.area.height / this.chunk);
 
         const startX = Math.floor((this.columns - centerW) / 2);
         const startY = Math.floor((this.rows - centerH) / 2);
