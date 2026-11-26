@@ -15,27 +15,27 @@ export default class Field {
 
         p.noStroke();
         
-        const spawnWidth = Config.spawn.width;
-        const spawnHeight = Config.spawn.height;
-
-        p.fill(Color.world.spawn);
-        p.rect(
-            (Config.map.width - spawnWidth) / 2,
-            (Config.map.height - spawnHeight) / 2,
-            spawnWidth,
-            spawnHeight
-        );
-
-        const areaWidth = Config.area.width;
-        const areaHeight = Config.area.height;
-
-        p.fill(Color.world.center);
-        p.rect(
-            (Config.map.width - areaWidth) / 2,
-            (Config.map.height - areaHeight) / 2,
-            areaWidth,
-            areaHeight
-        );
+        // const spawnWidth = Config.spawn.width;
+        // const spawnHeight = Config.spawn.height;
+        //
+        // p.fill(Color.world.spawn);
+        // p.rect(
+        //     (Config.map.width - spawnWidth) / 2,
+        //     (Config.map.height - spawnHeight) / 2,
+        //     spawnWidth,
+        //     spawnHeight
+        // );
+        //
+        // const areaWidth = Config.area.width;
+        // const areaHeight = Config.area.height;
+        //
+        // p.fill(Color.world.center);
+        // p.rect(
+        //     (Config.map.width - areaWidth) / 2,
+        //     (Config.map.height - areaHeight) / 2,
+        //     areaWidth,
+        //     areaHeight
+        // );
 
         p.strokeWeight(1);
         p.stroke(Color.world.grid);

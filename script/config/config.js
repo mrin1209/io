@@ -1,11 +1,11 @@
 const Config = {
     map: {
-        width: 10000,
-        height: 10000,
+        width: 8000,
+        height: 8000,
     },
 
     view: {
-        width: 800,
+        width: 1000,
         height: 600,
         chunk: 200,
         grid: 20,
@@ -17,8 +17,8 @@ const Config = {
     },
 
     spawn: {
-        width: 2400,
-        height: 2400,
+        width: 4000,
+        height: 4000,
     },
 
     canvas: {
@@ -33,10 +33,10 @@ const Config = {
 
     wall: {
         density: 0.2,
+        margin: 2,
     },
 
-    // seed: Math.floor(Math.random() * 900000) + 100000,
-    seed: 367313,
+    seed: Math.floor(Math.random() * 900000) + 100000,
 
     debug: false,
 };

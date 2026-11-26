@@ -2,7 +2,22 @@ import Config from "../config/config.js"
 
 export default class Random {
     constructor(seed = Config.seed) {
-        this.seed = seed;
+        this.seed = this.toSeed(seed);
+    }
+
+    toSeed(seed) {
+        if (typeof seed === "number") {
+            return Math.abs(Math.floor(seed)) % 2147483646 + 1;
+        }
+
+        let hash = 2166136261;
+
+        for (let i = 0; i < seed.length; i++) {
+            hash ^= seed.charCodeAt(i);
+            hash = Math.imul(hash, 16777619);
+        }
+
+        return (hash >>> 0) % 2147483646 + 1;
     }
 
     get(min = 0, max = 1) {

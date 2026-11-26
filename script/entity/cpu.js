@@ -13,7 +13,7 @@ export default class Cpu {
         this.turning = 0;
         this.goal = null;
         this.moveTimer = 0;
-        this.strafeDirection = this.random.get() < 0.5 ? -1 : 1;
+        this.turning = 0;
 
         this.collision = new Collision();
     }

@@ -74,14 +74,13 @@ export default class WallManager {
             const size = this.randomSize(sizes);
 
             const col = Math.floor(
-                this.random.get() * (this.columns - size.w - 1)
-            ) + 1;
+                this.random.get() * (this.columns - size.w - Config.wall.margin * 2 + 1)
+            ) + Config.wall.margin;
 
             const row = Math.floor(
-                this.random.get() * (this.rows - size.h - 1)
-            ) + 1;
+                this.random.get() * (this.rows - size.h - Config.wall.margin * 2 + 1)
+            ) + Config.wall.margin;
 
-            // 配置先の重なりを確認
             let canPlace = true;
 
             for (let y = row; y < row + size.h; y++) {
@@ -113,6 +112,121 @@ export default class WallManager {
             }
 
             occupiedCells += size.w * size.h;
+        }
+
+        let updated = true;
+        while (updated) {
+            updated = false;
+            for (let y = 1; y < this.rows - 1; y++) {
+                for (let x = 1; x < this.columns - 1; x++) {
+                    if (occupied[y][x]) continue;
+
+                    const count = [
+                        occupied[y - 1][x], // 上
+                        occupied[y + 1][x], // 下
+                        occupied[y][x - 1], // 左
+                        occupied[y][x + 1], // 右
+                    ].filter(Boolean).length;
+
+                    if (count >= 3) {
+                        occupied[y][x] = true;
+
+                        this.walls.push({
+                            x: x * this.chunk,
+                            y: y * this.chunk,
+                            width: this.chunk,
+                            height: this.chunk,
+                        });
+
+                        updated = true;
+                    }
+                }
+            }
+
+            for (let y = 0; y < this.rows - 1; y++) {
+                for (let x = 0; x < this.columns - 1; x++) {
+
+                    // 左上と右下が壁
+                    if (
+                        occupied[y][x] &&
+                        occupied[y + 1][x + 1] &&
+                        !occupied[y][x + 1] &&
+                        !occupied[y + 1][x]
+                    ) {
+                        const scoreA =
+                            Number(occupied[y - 1]?.[x] ?? false) +
+                            Number(occupied[y + 1]?.[x + 2] ?? false);
+
+                        const scoreB =
+                            Number(occupied[y][x - 1] ?? false) +
+                            Number(occupied[y + 2]?.[x + 1] ?? false);
+
+                        let fill;
+
+                        if (scoreA > scoreB) {
+                            fill = 0;
+                        } else if (scoreB > scoreA) {
+                            fill = 1;
+                        } else {
+                            fill = Math.floor(this.random.get() * 2);
+                        }
+
+                        const fillX = fill === 0 ? x : x + 1;
+                        const fillY = fill === 0 ? y + 1 : y;
+
+                        occupied[fillY][fillX] = true;
+
+                        this.walls.push({
+                            x: fillX * this.chunk,
+                            y: fillY * this.chunk,
+                            width: this.chunk,
+                            height: this.chunk,
+                        });
+
+                        updated = true;
+                    }
+
+                    // 右上と左下が壁
+                    if (
+                        occupied[y][x + 1] &&
+                        occupied[y + 1][x] &&
+                        !occupied[y][x] &&
+                        !occupied[y + 1][x + 1]
+                    ) {
+                        const scoreA =
+                            Number(occupied[y][x + 2] ?? false) +
+                            Number(occupied[y + 2]?.[x] ?? false);
+
+                        const scoreB =
+                            Number(occupied[y - 1]?.[x + 1] ?? false) +
+                            Number(occupied[y + 1]?.[x - 1] ?? false);
+
+                        let fill;
+
+                        if (scoreA > scoreB) {
+                            fill = 0;
+                        } else if (scoreB > scoreA) {
+                            fill = 1;
+                        } else {
+                            fill = Math.floor(this.random.get() * 2);
+                        }
+
+                        const fillX = fill === 0 ? x : x + 1;
+                        const fillY = fill === 0 ? y : y + 1;
+
+                        occupied[fillY][fillX] = true;
+
+                        this.walls.push({
+                            x: fillX * this.chunk,
+                            y: fillY * this.chunk,
+                            width: this.chunk,
+                            height: this.chunk,
+                        });
+
+                        updated = true;
+                    }
+                }
+            }
         }
     }
 

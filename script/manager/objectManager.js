@@ -190,7 +190,7 @@ export default class ObjectManager {
     }
 
     spawnPosition() {
-        const maxAttempts = 1;
+        const maxAttempts = 200;
         const radius = 40;
 
         const centerX = Config.map.width / 2;
