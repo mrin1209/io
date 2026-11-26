@@ -1,15 +1,15 @@
 import Config from "../config/config.js";
 import Camera from "./camera.js";
 import Field from "./field.js";
-import LogManager from "../manager/logManager.js";
 import BulletManager from "../manager/bulletManager.js";
 import TankManager from "../manager/tankManager.js";
 import ObjectManager from "../manager/objectManager.js";
 import WallManager from "../manager/wallManager.js";
-import UpgradeManager from "../manager/upgradeManager.js";
-import UpdateManager from "../manager/updateManager.js";
-import ScoreManager from "../manager/scoreManager.js";
-import MapManager from "../manager/mapManager.js";
+import LogSystem from "../system/log.js";
+import UpgradeSystem from "../system/upgrade.js";
+import UpdateSystem from "../system/update.js";
+import ScoreSystem from "../system/score.js";
+import MapSystem from "../system/map.js";
 import Level from "../draw/level.js"
 import Health from "../draw/health.js";
 import Name from "../draw/name.js";
@@ -23,12 +23,12 @@ export default class Game {
 
         this.wallManager = new WallManager(this.p);
 
-        this.logManager = new LogManager(this.p);
+        this.logSystem = new LogSystem(this.p);
 
-        this.upgradeManager = new UpgradeManager(this.p);
-        this.updateManager = new UpdateManager(this.p);
+        this.upgradeSystem = new UpgradeSystem(this.p);
+        this.updateSystem = new UpdateSystem(this.p);
 
-        this.scoreManager = new ScoreManager(this.p);
+        this.scoreSystem = new ScoreSystem(this.p);
 
         this.bulletManager = new BulletManager(
             this.p,
@@ -39,24 +39,24 @@ export default class Game {
             this.p,
             this.wallManager,
             this.bulletManager,
-            this.upgradeManager,
-            this.scoreManager,
-            this.logManager,
+            this.upgradeSystem,
+            this.scoreSystem,
+            this.logSystem,
         );
 
         this.tankManager = new TankManager(
             this.p,
             this.bulletManager,
             this.objectManager,
-            this.upgradeManager,
             this.wallManager,
-            this.scoreManager,
-            this.logManager,
+            this.upgradeSystem,
+            this.scoreSystem,
+            this.logSystem,
         );
 
-        this.scoreManager.tankManager = this.tankManager;
+        this.scoreSystem.tankManager = this.tankManager;
 
-        this.mapManager = new MapManager(
+        this.mapSystem = new MapSystem(
             this.p,
             this.wallManager,
             this.tankManager
@@ -113,11 +113,11 @@ export default class Game {
         this.tankManager.draw(view);
         this.bulletManager.draw(view);
 
-        this.updateManager.draw(tank);
-        this.upgradeManager.draw(tank);
-        this.mapManager.draw();
-        this.scoreManager.draw();
-        this.logManager.draw();
+        this.updateSystem.draw(tank);
+        this.upgradeSystem.draw(tank);
+        this.mapSystem.draw();
+        this.scoreSystem.draw();
+        this.logSystem.draw();
 
         this.drawLevel.draw(tank);
         this.drawHealth.draw(tank);
@@ -134,7 +134,7 @@ export default class Game {
 
     simulation() {
         const start = performance.now();
-        const total = 60 * 60 * 6;
+        const total = 60 * 60 * 1;
 
         console.clear();
 
@@ -172,15 +172,15 @@ export default class Game {
         if (!tank) return;
         if (!tank.get().upgradeToken) return;
 
-        const TankClass = this.upgradeManager.pressed(x, y);
+        const TankClass = this.upgradeSystem.pressed(x, y);
         if (TankClass) {
             if (!tank.upgrade(TankClass)) return;
 
             this.tankManager.change(tank);
             this.tankManager.set(tank);
 
-            this.logManager.awakening(tank.get());
-            this.upgradeManager.set(tank);
+            this.logSystem.awakening(tank.get());
+            this.upgradeSystem.set(tank);
         }
     }
 
@@ -190,7 +190,7 @@ export default class Game {
         if (!tank) return;
         if (!tank.get().updateToken) return;
 
-        const item = this.updateManager.pressed(x, y);
+        const item = this.updateSystem.pressed(x, y);
         if (item) {
             if (!tank.update(item)) return;
         }
@@ -199,7 +199,7 @@ export default class Game {
     watch(x, y) {
         if (this.tankManager.player) return;
 
-        const id = this.scoreManager.pressed(x, y);
+        const id = this.scoreSystem.pressed(x, y);
         if (id) {
             const tank = this.tankManager.tanks.find(
                 item => item.get().id === id
@@ -214,9 +214,9 @@ export default class Game {
 
     resize() {
         if (this.tankManager.player) {
-            this.upgradeManager.set(this.tankManager.player);
+            this.upgradeSystem.set(this.tankManager.player);
         }
-        this.scoreManager.set();
+        this.scoreSystem.set();
     }
 
     zoom(delta) {

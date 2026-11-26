@@ -1,6 +1,6 @@
 import Color from "../config/color.js";
 
-export default class ScoreManager {
+export default class Score {
     constructor(p) {
         this.p = p;
 

@@ -1,7 +1,7 @@
 import Tanks from "../config/tanks.js";
 import Color from "../config/color.js";
 
-export default class UpgradeManager {
+export default class Upgrade {
     constructor(p) {
         this.p = p;
 

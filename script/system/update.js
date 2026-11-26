@@ -1,6 +1,6 @@
 import Color from "../config/color.js";
 
-export default class UpdateManager {
+export default class Update {
     constructor(p) {
         this.p = p;
 

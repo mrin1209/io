@@ -1,7 +1,7 @@
 import Color from "../config/color.js";
 import Config from "../config/config.js";
 
-export default class mapManager {
+export default class map {
     constructor(p, wallManager, tankManager) {
         this.p = p;
 

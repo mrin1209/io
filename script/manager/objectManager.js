@@ -8,18 +8,18 @@ export default class ObjectManager {
         p,
         wallManager,
         bulletManager,
-        upgradeManager,
-        scoreManager,
-        logManager,
+        upgradeSystem,
+        scoreSystem,
+        logSystem,
     ) {
         this.p = p;
         this.objects = [];
 
         this.wallManager = wallManager;
         this.bulletManager = bulletManager;
-        this.upgradeManager = upgradeManager;
-        this.scoreManager = scoreManager;
-        this.logManager = logManager;
+        this.upgradeSystem = upgradeSystem;
+        this.scoreSystem = scoreSystem;
+        this.logSystem = logSystem;
 
         this.collision = new Collision();
         this.random = new Random();
@@ -72,7 +72,7 @@ export default class ObjectManager {
                         if (objectB.shapeIndex === 6) {
                             if (!objectB.lastShape && !objectA.lastShape) {
                                 objectB.lastShape = true;
-                                this.logManager.object(dataB);
+                                this.logSystem.object(dataB);
                             }
                         }
                     } else if (objectB.hit(dataA)) {
@@ -82,7 +82,7 @@ export default class ObjectManager {
                         if (objectA.shapeIndex === 6) {
                             if (!objectA.lastShape && !objectB.lastShape) {
                                 objectA.lastShape = true;
-                                this.logManager.object(dataA);
+                                this.logSystem.object(dataA);
                             }
                         }
                     }
@@ -109,10 +109,10 @@ export default class ObjectManager {
                         bullet.owner.kill(objectData);
                         object.death(bulletData);
 
-                        this.scoreManager.set();
+                        this.scoreSystem.set();
 
                         if (bullet.owner.get().type === 'player') {
-                            this.upgradeManager.set(bullet.owner);
+                            this.upgradeSystem.set(bullet.owner);
                         }
                     }
                 } else {

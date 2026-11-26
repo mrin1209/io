@@ -1,6 +1,6 @@
 import Color from "../config/color.js";
 
-export default class LogManager {
+export default class Log {
     constructor(p) {
         this.p = p;
 
