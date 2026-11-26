@@ -38,7 +38,7 @@ const Config = {
 
     seed: Math.floor(Math.random() * 900000) + 100000,
 
-    debug: false,
+    debug: true,
 };
 
 console.log(Config.seed);
@@ -48,6 +48,10 @@ if (Config.debug) {
     Config.map.height = 1000;
     Config.max.tank = 0;
     Config.max.object = 0;
+    Config.area.width = 0;
+    Config.area.height = 0;
+    Config.spawn.width = 0;
+    Config.spawn.height = 0;
 }
 
 export default Config;

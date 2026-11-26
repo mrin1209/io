@@ -89,6 +89,11 @@ const Color = {
         cpu: [234, 153, 153],
         watch: [255, 217, 102],
     },
+
+    error: {
+        fill: [255, 0, 0],
+        stroke: [0, 0, 0]
+    }
 };
 
 export default Color;

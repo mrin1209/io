@@ -71,6 +71,13 @@ export default class Game {
 
         // this.simulation();
 
+        if (Config.debug) {
+            if (this.tankManager.spawn('debug')) {
+                this.logSystem.error();
+            }
+
+        }
+
         this.setup();
     }
 
@@ -82,6 +89,8 @@ export default class Game {
             if (event.key !== "Enter") return;
             if (this.tankManager.spawn(input.value.trim())) {
                 input.style.display = "none";
+            } else {
+                this.logSystem.error();
             }
         });
 

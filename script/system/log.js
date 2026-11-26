@@ -52,6 +52,10 @@ export default class Log {
         this.add(`八角形が出現した。exp: ${target.totalExp}`, Color.pink);
     }
 
+    error() {
+        this.add(`エラーが発生しました。`, Color.error);
+    }
+
     draw() {
         const p = this.p;
 
@@ -60,10 +64,10 @@ export default class Log {
 
         p.textAlign(p.LEFT, p.CENTER);
         p.textSize(this.layout.textSize);
-        p.stroke(Color.name.stroke);
         p.strokeWeight(this.layout.strokeWeight);
 
         this.logs.forEach((log, index) => {
+            p.stroke(log.color.stroke ?? Color.name.stroke);
             p.fill(log.color.fill);
             p.text(
                 log.message,
