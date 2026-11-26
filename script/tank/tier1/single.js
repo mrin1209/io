@@ -20,7 +20,8 @@ export default class Single extends Tank {
                 shot: 0,
                 reload : 60, // 連射速度
                 aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
+                length : 15,  // 砲身長さ
+                radius   : 10, // 砲身太さ
                 count  : 1, // 同時発射数
                 recoil : 0.5, // 発射反動
                 type: 'normal'
@@ -35,8 +36,8 @@ export default class Single extends Tank {
                 armor  : 10, // 弾丸耐久力
                 power  : 10, // 攻撃力
                 penetration : 10, // 弾丸攻撃力
-                duration: 30, // 初速持続時間
-                deceleration: 0.01, // 減速率
+                duration: 120, // 初速持続時間
+                deceleration: 0.025, // 減速率
                 range  : 180, // 消滅時間
                 radius   : 10, // 弾丸半径
                 recoil : 0.5, // 着弾反動

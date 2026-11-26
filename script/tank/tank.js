@@ -48,7 +48,8 @@ export default class Tank {
                 shot: 0,
                 reload : 60, // 連射速度
                 aim    : 10, // 拡散角度
-                length : 15,  // 砲身サイズ
+                length : 15,  // 砲身長さ
+                radius   : 10, // 砲身太さ
                 count  : 1, // 同時発射数
                 recoil : 0.5, // 発射反動
             }
@@ -61,8 +62,8 @@ export default class Tank {
                 armor  : 10, // 弾丸耐久力
                 power  : 10, // 攻撃力
                 penetration : 10, // 弾丸攻撃力
-                duration: 30, // 初速持続時間
-                deceleration: 0.01, // 減速率
+                duration: 120, // 初速持続時間
+                deceleration: 0.025, // 減速率
                 range  : 180, // 消滅時間
                 radius   : 10, // 弾丸半径
                 recoil : 0.5, // 着弾反動
@@ -478,12 +479,10 @@ export default class Tank {
             if (property === "power") {
                 this.tank.penetration = Math.round((this.tank.penetration + item.rate * item.direction * count) * 100) / 100;
                 this.tank.radius = Math.round((this.tank.radius + 0.75 * count) * 100) / 100;
-                this.tank.recoil = Math.round((this.tank.recoil + 0.025 * count) * 10000) / 10000;
             }
 
             if (property === "speed") {
                 this.tank.maxSpeed = Math.round((this.tank.maxSpeed + item.rate * item.direction * count) * 100) / 100;
-                this.tank.recoil = Math.round((this.tank.recoil + 0.025 * count) * 10000) / 10000;
             }
         }
 
@@ -497,23 +496,12 @@ export default class Tank {
 
                 if (property === "power") {
                     this.bullet[i].penetration = this.baseStats.bullet[i].penetration * (1 + item.rate * item.direction * item.count);
-                    this.bullet[i].radius = this.baseStats.bullet[i].radius * (1 + 0.025 * item.count);
-
-                    for (let i = 0; i < this.gun.length; i++) {
-                        this.gun[i].recoil = Math.round((this.baseStats.gun[i].recoil * (1 + 0.05 * item.count)) * 100) / 100;
-                    }
+                    this.bullet[i].radius = Math.round((this.bullet[i].radius + 0.25 * count) * 100) / 100;
                 }
 
                 if (property === "speed") {
-                    const distance = this.baseStats.bullet[i].speed
-                        * this.baseStats.bullet[i].range
-                        + 20 * item.direction * item.count;
-
-                    this.bullet[i].range = distance / this.bullet[i].speed;
-                    this.bullet[i].recoil = Math.round((this.baseStats.bullet[i].recoil * (1 + 0.05 * item.count)) * 100) / 100;
-
                     for (let i = 0; i < this.gun.length; i++) {
-                        this.gun[i].length = Math.round((this.gun[i].length + 0.5 * count) * 100) / 100;
+                        this.gun[i].length = Math.round((this.gun[i].length + 0.25 * count) * 100) / 100;
                     }
                 }
             }
@@ -546,42 +534,42 @@ export default class Tank {
                 case 'normal':
                     p.rect(
                         0,
-                        -bullet.radius,
+                        -gun.radius,
                         this.tank.radius + gun.length,
-                        bullet.radius * 2
+                        gun.radius * 2
                     );
                     break;
                 case 'wide':
                     p.beginShape();
-                    p.vertex(0, -bullet.radius);
-                    p.vertex(this.tank.radius, -bullet.radius);
-                    p.vertex(this.tank.radius + gun.length, -bullet.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
-                    p.vertex(this.tank.radius + gun.length, bullet.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
-                    p.vertex(this.tank.radius, bullet.radius);
-                    p.vertex(0, bullet.radius);
+                    p.vertex(0, -gun.radius);
+                    p.vertex(this.tank.radius, -gun.radius);
+                    p.vertex(this.tank.radius + gun.length, -gun.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius + gun.length, gun.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius, gun.radius);
+                    p.vertex(0, gun.radius);
                     p.endShape(p.CLOSE);
                     break;
                 case 'shotgun':
                     p.rect(
                         0,
-                        -bullet.radius,
+                        -gun.radius,
                         this.tank.radius + gun.length,
-                        bullet.radius * 2
+                        gun.radius * 2
                     );
 
                     p.beginShape();
-                    p.vertex(this.tank.radius + gun.length / 2, -bullet.radius);
-                    p.vertex(this.tank.radius + gun.length, -bullet.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
-                    p.vertex(this.tank.radius + gun.length, bullet.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
-                    p.vertex(this.tank.radius + gun.length / 2, bullet.radius);
+                    p.vertex(this.tank.radius + gun.length / 2, -gun.radius);
+                    p.vertex(this.tank.radius + gun.length, -gun.radius - gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius + gun.length, gun.radius + gun.length * Math.tan(gun.aim / 2 * Math.PI / 180));
+                    p.vertex(this.tank.radius + gun.length / 2, gun.radius);
                     p.endShape(p.CLOSE);
                     break;
                 case 'trap':
                     p.rect(
                         0,
-                        -bullet.radius,
+                        -gun.radius,
                         this.tank.radius + gun.length,
-                        bullet.radius * 2
+                        gun.radius * 2
                     );
                     break;
             }
