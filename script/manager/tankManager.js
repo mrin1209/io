@@ -286,7 +286,7 @@ export default class TankManager {
 
     spawn(name) {
         const position = this.spawnPosition();
-        if (!position) return;
+        if (!position) return false;
 
         if (Config.debug) {
             position.x = Config.map.width / 2 - 100;
@@ -332,6 +332,8 @@ export default class TankManager {
         this.tanks.push(tank);
         this.logSystem.spawn(tank.get());
         this.scoreSystem.set();
+
+        return true;
     }
 
     target(tank) {
