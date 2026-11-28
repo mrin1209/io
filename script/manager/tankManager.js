@@ -307,7 +307,7 @@ export default class TankManager {
                     ...(Config.debug && {
                         level: 0,
                         upgradeToken: 5,
-                        updateToken: 100,
+                        updateToken: 70,
                     }),
                 })
             );

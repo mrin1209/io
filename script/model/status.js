@@ -12,6 +12,18 @@ export default class Status {
             { key: "bullet.armor", name: "Bullet Armor", count: 0, max: 10, rate: 0.1, direction: 1, color: Color.purple },
             { key: "bullet.speed", name: "Bullet Speed", count: 0, max: 10, rate: 0.1, direction: 1, color: Color.pink },
         ];
+
+        if (Config.debug) {
+            this.items.unshift({
+                key: "level",
+                name: "Level",
+                count: 0,
+                max: 50,
+                rate: 1,
+                direction: 1,
+                color: Color.gray,
+            });
+        }
     }
 
     update(key) {

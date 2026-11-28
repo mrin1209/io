@@ -101,7 +101,9 @@ export default class Tank {
             for (const item of this.status.items) {
                 const [group, property] = item.key.split(".");
 
-                this.applyStatus(item, group, property, item.count);
+                if (group !== 'level') {
+                    this.applyStatus(item, group, property, item.count);
+                }
             }
         }
 
@@ -505,6 +507,10 @@ export default class Tank {
                     }
                 }
             }
+        }
+
+        if (Config.debug && group === "level") {
+            this.levelUp();
         }
     }
 

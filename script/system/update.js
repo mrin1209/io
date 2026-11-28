@@ -82,6 +82,37 @@ export default class Update {
             );
         });
 
+        const y = p.height - this.layout.padding - this.layout.height - (items.length * (this.layout.height + this.layout.gap));
+        // ゲージ背景
+        p.stroke(Color.update.stroke);
+        p.strokeWeight(this.layout.strokeWeight);
+        p.fill(Color.update.back);
+        p.rect(
+            this.layout.padding,
+            y,
+            this.layout.width,
+            this.layout.height,
+        );
+
+        // 強化ゲージ
+        p.fill(Color.gray.border);
+        p.rect(
+            this.layout.padding,
+            y,
+            this.layout.width * (tank.get().updateToken < 10 ? tank.get().updateToken : 10) / 10,
+            this.layout.height,
+        );
+
+        // 項目名
+        p.stroke(Color.name.stroke);
+        p.strokeWeight(this.layout.strokeWeight);
+        p.fill(Color.name.color);
+        p.text(
+            tank.get().updateToken,
+            this.layout.padding * 2,
+            y + (this.layout.height / 2),
+        );
+
         p.pop();
     }
 }

@@ -38,7 +38,7 @@ const Config = {
 
     seed: Math.floor(Math.random() * 900000) + 100000,
 
-    debug: true,
+    debug: false,
 };
 
 console.log(Config.seed);
